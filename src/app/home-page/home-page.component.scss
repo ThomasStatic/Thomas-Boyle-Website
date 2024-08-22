@@ -1,0 +1,38 @@
+.home-page-container{
+    background-color: #DAD7CD;
+}
+
+h1{
+    color: #588157;
+}
+
+a{
+    color: #588157;
+    font-weight: bolder;
+}
+
+a:active{
+    color: #588157;
+}
+
+.font{
+    font-family: Arimo, Roboto, Poppins;
+}
+
+.interesting-header{
+    font-size: 40px;
+    color: #588157;
+    padding-top: 16px;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+.interesting-body{
+    padding-left: 64px;
+    padding-bottom: 24px;
+}
+
+.interesting-body div{
+    padding-bottom: 8px;
+    padding-right: 64px;
+}
