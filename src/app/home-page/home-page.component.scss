@@ -1,39 +1,44 @@
-.home-page-container{
-    background-color: #F9FBF2;
-}
-
-h1{
-    color: #588157;
-}
-
 a{
     color: #246EB9;
     font-weight: bolder;
 }
 
 a:active{
-    color: #588157;
+    color: #BF9ACA;
 }
 
 .font{
-    font-family: Arimo, Roboto, Poppins;
+    font-family: "VT323", Arimo, Roboto, Poppins;
 }
 
 .interesting-header{
-    font-size: 40px;
-    color: #333232;
-    padding-top: 16px;
-    padding-left: 24px;
-    padding-right: 24px;
+    font-size: 3rem;
+    font-weight: 400;
+    color: #f9fbf2;
+    padding-top: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
 }
 
 .interesting-body{
-    padding-left: 64px;
-    padding-bottom: 24px;
-    color: #333232
-}
+    padding-left: 4rem;
+    padding-bottom: 1.5rem;
+    
+    div {
+        padding-top: 2rem;
+        padding-right: 4rem;
+        
+        h3 {
+            font-weight: 400;
+            font-size: 2rem;
+            color: #f9fbf2;
+        }
+        
+        p{
+            color: #f9fbf2;
+            font-size: 1.3rem;
+        }
 
-.interesting-body div{
-    padding-bottom: 8px;
-    padding-right: 64px;
+    }
+    
 }
