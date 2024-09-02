@@ -1,17 +1,19 @@
-.nav-logo-container{
-    width: 100px;
-    height: 60px;
-}
-
-.nav-logo-container input{
+nav{
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    position: fixed;
     width: 100%;
-    height: auto;
+    background-color: #525151;
 }
 
-nav ul{
-    list-style-type: none;
+a {
+    padding-left: 1rem;
+    font-family: "VT323", Arimo, Roboto, Poppins;
+    text-decoration: none;
+    color: #f9fbf2;
+    font-size: 2rem;
 }
 
-a{
-    color: ivory;
+a:active {
+    color: #bf9aca;
 }
