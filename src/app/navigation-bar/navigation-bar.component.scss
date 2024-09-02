@@ -4,6 +4,7 @@ nav{
     position: fixed;
     width: 100%;
     background-color: #525151;
+    display: flex;
 }
 
 a {
@@ -16,4 +17,13 @@ a {
 
 a:active {
     color: #bf9aca;
+}
+
+ul{
+    padding-left: 75%;
+    margin-top: 0;
+}
+
+li{
+    list-style: none;
 }
