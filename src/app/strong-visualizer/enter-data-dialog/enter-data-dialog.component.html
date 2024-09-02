@@ -1,0 +1,7 @@
+<h2 mat-dialog-title>Let's get some data in here!</h2>
+<mat-dialog-content>This app requires the use of CSV data from the workout app Strong.</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-stroked-button (click)="fileInput.click()">Use my own data!</button>
+    <button mat-stroked-button (click)="onUseDummyData()">Use Thomas' data!</button>
+    <input hidden (change)="onFileSelected($event)" #fileInput type="file" id="file" accept=".csv"/>
+</mat-dialog-actions>
