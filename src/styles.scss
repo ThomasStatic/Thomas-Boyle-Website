@@ -12,9 +12,9 @@
 // Define the theme object.
 $thomas-boyle-website-theme: mat.define-theme((
   color: (
-    theme-type: light,
-    primary: mat.$azure-palette,
-    tertiary: mat.$blue-palette,
+    theme-type: dark,
+    primary: mat.$violet-palette,
+    tertiary: mat.$magenta-palette,
   ),
   density: (
     scale: 0,
