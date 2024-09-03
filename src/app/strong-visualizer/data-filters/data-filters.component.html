@@ -3,11 +3,50 @@
         <mat-card-title>Data Filters</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <mat-form-field>
-            <mat-label>Exercise Name</mat-label>
-            <mat-select>
-                <mat-option value="one">Dummy Data</mat-option>
-            </mat-select>
-        </mat-form-field>
+        <form [formGroup]="options">
+
+            <mat-form-field class="exercise-select-container">
+                <mat-label>Exercise Name</mat-label>
+                <mat-select>
+                    <mat-option value="one">Dummy Data</mat-option>
+                </mat-select>
+            </mat-form-field>
+            
+            <div class="radio-container">
+                <mat-label class="metric-label">Metric:</mat-label>
+                <mat-radio-group>
+                    <mat-radio-button checked value="1RM">1RM</mat-radio-button>
+                    <mat-radio-button value="Volume">Volume</mat-radio-button>
+                </mat-radio-group>
+            </div>
+
+            
+            <mat-form-field class="from-datepicker-container">
+                <mat-label>From</mat-label>
+                <input matInput [matDatepicker]="fromDatepicker">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="fromDatepicker"></mat-datepicker-toggle>
+                <mat-datepicker #fromDatepicker>
+                    <button mat-button matDatepickerCancel>Cancel</button>
+                    <button mat-raised-button matDatepickerApply>Apply</button>
+                </mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field class="to-datepicker-container">
+                <mat-label>To</mat-label>
+                <input matInput [matDatepicker]="toDatepicker">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="toDatepicker"></mat-datepicker-toggle>
+                <mat-datepicker #toDatepicker>
+                    <button mat-button matDatepickerCancel>Cancel</button>
+                    <button mat-raised-button matDatepickerApply>Apply</button>
+                </mat-datepicker>
+            </mat-form-field>
+        
+            <div class="button-container">
+                <button mat-flat-button>Calculate!</button>
+            </div>
+            
+        </form>
     </mat-card-content>
 </mat-card>
