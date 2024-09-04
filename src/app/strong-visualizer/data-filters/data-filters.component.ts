@@ -31,6 +31,8 @@ export class DataFiltersComponent {
 
   csvContent = input('');
 
+  exercises = input<string[]>();
+
   selectedRadioButton = '1RM';
 
   readonly metricFormControl = new FormControl();

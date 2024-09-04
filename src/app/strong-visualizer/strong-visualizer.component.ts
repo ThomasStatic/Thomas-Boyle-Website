@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EnterDataDialogComponent } from './enter-data-dialog/enter-data-dialog.component';
 import { DataFiltersComponent } from './data-filters/data-filters.component';
@@ -13,6 +13,9 @@ import { DataFiltersComponent } from './data-filters/data-filters.component';
 export class StrongVisualizerComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   userSeletedCsvContent: string = '';
+  columnHeaders = signal<string[]>([]);
+  dataRows = signal<string[]>([]);
+  exerciseNames = signal<string[]>([]);
 
   ngOnInit(): void {
       const dialogRef = this.dialog.open(EnterDataDialogComponent, {
@@ -21,8 +24,29 @@ export class StrongVisualizerComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(result => {
-        console.log(result);
-        this.userSeletedCsvContent = result;
+        if(result){
+          let resultSplit: string[] = result.split('\n');
+          this.columnHeaders.set(resultSplit[0].split(';'));
+          this.dataRows.set(resultSplit.slice(1)); 
+
+          this.getUniqueExerciseNames();
+        }
       });
+  }
+
+  getUniqueExerciseNames() {
+    let rawData: string[] = this.dataRows();
+    for(let row of rawData) {
+      let exerciseName = row.split(';')[2];
+      if(exerciseName){
+        exerciseName = exerciseName.replaceAll('"', '');
+      }
+
+      let hasNumber = /\d/;
+      if(!this.exerciseNames().includes(exerciseName) && exerciseName && !hasNumber.test(exerciseName)){
+        this.exerciseNames.update((prevExercises) => [...prevExercises, exerciseName]);
+      }
+
+    }
   }
 }

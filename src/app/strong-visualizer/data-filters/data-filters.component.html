@@ -8,7 +8,9 @@
             <mat-form-field class="exercise-select-container">
                 <mat-label>Exercise Name</mat-label>
                 <mat-select>
-                    <mat-option value="one">Dummy Data</mat-option>
+                    @for (exercise of exercises(); track exercise) {
+                        <mat-option value="exercise">{{ exercise }}</mat-option>
+                    }
                 </mat-select>
             </mat-form-field>
             
