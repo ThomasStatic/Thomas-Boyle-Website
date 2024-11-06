@@ -16,6 +16,9 @@ export class StrongVisualizerComponent implements OnInit {
   columnHeaders = signal<string[]>([]);
   dataRows = signal<string[]>([]);
   exerciseNames = signal<string[]>([]);
+  earliestDate = signal<Date>(new Date());
+  latestDate = signal<Date>(new Date());
+
 
   ngOnInit(): void {
       const dialogRef = this.dialog.open(EnterDataDialogComponent, {
@@ -30,6 +33,7 @@ export class StrongVisualizerComponent implements OnInit {
           this.dataRows.set(resultSplit.slice(1)); 
 
           this.getUniqueExerciseNames();
+          this.getFirstAndLastDates();
         }
       });
   }
@@ -48,5 +52,13 @@ export class StrongVisualizerComponent implements OnInit {
       }
 
     }
+  }
+
+  getFirstAndLastDates() {
+    let rawData: string[] = this.dataRows();
+    this.earliestDate.set(new Date(this.dataRows()[0].split(';')[0]));
+    this.latestDate.set(new Date(this.dataRows()[this.dataRows().length - 2].split(';')[0]));
+    console.log(this.earliestDate());
+    console.log(this.latestDate());
   }
 }

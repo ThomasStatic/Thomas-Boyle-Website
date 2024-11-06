@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
@@ -33,6 +33,12 @@ export class DataFiltersComponent {
 
   exercises = input<string[]>();
 
+  fromDate = input<Date>();
+  fromDateControl = new FormControl();
+  
+  toDate = input<Date>();
+  toDateControl = new FormControl();
+
   selectedRadioButton = '1RM';
 
   readonly metricFormControl = new FormControl();
@@ -42,6 +48,15 @@ export class DataFiltersComponent {
     metric: this.metricFormControl,
   });
 
-  
+  constructor(){
+    effect(() => {
+      if(this.fromDate()) {
+        this.fromDateControl = new FormControl(this.fromDate() as Date | null);
+      }
+      if(this.toDate()) {
+        this.toDateControl = new FormControl(this.toDate() as Date | null);
+      }
+    })
+  }
 
 }

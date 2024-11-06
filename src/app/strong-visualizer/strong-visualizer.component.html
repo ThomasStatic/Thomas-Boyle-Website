@@ -1,1 +1,6 @@
-<app-data-filters [csvContent]="userSeletedCsvContent" [exercises]="exerciseNames()"></app-data-filters>
+<app-data-filters 
+[csvContent]="userSeletedCsvContent" 
+[exercises]="exerciseNames()"
+[fromDate]="earliestDate()"
+[toDate]="latestDate()">
+</app-data-filters>
