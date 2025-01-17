@@ -1,4 +1,4 @@
-import { Component, input, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
+import { Component, Input, input, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
 import {
   ChartComponent,
   ApexAxisChartSeries,
@@ -38,8 +38,9 @@ export class ChartViewerComponent implements OnInit{
   chartData = input.required<Array<string>>();
   selectedExercise = input<string>('');
   selectedMetric = input<string>('');
-
-
+  
+  @Input() toDate: Date;
+  @Input() fromDate: Date;
   constructor(){
     this.chartOptions = {};
     
@@ -50,7 +51,7 @@ export class ChartViewerComponent implements OnInit{
       series: [
         {
           name: `${this.selectedMetric()} - ${this.selectedExercise()}`,
-          data: this.getSeriesValues()
+          data: this.getSeriesValues().dataPoints
         }
       ],
       chart: {
@@ -76,12 +77,13 @@ export class ChartViewerComponent implements OnInit{
         title: {
           text: this.selectedExercise() + ' - ' + this.selectedMetric(),
           style: {color: '#f9fbf2', fontFamily: 'VT323, Arimo, Roboto, Poppins', fontSize: '2rem', fontWeight: '300'}
-        } 
+        },
+        categories: this.getSeriesValues().dataPointLabels 
       },
     };
   }
   
-  getSeriesValues(): Array<number> {    
+  getSeriesValues(): {dataPoints : Array<number>, dataPointLabels: Array<string>} {    
     let dateMetricMap: Map<string, number> = new Map<string, number>();
 
     for(let row of this.chartData()) {
@@ -100,6 +102,13 @@ export class ChartViewerComponent implements OnInit{
       }
       
       const date = splitRow[0].replaceAll('"', '').replaceAll('\\', '');
+      const dateObject = new Date(date);
+
+      // filter date that falls out of date range
+      if(dateObject > this.toDate || dateObject < this.fromDate) {
+        continue;
+      }
+      
       const weight = parseInt(splitRow[4].replaceAll('"', '').replaceAll('\\', ''));
       const reps = parseInt(splitRow[6].replaceAll('"', '').replaceAll('\\', ''));     
       if(this.selectedMetric() === '1RM') {
@@ -128,9 +137,12 @@ export class ChartViewerComponent implements OnInit{
     
     let seriesValues: Array<number> = [];
     dateMetricMap.forEach(value => seriesValues.push(value));
-    
+    let seriesDates : Array<string> = [];
+    for(let key of dateMetricMap.keys()) {
+      seriesDates.push(key);
+    }
 
-    return seriesValues;
+    return {dataPoints: seriesValues, dataPointLabels: seriesDates};
   }
 
   // Use the Epley, Brzycki, Lombardi and O'Conner formulas and return their average

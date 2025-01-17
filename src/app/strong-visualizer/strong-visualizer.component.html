@@ -1,8 +1,8 @@
 <app-data-filters 
 [csvContent]="userSeletedCsvContent" 
 [exercises]="exerciseNames()"
-[fromDate]="earliestDate()"
-[toDate]="latestDate()"
+[earliestDate]="earliestDate()"
+[latestDate]="latestDate()"
 (calculateData)="displayChart($event)">
 </app-data-filters>
 @if(showChart === true) {
@@ -10,6 +10,8 @@
         [chartData]="dataRows()" 
         [selectedExercise]="selectedExercise()" 
         [selectedMetric]="selectedMetric()"
+        [fromDate]="selectedFromDate"
+        [toDate]="selectedToDate"
         class="chart"
     >
     </app-chart-viewer>

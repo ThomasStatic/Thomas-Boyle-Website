@@ -24,6 +24,8 @@ export class StrongVisualizerComponent implements OnInit {
   showChart: boolean = false;
   selectedExercise: WritableSignal<string> = signal('');
   selectedMetric: WritableSignal<string> = signal('');
+  selectedFromDate: Date = new Date();
+  selectedToDate: Date = new Date();
 
   ngOnInit(): void {
       const dialogRef = this.dialog.open(EnterDataDialogComponent, {
@@ -66,6 +68,8 @@ export class StrongVisualizerComponent implements OnInit {
   displayChart(calculateData: calculateData) {
     this.selectedExercise.set(calculateData.selectedExercise);
     this.selectedMetric.set(calculateData.metric);
+    this.selectedFromDate = calculateData.fromDate;
+    this.selectedToDate = calculateData.toDate;
     this.showChart = true;
   }
 }

@@ -26,7 +26,11 @@
             
             <mat-form-field class="from-datepicker-container">
                 <mat-label>From</mat-label>
-                <input matInput [matDatepicker]="fromDatepicker" [formControl]="fromDateControl">
+                <input 
+                    matInput 
+                    [matDatepicker]="fromDatepicker" 
+                    [formControl]="fromDateControl"
+                />
                 <mat-hint>MM/DD/YYYY</mat-hint>
                 <mat-datepicker-toggle matIconSuffix [for]="fromDatepicker"></mat-datepicker-toggle>
                 <mat-datepicker #fromDatepicker>
@@ -37,7 +41,11 @@
             
             <mat-form-field class="to-datepicker-container">
                 <mat-label>To</mat-label>
-                <input matInput [matDatepicker]="toDatepicker" [formControl]="toDateControl">
+                <input 
+                    matInput 
+                    [matDatepicker]="toDatepicker" 
+                    [formControl]="toDateControl"
+                >
                 <mat-hint>MM/DD/YYYY</mat-hint>
                 <mat-datepicker-toggle matIconSuffix [for]="toDatepicker"></mat-datepicker-toggle>
                 <mat-datepicker #toDatepicker>

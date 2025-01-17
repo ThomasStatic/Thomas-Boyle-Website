@@ -34,10 +34,10 @@ export class DataFiltersComponent {
 
   exercises = input<string[]>();
 
-  fromDate = input<Date>();
+  earliestDate = input<Date>();
   fromDateControl = new FormControl();
   
-  toDate = input<Date>();
+  latestDate = input<Date>();
   toDateControl = new FormControl();
 
   selectedRadioButton: string = '1RM';
@@ -57,19 +57,21 @@ export class DataFiltersComponent {
 
   constructor(){
     effect(() => {
-      if(this.fromDate()) {
-        this.fromDateControl = new FormControl(this.fromDate() as Date | null);
+      if(this.earliestDate()) {
+        this.fromDateControl = new FormControl(this.earliestDate() as Date | null);
       }
-      if(this.toDate()) {
-        this.toDateControl = new FormControl(this.toDate() as Date | null);
+      if(this.latestDate()) {
+        this.toDateControl = new FormControl(this.latestDate() as Date | null);
       }
     })
   }
 
-  onCalculate(): void {
+  onCalculate(): void {    
     this.calculateData.emit({
         selectedExercise: this.selectedExercise,
-        metric: this.selectedRadioButton
+        metric: this.selectedRadioButton,
+        fromDate: this.fromDateControl.value,
+        toDate: this.toDateControl.value
       });
 
     this.dataFiltersVisible.set(false);
