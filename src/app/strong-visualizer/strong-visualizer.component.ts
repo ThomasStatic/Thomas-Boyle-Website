@@ -66,6 +66,7 @@ export class StrongVisualizerComponent implements OnInit {
   }
 
   displayChart(calculateData: calculateData) {
+    this.showChart = false;
     this.selectedExercise.set(calculateData.selectedExercise);
     this.selectedMetric.set(calculateData.metric);
     this.selectedFromDate = calculateData.fromDate;

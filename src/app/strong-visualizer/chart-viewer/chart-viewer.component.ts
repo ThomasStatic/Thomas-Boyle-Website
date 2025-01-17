@@ -1,4 +1,4 @@
-import { Component, Input, input, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
+import { Component, effect, Input, input, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
 import {
   ChartComponent,
   ApexAxisChartSeries,
@@ -30,57 +30,59 @@ export type ChartOptions = {
   templateUrl: './chart-viewer.component.html',
   styleUrl: './chart-viewer.component.scss'
 })
-export class ChartViewerComponent implements OnInit{
+export class ChartViewerComponent {
 
   @ViewChild("chart") chart: any;
   public chartOptions: Partial<ChartOptions>;
   
   chartData = input.required<Array<string>>();
   selectedExercise = input<string>('');
-  selectedMetric = input<string>('');
-  
-  @Input() toDate: Date;
-  @Input() fromDate: Date;
+  selectedMetric = input<string>('');  
+  toDate = input<Date>();
+  fromDate = input<Date>();
+
   constructor(){
     this.chartOptions = {};
-    
-  }
 
-  ngOnInit(): void {
-    this.chartOptions = {
-      series: [
-        {
-          name: `${this.selectedMetric()} - ${this.selectedExercise()}`,
-          data: this.getSeriesValues().dataPoints
-        }
-      ],
-      chart: {
-        height: 350,
-        type: "line",
-        zoom: {
+    effect(() => {
+      this.selectedExercise();
+      this.selectedMetric();
+      this.chartOptions = {
+        series: [
+          {
+            name: `${this.selectedMetric()} - ${this.selectedExercise()}`,
+            data: this.getSeriesValues().dataPoints
+          }
+        ],
+        chart: {
+          height: 350,
+          type: "line",
+          zoom: {
+            enabled: false
+          },
+        },
+        dataLabels: {
           enabled: false
         },
-      },
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        curve: "straight"
-      },
-      grid: {
-        row: {
-          colors: ["transparent"], // takes an array which will be repeated on columns
-          opacity: 0.5
-        }
-      },
-      xaxis: {
-        title: {
-          text: this.selectedExercise() + ' - ' + this.selectedMetric(),
-          style: {color: '#f9fbf2', fontFamily: 'VT323, Arimo, Roboto, Poppins', fontSize: '2rem', fontWeight: '300'}
+        stroke: {
+          curve: "straight"
         },
-        categories: this.getSeriesValues().dataPointLabels 
-      },
-    };
+        grid: {
+          row: {
+            colors: ["transparent"], // takes an array which will be repeated on columns
+            opacity: 0.5
+          }
+        },
+        xaxis: {
+          title: {
+            text: this.selectedExercise() + ' - ' + this.selectedMetric(),
+            style: {color: '#f9fbf2', fontFamily: 'VT323, Arimo, Roboto, Poppins', fontSize: '2rem', fontWeight: '300'}
+          },
+          categories: this.getSeriesValues().dataPointLabels 
+        },
+      };
+    });
+    
   }
   
   getSeriesValues(): {dataPoints : Array<number>, dataPointLabels: Array<string>} {    
@@ -105,7 +107,7 @@ export class ChartViewerComponent implements OnInit{
       const dateObject = new Date(date);
 
       // filter date that falls out of date range
-      if(dateObject > this.toDate || dateObject < this.fromDate) {
+      if(dateObject > this.toDate()! || dateObject < this.fromDate()!) {
         continue;
       }
       

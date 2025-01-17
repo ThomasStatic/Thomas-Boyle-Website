@@ -45,8 +45,6 @@ export class DataFiltersComponent {
   selectedExercise: string = '';
 
   calculateData = output<calculateData>();
-  dataFiltersVisible: WritableSignal<boolean> = signal<boolean>(true);
-
 
   readonly metricFormControl = new FormControl();
   readonly exerciseFormControl = new FormControl();
@@ -66,15 +64,13 @@ export class DataFiltersComponent {
     })
   }
 
-  onCalculate(): void {    
+  onCalculate(): void { 
     this.calculateData.emit({
         selectedExercise: this.selectedExercise,
         metric: this.selectedRadioButton,
         fromDate: this.fromDateControl.value,
         toDate: this.toDateControl.value
       });
-
-    this.dataFiltersVisible.set(false);
   }
 
   radioChange(radioChangeEvent: MatRadioChange): void {
