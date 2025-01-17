@@ -1,13 +1,14 @@
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, effect, inject, input, output, signal, WritableSignal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
-import { MatRadioModule } from '@angular/material/radio';
+import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
+import { calculateData } from '../calculate-data.model';
 
 @Component({
   selector: 'app-data-filters',
@@ -39,7 +40,13 @@ export class DataFiltersComponent {
   toDate = input<Date>();
   toDateControl = new FormControl();
 
-  selectedRadioButton = '1RM';
+  selectedRadioButton: string = '1RM';
+
+  selectedExercise: string = '';
+
+  calculateData = output<calculateData>();
+  dataFiltersVisible: WritableSignal<boolean> = signal<boolean>(true);
+
 
   readonly metricFormControl = new FormControl();
   readonly exerciseFormControl = new FormControl();
@@ -59,4 +66,16 @@ export class DataFiltersComponent {
     })
   }
 
+  onCalculate(): void {
+    this.calculateData.emit({
+        selectedExercise: this.selectedExercise,
+        metric: this.selectedRadioButton
+      });
+
+    this.dataFiltersVisible.set(false);
+  }
+
+  radioChange(radioChangeEvent: MatRadioChange): void {
+    this.selectedRadioButton = radioChangeEvent.value;
+  }
 }

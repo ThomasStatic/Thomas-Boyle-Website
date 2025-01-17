@@ -2,5 +2,15 @@
 [csvContent]="userSeletedCsvContent" 
 [exercises]="exerciseNames()"
 [fromDate]="earliestDate()"
-[toDate]="latestDate()">
+[toDate]="latestDate()"
+(calculateData)="displayChart($event)">
 </app-data-filters>
+@if(showChart === true) {
+    <app-chart-viewer 
+        [chartData]="dataRows()" 
+        [selectedExercise]="selectedExercise()" 
+        [selectedMetric]="selectedMetric()"
+        class="chart"
+    >
+    </app-chart-viewer>
+}
