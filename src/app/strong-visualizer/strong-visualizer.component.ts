@@ -27,6 +27,8 @@ export class StrongVisualizerComponent implements OnInit {
   selectedFromDate: Date = new Date();
   selectedToDate: Date = new Date();
 
+  androidOrIphone: ';' | ',' = ';';
+
   ngOnInit(): void {
       const dialogRef = this.dialog.open(EnterDataDialogComponent, {
         height: '200px',
@@ -36,7 +38,8 @@ export class StrongVisualizerComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         if(result){
           let resultSplit: string[] = result.split('\n');
-          this.columnHeaders.set(resultSplit[0].split(';'));
+          resultSplit[0].includes(';') ? this.androidOrIphone = ';' : this.androidOrIphone = ',';
+          this.columnHeaders.set(resultSplit[0].split(this.androidOrIphone));
           this.dataRows.set(resultSplit.slice(1)); 
           this.getUniqueExerciseNames();
           this.getFirstAndLastDates();
@@ -47,7 +50,7 @@ export class StrongVisualizerComponent implements OnInit {
   getUniqueExerciseNames(): void {
     let rawData: string[] = this.dataRows();
     for(let row of rawData) {
-      let exerciseName = row.split(';')[2];
+      let exerciseName = row.split(this.androidOrIphone)[this.androidOrIphone == ';' ? 2 : 3];
       if(exerciseName){
         exerciseName = exerciseName.replaceAll('"', '');
       }
@@ -61,8 +64,8 @@ export class StrongVisualizerComponent implements OnInit {
   }
 
   getFirstAndLastDates(): void {
-    this.earliestDate.set(new Date(this.dataRows()[0].split(';')[0]));
-    this.latestDate.set(new Date(this.dataRows()[this.dataRows().length - 2].split(';')[0]));
+    this.earliestDate.set(new Date(this.dataRows()[0].split(this.androidOrIphone)[0]));
+    this.latestDate.set(new Date(this.dataRows()[this.dataRows().length - 2].split(this.androidOrIphone)[0]));
   }
 
   displayChart(calculateData: calculateData) {

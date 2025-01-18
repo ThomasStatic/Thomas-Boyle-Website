@@ -41,6 +41,8 @@ export class ChartViewerComponent {
   toDate = input<Date>();
   fromDate = input<Date>();
 
+  androidOrIphone: ';' | ',' = ';';
+
   constructor(){
     this.chartOptions = {};
 
@@ -86,32 +88,32 @@ export class ChartViewerComponent {
   }
   
   getSeriesValues(): {dataPoints : Array<number>, dataPointLabels: Array<string>} {    
-    let dateMetricMap: Map<string, number> = new Map<string, number>();
+    let dateMetricMap: Map<string, number> = new Map<string, number>();    
+    this.chartData()[0].includes(';') ? this.androidOrIphone = ';' : this.androidOrIphone = ',';
 
     for(let row of this.chartData()) {
       // Date - Workout Name - Exercise Name - Set Order - Weight - Weight Unit - Reps - RPE - Distance
       // Distance Units - Seconds - Notes - Workout Notes - Workout Duration
-      let splitRow = row.split(';');
-
+      let splitRow = row.split(this.androidOrIphone);
+      
       // Skip over corrupt data
-      if(splitRow.length != 14) {
+      if(splitRow.length < 12) {
         continue;
       }
-
       // Filter out non selected exercise data
-      if(splitRow[2].replaceAll('"', '').replaceAll('\\', '') != this.selectedExercise()) {
+      if(splitRow[this.androidOrIphone == ';' ? 2 : 3].replaceAll('"', '').replaceAll('\\', '') != this.selectedExercise()) {
         continue;
       }
+      console.log('reaching here')
       
       const date = splitRow[0].replaceAll('"', '').replaceAll('\\', '');
       const dateObject = new Date(date);
-
       // filter date that falls out of date range
       if(dateObject > this.toDate()! || dateObject < this.fromDate()!) {
         continue;
       }
       
-      const weight = parseInt(splitRow[4].replaceAll('"', '').replaceAll('\\', ''));
+      const weight = parseInt(splitRow[this.androidOrIphone == ';' ? 4 : 5].replaceAll('"', '').replaceAll('\\', ''));
       const reps = parseInt(splitRow[6].replaceAll('"', '').replaceAll('\\', ''));     
       if(this.selectedMetric() === '1RM') {
         let oneRM = this.calculateOneRepMax(weight, reps);
