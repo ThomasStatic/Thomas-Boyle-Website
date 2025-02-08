@@ -2,8 +2,14 @@ mat-card{
     width: 20rem;
     height: 35rem;
     top: 15rem;
-    left: 2.5rem;
-    
+    left: 2.5rem;    
+}
+
+@media (480px < width <= 1600px) {
+    mat-card {
+        top: 10rem;
+        overflow-y: auto;
+    }
 }
 
 mat-card-title{

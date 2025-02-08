@@ -1,3 +1,7 @@
+.strong-visualizer-container {
+    height: 100%;
+}
+
 p {
     margin-top: 0;
     padding-top: 15rem;
@@ -9,4 +13,11 @@ p {
     top: 35%;
     width: 75%;
     left: 20%;
+}
+
+@media (480px < width <= 1600px) {
+    .chart {
+        width: 65%;
+        left: 30%;
+    } 
 }
