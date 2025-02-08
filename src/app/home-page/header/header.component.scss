@@ -1,5 +1,12 @@
 .flex{
     display: flex;
+    align-items: center;
+}
+
+@media (480px < width <= 1600px) {
+    .flex {
+        width: 800px
+    }
 }
 
 .img-slogan-container{
@@ -9,14 +16,23 @@
     padding-bottom: 16rem;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
+
+@media (480px < width <= 1600px) {
+    .img-slogan-container {
+        padding-bottom: 5rem;
+        padding-left: 1rem;
+    }    
+}
+
 .circular-image{
     border-radius: 25%;
     width: 20%;
     height: 20%
 }
 
-.header-slogan{
+.header-slogan {
     font-family: "VT323", Arimo, Roboto, Poppins;
     color: #f9fbf2;
     padding-top: 5rem;
@@ -24,6 +40,13 @@
     font-size: 3rem;
     font-weight: 400;
     user-select: none;
+}
+
+@media (480px < width <= 1600px) {
+    .header-slogan {
+        font-size: 1.5rem;
+        overflow-x: visible;
+    }
 }
 
 h1::after {

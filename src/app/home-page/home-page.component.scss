@@ -20,6 +20,12 @@ a:active{
     padding-right: 1.5rem;
 }
 
+@media (480px < width <= 1600px) {
+    .interesting-header {
+        font-size: 1.5rem;
+    }
+}
+
 .interesting-body{
     padding-left: 4rem;
     padding-bottom: 1.5rem;
