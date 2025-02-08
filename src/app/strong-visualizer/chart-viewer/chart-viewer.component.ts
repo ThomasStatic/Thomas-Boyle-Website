@@ -80,6 +80,9 @@ export class ChartViewerComponent {
             text: this.selectedExercise() + ' - ' + this.selectedMetric(),
             style: {color: '#f9fbf2', fontFamily: 'VT323, Arimo, Roboto, Poppins', fontSize: '2rem', fontWeight: '300'}
           },
+          labels: {
+            show: false
+          },
           categories: this.getSeriesValues().dataPointLabels 
         },
       };
