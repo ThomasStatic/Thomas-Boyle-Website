@@ -25,6 +25,12 @@ ul{
     margin-top: 0;
 }
 
+@media (width <= 480px) {
+    ul {
+        padding-left: 30%;
+    }
+}
+
 li{
     list-style: none;
 }
