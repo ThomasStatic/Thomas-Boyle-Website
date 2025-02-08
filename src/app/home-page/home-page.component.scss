@@ -20,7 +20,7 @@ a:active{
     padding-right: 1.5rem;
 }
 
-@media (480px < width <= 1600px) {
+@media (width <= 1600px) {
     .interesting-header {
         font-size: 1.5rem;
     }
