@@ -110,7 +110,7 @@ export class ChartViewerComponent {
         continue;
       }
       
-      const date = splitRow[1].replaceAll('"', '').replaceAll('\\', '');
+      const date = splitRow[1].replaceAll('"', '').replaceAll('\\', '').split(' ')[0];
       const dateObject = new Date(date);
       // filter date that falls out of date range
       if(dateObject > this.toDate()! || dateObject < this.fromDate()!) {
