@@ -78,9 +78,14 @@ export class ChartViewerComponent {
         xaxis: {
           title: {
             text: this.selectedExercise() + ' - ' + this.selectedMetric(),
-            style: {color: '#f9fbf2', fontFamily: 'VT323, Arimo, Roboto, Poppins', fontSize: '2rem', fontWeight: '300'}
+            style: {color: '#F9FBF2', fontFamily: 'VT323, Arimo, Roboto, Poppins', fontSize: '2rem', fontWeight: '300'}
           },
-          categories: this.getSeriesValues().dataPointLabels 
+          categories: this.getSeriesValues().dataPointLabels,
+          labels: {
+            style: {
+              colors: '#F9FBF2'
+            }
+          }
         },
       };
     });
