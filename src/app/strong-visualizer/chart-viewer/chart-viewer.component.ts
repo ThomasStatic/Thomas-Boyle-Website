@@ -101,20 +101,20 @@ export class ChartViewerComponent {
         continue;
       }
       // Filter out non selected exercise data
-      if(splitRow[this.androidOrIphone == ';' ? 2 : 3].replaceAll('"', '').replaceAll('\\', '') != this.selectedExercise()) {
+      if(splitRow[this.androidOrIphone == ';' ? 4 : 3].replaceAll('"', '').replaceAll('\\', '') != this.selectedExercise()) {
         continue;
       }
-      console.log('reaching here')
       
-      const date = splitRow[0].replaceAll('"', '').replaceAll('\\', '');
+      const date = splitRow[1].replaceAll('"', '').replaceAll('\\', '');
       const dateObject = new Date(date);
       // filter date that falls out of date range
       if(dateObject > this.toDate()! || dateObject < this.fromDate()!) {
         continue;
       }
       
-      const weight = parseInt(splitRow[this.androidOrIphone == ';' ? 4 : 5].replaceAll('"', '').replaceAll('\\', ''));
-      const reps = parseInt(splitRow[6].replaceAll('"', '').replaceAll('\\', ''));     
+      const weight = parseInt(splitRow[this.androidOrIphone == ';' ? 6 : 5].replaceAll('"', '').replaceAll('\\', '').replaceAll('(kg)', '')) * 2.20462;
+      console.log(splitRow[this.androidOrIphone == ';' ? 6 : 5].replaceAll('"', '').replaceAll('\\', '').replaceAll('(kg)', ''));
+      const reps = parseInt(splitRow[7].replaceAll('"', '').replaceAll('\\', ''));     
       if(this.selectedMetric() === '1RM') {
         let oneRM = this.calculateOneRepMax(weight, reps);
         if(dateMetricMap.get(date) != undefined) {
@@ -122,7 +122,7 @@ export class ChartViewerComponent {
             dateMetricMap.set(date, oneRM);
           }
         }
-        else {
+        else if(!isNaN(oneRM)) {
           dateMetricMap.set(date, oneRM);
         }
       }
@@ -133,7 +133,7 @@ export class ChartViewerComponent {
             dateMetricMap.set(date, volume);
           }
         }
-        else {
+        else if(!isNaN(volume)) {
           dateMetricMap.set(date, volume);
         }
       }
