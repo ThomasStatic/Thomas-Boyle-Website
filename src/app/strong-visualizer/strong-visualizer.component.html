@@ -1,19 +1,21 @@
-<app-data-filters 
-  [csvContent]="userSeletedCsvContent" 
-  [exercises]="exerciseNames()"
-  [earliestDate]="earliestDate()"
-  [latestDate]="latestDate()"
-  (calculateData)="displayChart($event)"
->
-</app-data-filters>
-@if(showChart === true) {
-  <app-chart-viewer 
-    [chartData]="dataRows()" 
-    [selectedExercise]="selectedExercise()" 
-    [selectedMetric]="selectedMetric()"
-    [fromDate]="selectedFromDate"
-    [toDate]="selectedToDate"
-    class="chart"
+<div class="filter-chart-container">
+  <app-data-filters
+    [csvContent]="userSeletedCsvContent"
+    [exercises]="exerciseNames()"
+    [earliestDate]="earliestDate()"
+    [latestDate]="latestDate()"
+    (calculateData)="displayChart($event)"
   >
-  </app-chart-viewer>
-}
+  </app-data-filters>
+  @if(showChart === true) {
+    <app-chart-viewer
+      [chartData]="dataRows()"
+      [selectedExercise]="selectedExercise()"
+      [selectedMetric]="selectedMetric()"
+      [fromDate]="selectedFromDate"
+      [toDate]="selectedToDate"
+      class="chart"
+    >
+    </app-chart-viewer>
+  }
+</div>
