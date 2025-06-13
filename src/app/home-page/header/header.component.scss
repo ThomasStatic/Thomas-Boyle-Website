@@ -1,73 +1,73 @@
 .flex{
-    display: flex;
+  display: flex;
 }
 
 .img-slogan-container{
-    padding-top: 12.5rem;
-    padding-left: 6.25rem;
-    padding-right: 6.25rem;
-    padding-bottom: 16rem;
-    align-items: center;
-    justify-content: center;
+  padding-top: 12.5rem;
+  padding-left: 6.25rem;
+  padding-right: 6.25rem;
+  padding-bottom: 16rem;
+  align-items: center;
+  justify-content: center;
 }
 .circular-image{
-    border-radius: 25%;
-    width: 20%;
-    height: 20%
+  border-radius: 25%;
+  width: 22.5%;
+  height: 22.5%
 }
 
 .header-slogan{
-    font-family: "VT323", Arimo, Roboto, Poppins;
-    color: #f9fbf2;
-    padding-top: 5rem;
-    padding-left: 2.5rem;
-    font-size: 3rem;
-    font-weight: 400;
-    user-select: none;
+  font-family: "VT323", Arimo, Roboto, Poppins;
+  color: #f9fbf2;
+  padding-top: 5rem;
+  padding-left: 2.5rem;
+  font-size: 3rem;
+  font-weight: 400;
+  user-select: none;
 }
 
 h1::after {
-    content: "";
-    width: 0.313rem;
-    height: 2rem;
-    background: #f9fbf2;
-    display: inline-block;
-    animation: cursor-blink 1.5s steps(2) infinite;
+  content: "";
+  width: 0.313rem;
+  height: 2rem;
+  background: #f9fbf2;
+  display: inline-block;
+  animation: cursor-blink 1.5s steps(2) infinite;
 }
 
 @keyframes cursor-blink {
-    0% {
-        opacity: 0;
-    }
+  0% {
+      opacity: 0;
+  }
 }
 
 .socials-container{
-    margin-left: 30rem;
-    margin-right: 30rem;
-    width: 10rem;
-    background-color: #f9fbf2;
-    border-radius: 1.5rem;
-    list-style-type: none;
-    padding-right: 2.5rem;
+  margin-left: 30rem;
+  margin-right: 30rem;
+  width: 10rem;
+  background-color: #f9fbf2;
+  border-radius: 1.5rem;
+  list-style-type: none;
+  padding-right: 2.5rem;
 
-    li{
-        display: inline;
-    }
-    
+  li{
+      display: inline;
+  }
+  
 }
 
 .linkedin-logo{
-    width: 35%;
+  width: 35%;
 }
 
 .github-logo{
-    width: 22%;
-    padding-left: 0.4rem;
-    padding-bottom: 0.65rem;
+  width: 22%;
+  padding-left: 0.4rem;
+  padding-bottom: 0.65rem;
 }
 
 .gmail-logo{
-    width: 25%;
-    padding-left: 0.8rem;
-    padding-bottom: 0.35rem;
+  width: 25%;
+  padding-left: 0.8rem;
+  padding-bottom: 0.35rem;
 }
