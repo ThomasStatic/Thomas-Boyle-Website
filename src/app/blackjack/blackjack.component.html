@@ -1,1 +1,3 @@
-<div>blackjack works!</div>
+@for(card of playersHand; track $index) {
+    <img [src]="getImagePath(card)" alt="">
+}
