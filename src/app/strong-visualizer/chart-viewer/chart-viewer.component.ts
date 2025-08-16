@@ -62,6 +62,7 @@ export class ChartViewerComponent {
           zoom: {
             enabled: false
           },
+          foreColor: '#F9FBF2',
         },
         dataLabels: {
           enabled: false
