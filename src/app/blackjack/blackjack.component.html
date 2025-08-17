@@ -15,8 +15,9 @@
     @for(card of playersHand(); track $index) {
         <img [src]="getImagePath(card)" alt="" class="card">
     }
-</div>
 
+    
+</div>
 <div class="controls">
     <button mat-stroked-button (click)="hit('Player')">Hit</button>
     <button mat-stroked-button (click)="stand()">Stand</button>

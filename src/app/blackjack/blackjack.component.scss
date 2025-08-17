@@ -1,9 +1,19 @@
 .hand-of-cards {
   display: flex;
   padding-top: 200px;
-  padding-left: 1.75%;
+  justify-content: center;
 
   .card {
     padding-right: 8px;
+  }
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+
+  button {
+    margin: 0 4px;
   }
 }
