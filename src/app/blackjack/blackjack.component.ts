@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, OnInit, signal, WritableSignal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { Card, CardName, Deck, ICard, PlayingCard, Suit } from 'typedeck';
 
 @Component({
   selector: 'app-blackjack',
   standalone: true,
-  imports: [],
+  imports: [MatButtonModule],
   templateUrl: './blackjack.component.html',
   styleUrl: './blackjack.component.scss'
 })
@@ -15,16 +16,16 @@ export class BlackjackComponent implements OnInit {
   deck: Deck | null = null;
   cards: ICard[] = [];
 
-  playersHand: PlayingCard[] = [];
+  dealersHand: WritableSignal<PlayingCard[]> = signal([]);
+  playersHand: WritableSignal<PlayingCard[]> = signal([]);
+
+  playersTotal: WritableSignal<number> = signal(0);
+  dealersTotal: WritableSignal<number> = signal(0);
 
   ngOnInit(): void {
-    this.refreshDeck();
-    this.deck?.shuffle();
-    const card = this.deck?.takeCard();
-    this.playersHand.push(card as PlayingCard);
-    console.log('Player\'s hand:', this.playersHand);
-  } 
-  
+    this.initNewGame();
+  }
+
   refreshDeck(): void {
    for(const cardName of this.validCardNumbers) {
       for(const suit of this.validCardSuits) {
@@ -74,7 +75,7 @@ export class BlackjackComponent implements OnInit {
   private getCardSuit(cardSuit: number): string {
     switch(cardSuit) {
       case Suit.Clubs:
-        return "ace";
+        return "clubs";
       case Suit.Diamonds:
         return "diamonds";
       case Suit.Hearts:
@@ -84,4 +85,50 @@ export class BlackjackComponent implements OnInit {
     }
   }
 
+  private initNewGame(): void {
+    this.refreshDeck();
+    this.deck?.shuffle();
+    this.dealersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
+    this.playersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
+  }
+
+  protected hit(whoHit: 'Player' | 'Dealer' = 'Dealer'): void {
+    this.playersHand.update(hand => [...hand, this.deck?.takeCard() as PlayingCard]);
+    whoHit === 'Player' ? this.playersTotal.set(this.calcHandTotal(this.playersHand())) : this.dealersTotal.set(this.calcHandTotal(this.dealersHand()));
+    console.log(`Player's hand total: ${this.playersTotal()}`);
+  }
+
+  private calcHandTotal(hand: PlayingCard[]): number {
+    let total = 0;
+    let aces = 0;
+
+    for (const card of hand) {
+      const cardValue = this.getCardValue(card.cardName);
+      total += cardValue;
+
+      if (cardValue === 11) {
+        aces++;
+      }
+    }
+
+    while (total > 21 && aces > 0) {
+      total -= 10;
+      aces--;
+    }
+
+    return total;
+  }
+
+  private getCardValue(cardName: CardName): number {
+    switch (cardName) {
+      case CardName.Ace:
+        return 11;
+      case CardName.Jack:
+      case CardName.Queen:
+      case CardName.King:
+        return 10;
+      default:
+        return cardName + 1;
+    }
+  }
 }
