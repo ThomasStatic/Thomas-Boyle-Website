@@ -1,6 +1,8 @@
-import { Component, computed, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Card, CardName, Deck, ICard, PlayingCard, Suit } from 'typedeck';
+import { PlayerBustDialogComponent } from './player-bust-dialog/player-bust-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-blackjack',
@@ -10,6 +12,7 @@ import { Card, CardName, Deck, ICard, PlayingCard, Suit } from 'typedeck';
   styleUrl: './blackjack.component.scss'
 })
 export class BlackjackComponent implements OnInit {
+  readonly dialog = inject(MatDialog);
   
   validCardNumbers: CardName[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   validCardSuits: Suit[] = [0, 1, 2, 3]; // Suit is an enum with values 0-3
@@ -95,7 +98,12 @@ export class BlackjackComponent implements OnInit {
   protected hit(whoHit: 'Player' | 'Dealer' = 'Dealer'): void {
     this.playersHand.update(hand => [...hand, this.deck?.takeCard() as PlayingCard]);
     whoHit === 'Player' ? this.playersTotal.set(this.calcHandTotal(this.playersHand())) : this.dealersTotal.set(this.calcHandTotal(this.dealersHand()));
-    console.log(`Player's hand total: ${this.playersTotal()}`);
+    if(this.playersTotal() > 21) {
+      const dialogRef = this.dialog.open(PlayerBustDialogComponent, {
+        height: '200px',
+        width: '500px',
+      });
+    }
   }
 
   private calcHandTotal(hand: PlayingCard[]): number {
