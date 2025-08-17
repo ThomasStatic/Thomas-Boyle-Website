@@ -1,6 +1,14 @@
 <div class="hand-of-cards">
-    <img src="playing-cards/red_backing.png" alt="" class="card">
-    <img [src]="getImagePath(dealersHand()[1])" alt="" class="card">
+    @if(!userStanding()) {
+        <img src="playing-cards/red_backing.png" alt="" class="card">
+        <img [src]="getImagePath(dealersHand()[1])" alt="" class="card">
+    }
+    @else {
+        @for(card of dealersHand(); track $index) {
+            <img [src]="getImagePath(card)" alt="" class="card">
+        }
+    }
+    
 </div>
 
 <div class="hand-of-cards">
@@ -11,5 +19,5 @@
 
 <div class="controls">
     <button mat-stroked-button (click)="hit('Player')">Hit</button>
-    <button mat-stroked-button>Stand</button>
+    <button mat-stroked-button (click)="stand()">Stand</button>
 </div>

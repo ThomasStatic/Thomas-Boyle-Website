@@ -1,8 +1,8 @@
 import { Component, computed, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { Card, CardName, Deck, ICard, PlayingCard, Suit } from 'typedeck';
-import { PlayerBustDialogComponent } from './player-bust-dialog/player-bust-dialog.component';
+import { CardName, Deck, ICard, PlayingCard, Suit } from 'typedeck';
 import { MatDialog } from '@angular/material/dialog';
+import { EndOfGameDialogComponent } from './end-of-game-dialog/end-of-game-dialog.component';
 
 @Component({
   selector: 'app-blackjack',
@@ -24,6 +24,8 @@ export class BlackjackComponent implements OnInit {
 
   playersTotal: WritableSignal<number> = signal(0);
   dealersTotal: WritableSignal<number> = signal(0);
+
+  userStanding: WritableSignal<boolean> = signal(false);
 
   ngOnInit(): void {
     this.initNewGame();
@@ -89,6 +91,7 @@ export class BlackjackComponent implements OnInit {
   }
 
   private initNewGame(): void {
+    this.userStanding.set(false);
     this.refreshDeck();
     this.deck?.shuffle();
     this.dealersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
@@ -96,12 +99,76 @@ export class BlackjackComponent implements OnInit {
   }
 
   protected hit(whoHit: 'Player' | 'Dealer' = 'Dealer'): void {
-    this.playersHand.update(hand => [...hand, this.deck?.takeCard() as PlayingCard]);
-    whoHit === 'Player' ? this.playersTotal.set(this.calcHandTotal(this.playersHand())) : this.dealersTotal.set(this.calcHandTotal(this.dealersHand()));
+    if(whoHit === 'Player') {
+      this.playersHand.update(hand => [...hand, this.deck?.takeCard() as PlayingCard]);
+      this.playersTotal.set(this.calcHandTotal(this.playersHand()));
+    } else {
+      this.dealersHand.update(hand => [...hand, this.deck?.takeCard() as PlayingCard]);
+      this.dealersTotal.set(this.calcHandTotal(this.dealersHand()));
+    }
     if(this.playersTotal() > 21) {
-      const dialogRef = this.dialog.open(PlayerBustDialogComponent, {
+      const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
         height: '200px',
         width: '500px',
+        data: { title: 'Player Bust!', message: `You busted with ${this.playersTotal()}... dealer wins!` }
+      });
+
+      dialogRef.afterClosed().subscribe(() => {
+        this.initNewGame();
+      });
+    }
+  }
+
+  protected stand(): void {
+    this.userStanding.set(true);
+    this.dealersTotal.set(this.calcHandTotal(this.dealersHand()));
+    this.playersTotal.set(this.calcHandTotal(this.playersHand()));
+    while(this.calcHandTotal(this.dealersHand()) < 17) {
+      this.hit('Dealer');
+    }
+
+    if(this.dealersTotal() > 21) {
+      const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
+        height: '200px',
+        width: '500px',
+        data: { title: 'Dealer Bust!', message: `The dealer busted with ${this.dealersTotal()}... you win!` }
+      });
+
+      dialogRef.afterClosed().subscribe(() => {
+        this.initNewGame();
+      });
+    }
+    else if(this.dealersTotal() > this.playersTotal()) {
+      const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
+        height: '200px',
+        width: '500px',
+        data: { title: 'Dealer Wins!', message: `The dealer beat your ${this.playersTotal()} with ${this.dealersTotal()}!` }
+      });
+
+      dialogRef.afterClosed().subscribe(() => {
+        this.initNewGame();
+      });
+    }
+    else if(this.dealersTotal() === this.playersTotal()) {
+      const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
+        height: '200px',
+        width: '500px',
+        data: { title: 'Push!', message: `It's a push! Both you and the dealer have ${this.playersTotal()}.` }
+      });
+
+      dialogRef.afterClosed().subscribe(() => {
+        this.initNewGame();
+      });
+    }
+    else if(this.dealersTotal() < this.playersTotal()) {
+      const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
+        height: '200px',
+        width: '500px',
+        data: { title: 'You Win!', message: `You beat the dealer with ${this.playersTotal()} to their ${this.dealersTotal()}!` }
+      });
+
+      dialogRef.afterClosed().subscribe(() => {
+        this.initNewGame();
       });
     }
   }
