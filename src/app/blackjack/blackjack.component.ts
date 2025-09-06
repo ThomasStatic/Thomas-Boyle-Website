@@ -3,11 +3,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { CardName, Deck, ICard, PlayingCard, Suit } from 'typedeck';
 import { MatDialog } from '@angular/material/dialog';
 import { EndOfGameDialogComponent } from './end-of-game-dialog/end-of-game-dialog.component';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
   selector: 'app-blackjack',
   standalone: true,
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, MatChipsModule, MatIconModule],
   templateUrl: './blackjack.component.html',
   styleUrl: './blackjack.component.scss'
 })
@@ -27,8 +29,17 @@ export class BlackjackComponent implements OnInit {
 
   userStanding: WritableSignal<boolean> = signal(false);
 
+  userBank: WritableSignal<number> = signal(0);
+  userBet: WritableSignal<number> = signal(10);
+  betPlaced: WritableSignal<boolean> = signal(false);
+
+  constructor() {
+
+  }
   ngOnInit(): void {
-    this.initNewGame();
+    if(typeof window !== 'undefined') {
+        localStorage.getItem('blackjackBank') === null ? this.userBank.set(100) : this.userBank.set(Number(localStorage.getItem('blackjackBank')));
+    }
   }
 
   refreshDeck(): void {
@@ -91,7 +102,7 @@ export class BlackjackComponent implements OnInit {
   }
 
   private initNewGame(): void {
-    this.userStanding.set(false);
+    localStorage.setItem('blackjackBank', this.userBank().toString());
     this.refreshDeck();
     this.deck?.shuffle();
     this.dealersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
@@ -140,15 +151,23 @@ export class BlackjackComponent implements OnInit {
       this.hit('Dealer');
     }
 
+    if(this.playersTotal() === 21 && this.dealersTotal() !== 21) { 
+      const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
+        height: '200px',
+        width: '500px',
+        data: { title: 'Blackjack!', message: `You got blackjack! You win!` }
+      }).afterClosed().subscribe(() => {
+        this.userBank.set(this.userBank() + this.userBet()*2);
+      });
+      return;
+    }
     if(this.dealersTotal() > 21) {
       const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
         height: '200px',
         width: '500px',
         data: { title: 'Dealer Bust!', message: `The dealer busted with ${this.dealersTotal()}... you win!` }
-      });
-
-      dialogRef.afterClosed().subscribe(() => {
-        this.initNewGame();
+      }).afterClosed().subscribe(() => {
+        this.userBank.set(this.userBank() + this.userBet());
       });
     }
     else if(this.dealersTotal() > this.playersTotal()) {
@@ -156,10 +175,8 @@ export class BlackjackComponent implements OnInit {
         height: '200px',
         width: '500px',
         data: { title: 'Dealer Wins!', message: `The dealer beat your ${this.playersTotal()} with ${this.dealersTotal()}!` }
-      });
-
-      dialogRef.afterClosed().subscribe(() => {
-        this.initNewGame();
+      }).afterClosed().subscribe(() => {
+        this.userBank.set(this.userBank() - this.userBet());
       });
     }
     else if(this.dealersTotal() === this.playersTotal()) {
@@ -168,21 +185,19 @@ export class BlackjackComponent implements OnInit {
         width: '500px',
         data: { title: 'Push!', message: `It's a push! Both you and the dealer have ${this.playersTotal()}.` }
       });
-
-      dialogRef.afterClosed().subscribe(() => {
-        this.initNewGame();
-      });
     }
     else if(this.dealersTotal() < this.playersTotal()) {
       const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
         height: '200px',
         width: '500px',
         data: { title: 'You Win!', message: `You beat the dealer with ${this.playersTotal()} to their ${this.dealersTotal()}!` }
+      }).afterClosed().subscribe(() => {
+        this.userBank.set(this.userBank() + this.userBet());
       });
+    }
 
-      dialogRef.afterClosed().subscribe(() => {
-        this.initNewGame();
-      });
+    if(typeof window !== 'undefined') {
+      localStorage.setItem('blackjackBank', this.userBank().toString());
     }
   }
 
@@ -222,5 +237,18 @@ export class BlackjackComponent implements OnInit {
 
   private sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  protected changeBet(amount: 10 | -10) : void {
+    if(this.userBet() + amount >= 10) {
+      this.userBet.set(this.userBet() + amount);
+    }
+  }
+
+  placeBet(): void {
+    this.betPlaced.set(true);
+    this.userStanding.set(false);
+
+    this.initNewGame();
   }
 }

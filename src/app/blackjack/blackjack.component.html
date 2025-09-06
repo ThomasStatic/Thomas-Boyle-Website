@@ -1,5 +1,5 @@
 <div class="hand-of-cards">
-    @if(!userStanding()) {
+    @if(!userStanding() && betPlaced()) {
         <img src="playing-cards/red_backing.png" alt="" class="card">
         <img [src]="getImagePath(dealersHand()[1])" alt="" class="card">
     }
@@ -10,9 +10,11 @@
     }
     
 </div>
-<div>
-    <p class="centered">{{ !userStanding() ? "Dealer showing: " + dealersTotal() : "Dealer has: " + dealersTotal()}}</p>
-</div>
+@if(betPlaced()) {
+    <div>
+        <p class="centered hand-totals">{{ !userStanding() ? "Dealer showing: " + dealersTotal() : "Dealer has: " + dealersTotal()}}</p>
+    </div>
+}
 
 <div class="hand-of-cards">
     @for(card of playersHand(); track $index) {
@@ -21,10 +23,30 @@
 
     
 </div>
-<div class="controls centered">
-    <button mat-stroked-button (click)="hit('Player')">Hit</button>
-    <button mat-stroked-button (click)="stand()">Stand</button>
+
+@if(betPlaced()) {
+    <div class="controls centered">
+        <button mat-stroked-button (click)="hit('Player')">Hit</button>
+        <button mat-stroked-button (click)="stand()">Stand</button>
+    </div>
+    <div>
+        <p class="centered hand-totals">{{ !userStanding() ? "You have: " + playersTotal() : "Standing with: " + playersTotal()}}</p>
+    </div>
+}
+
+<div class="centered">
+    <button matFab class="betting-button" (click)="changeBet(-10)">
+        <mat-icon>arrow_left</mat-icon>
+    </button>
+    <mat-chip-set>
+        <mat-chip>{{ userBet() }}</mat-chip>
+    </mat-chip-set>
+
+    <button matFab class="betting-button" (click)="changeBet(10)">
+        <mat-icon>arrow_right</mat-icon>
+    </button>
+
+    <button class="centered place-bet" mat-stroked-button (click)="placeBet()">Place Bet</button>
 </div>
-<div>
-    <p class="centered">{{ !userStanding() ? "You have: " + playersTotal() : "Standing with: " + playersTotal()}}</p>
-</div>
+
+<p>Bank: {{ userBank()}}</p>
