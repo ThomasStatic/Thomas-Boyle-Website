@@ -111,6 +111,10 @@ export class BlackjackComponent implements OnInit {
       this.dealersHand.update(hand => [...hand, this.deck?.takeCard() as PlayingCard]);
       this.dealersTotal.set(this.calcHandTotal(this.dealersHand()));
     }
+    if(this.playersTotal() === 21) { 
+      this.stand();
+      return;
+    }
     if(this.playersTotal() > 21) {
       const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
         height: '200px',
