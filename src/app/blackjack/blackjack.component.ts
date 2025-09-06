@@ -97,8 +97,11 @@ export class BlackjackComponent implements OnInit {
     this.dealersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
     this.playersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
 
+    this.playersTotal.set(this.calcHandTotal(this.playersHand()));
+    this.dealersTotal.set(this.calcHandTotal([this.dealersHand()[1]])); // Only show the player the dealer's face-up card
+
     // If the player has blackjack, they shouldn't be able to hit
-    if(this.calcHandTotal(this.playersHand()) === 21) {
+    if(this.playersTotal() === 21) {
       this.stand();
     }
   }

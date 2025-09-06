@@ -10,6 +10,9 @@
     }
     
 </div>
+<div>
+    <p class="centered">{{ !userStanding() ? "Dealer showing: " + dealersTotal() : "Dealer has: " + dealersTotal()}}</p>
+</div>
 
 <div class="hand-of-cards">
     @for(card of playersHand(); track $index) {
@@ -18,7 +21,10 @@
 
     
 </div>
-<div class="controls">
+<div class="controls centered">
     <button mat-stroked-button (click)="hit('Player')">Hit</button>
     <button mat-stroked-button (click)="stand()">Stand</button>
+</div>
+<div>
+    <p class="centered">{{ !userStanding() ? "You have: " + playersTotal() : "Standing with: " + playersTotal()}}</p>
 </div>

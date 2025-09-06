@@ -8,12 +8,22 @@
   }
 }
 
-.controls {
+.centered {
   display: flex;
   justify-content: center;
+}
+
+.controls {
   padding-top: 16px;
 
   button {
     margin: 0 4px;
   }
+}
+
+p {
+    font-family: "VT323", Arimo, Roboto, Poppins;
+    text-decoration: none;
+    color: #f9fbf2;
+    font-size: 2rem;
 }
