@@ -124,11 +124,12 @@ export class BlackjackComponent implements OnInit {
     }
   }
 
-  protected stand(): void {
+  protected async stand(): Promise<void> {
     this.userStanding.set(true);
     this.dealersTotal.set(this.calcHandTotal(this.dealersHand()));
     this.playersTotal.set(this.calcHandTotal(this.playersHand()));
     while(this.calcHandTotal(this.dealersHand()) < 17) {
+      await this.sleep(500);
       this.hit('Dealer');
     }
 
@@ -210,5 +211,9 @@ export class BlackjackComponent implements OnInit {
       default:
         return cardName + 1;
     }
+  }
+
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }
