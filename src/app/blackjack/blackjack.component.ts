@@ -96,6 +96,11 @@ export class BlackjackComponent implements OnInit {
     this.deck?.shuffle();
     this.dealersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
     this.playersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
+
+    // If the player has blackjack, they shouldn't be able to hit
+    if(this.calcHandTotal(this.playersHand()) === 21) {
+      this.stand();
+    }
   }
 
   protected hit(whoHit: 'Player' | 'Dealer' = 'Dealer'): void {
