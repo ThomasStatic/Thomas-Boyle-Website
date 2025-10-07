@@ -42,3 +42,17 @@ mat-chip-set {
 .place-bet {
   margin-left: 8px;
 }
+
+@media (min-width: 768px) {
+  .betting-container {
+    position: absolute;
+    left: 43.5%;
+    bottom: 10%;
+  }
+
+  .bank-amount {
+    position: absolute;
+    left: 5%;
+    bottom: 5%;
+  }
+}

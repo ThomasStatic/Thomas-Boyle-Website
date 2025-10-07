@@ -34,7 +34,7 @@
     </div>
 }
 
-<div class="centered">
+<div class="centered betting-container">
     <button matFab class="betting-button" (click)="changeBet(-10)">
         <mat-icon>arrow_left</mat-icon>
     </button>
@@ -49,4 +49,4 @@
     <button class="centered place-bet" mat-stroked-button (click)="placeBet()">Place Bet</button>
 </div>
 
-<p>Bank: {{ userBank()}}</p>
+<p class="bank-amount">Bank: {{ userBank()}}</p>
