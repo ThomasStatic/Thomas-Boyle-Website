@@ -137,6 +137,10 @@ export class BlackjackComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(() => {
+        this.userBank.set(this.userBank() - this.userBet());
+        if(typeof window !== 'undefined') {
+          localStorage.setItem('blackjackBank', this.userBank().toString());
+        }
         this.initNewGame();
       });
     }
@@ -155,7 +159,7 @@ export class BlackjackComponent implements OnInit {
       const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
         height: '200px',
         width: '500px',
-        data: { title: 'Blackjack!', message: `You got blackjack! You win!` }
+        data: { title: 'Blackjack!', message: `You got a blackjack! You win!` }
       }).afterClosed().subscribe(() => {
         this.userBank.set(this.userBank() + this.userBet()*2);
       });
