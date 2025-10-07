@@ -163,9 +163,8 @@ export class BlackjackComponent implements OnInit {
       }).afterClosed().subscribe(() => {
         this.userBank.set(this.userBank() + this.userBet()*2);
       });
-      return;
     }
-    if(this.dealersTotal() > 21) {
+    else if(this.dealersTotal() > 21) {
       const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
         height: '200px',
         width: '500px',
