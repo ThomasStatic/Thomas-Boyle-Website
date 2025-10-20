@@ -27,8 +27,21 @@
 }
 
 @media (480px < width <= 1600px) {
-    .header-slogan {
+    .img-slogan-container {
         font-size: 1.5rem;
+        width: 15%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-left: 40%;
+        padding-bottom: 5%;
+    }
+    
+    .header-slogan{
+        font-size: 2rem;
+        padding-left: 1.5rem;
+        width: 85%;
+        padding-top: 2.5rem;
     }
 }
 
@@ -47,6 +60,11 @@ h1::after {
   background: #f9fbf2;
   display: inline-block;
   animation: cursor-blink 1.5s steps(2) infinite;
+}
+@media (480px < width <= 1600px) {
+    h1::after {
+        height: 1.5rem;
+    }
 }
 
 @keyframes cursor-blink {
@@ -67,6 +85,13 @@ h1::after {
   li{
       display: inline;
   }
+  
+}
+
+@media (480px < width <= 1600px) {
+    .socials-container {
+        margin-left: 15rem;
+    }
   
 }
 
