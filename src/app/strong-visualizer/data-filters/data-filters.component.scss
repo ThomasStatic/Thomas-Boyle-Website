@@ -12,6 +12,13 @@ mat-card{
     }
 }
 
+@media (width <= 480px) {
+    mat-card {
+        top: 10rem;
+        height: 40rem;
+    }
+}
+
 mat-card-title{
     font-family: "VT323", Arimo, Roboto, Poppins;
     font-size: 1.5rem;
