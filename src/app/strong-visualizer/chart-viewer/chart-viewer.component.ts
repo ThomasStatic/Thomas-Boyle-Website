@@ -62,6 +62,7 @@ export class ChartViewerComponent {
           zoom: {
             enabled: false
           },
+          foreColor: '#F9FBF2',
         },
         dataLabels: {
           enabled: false
@@ -78,12 +79,14 @@ export class ChartViewerComponent {
         xaxis: {
           title: {
             text: this.selectedExercise() + ' - ' + this.selectedMetric(),
-            style: {color: '#f9fbf2', fontFamily: 'VT323, Arimo, Roboto, Poppins', fontSize: '2rem', fontWeight: '300'}
+            style: {color: '#F9FBF2', fontFamily: 'VT323, Arimo, Roboto, Poppins', fontSize: '2rem', fontWeight: '300'}
           },
+          categories: this.getSeriesValues().dataPointLabels,
           labels: {
-            show: false
-          },
-          categories: this.getSeriesValues().dataPointLabels 
+            style: {
+              colors: '#F9FBF2'
+            }
+          }
         },
       };
     });
@@ -104,20 +107,20 @@ export class ChartViewerComponent {
         continue;
       }
       // Filter out non selected exercise data
-      if(splitRow[this.androidOrIphone == ';' ? 2 : 3].replaceAll('"', '').replaceAll('\\', '') != this.selectedExercise()) {
+      if(splitRow[this.androidOrIphone == ';' ? 4 : 3].replaceAll('"', '').replaceAll('\\', '') != this.selectedExercise()) {
         continue;
       }
-      console.log('reaching here')
       
-      const date = splitRow[0].replaceAll('"', '').replaceAll('\\', '');
+      const date = splitRow[1].replaceAll('"', '').replaceAll('\\', '').split(' ')[0];
       const dateObject = new Date(date);
       // filter date that falls out of date range
       if(dateObject > this.toDate()! || dateObject < this.fromDate()!) {
         continue;
       }
       
-      const weight = parseInt(splitRow[this.androidOrIphone == ';' ? 4 : 5].replaceAll('"', '').replaceAll('\\', ''));
-      const reps = parseInt(splitRow[6].replaceAll('"', '').replaceAll('\\', ''));     
+      const weight = parseInt(splitRow[this.androidOrIphone == ';' ? 6 : 5].replaceAll('"', '').replaceAll('\\', '').replaceAll('(kg)', '')) * 2.20462;
+      console.log(splitRow[this.androidOrIphone == ';' ? 6 : 5].replaceAll('"', '').replaceAll('\\', '').replaceAll('(kg)', ''));
+      const reps = parseInt(splitRow[7].replaceAll('"', '').replaceAll('\\', ''));     
       if(this.selectedMetric() === '1RM') {
         let oneRM = this.calculateOneRepMax(weight, reps);
         if(dateMetricMap.get(date) != undefined) {
@@ -125,7 +128,7 @@ export class ChartViewerComponent {
             dateMetricMap.set(date, oneRM);
           }
         }
-        else {
+        else if(!isNaN(oneRM)) {
           dateMetricMap.set(date, oneRM);
         }
       }
@@ -136,7 +139,7 @@ export class ChartViewerComponent {
             dateMetricMap.set(date, volume);
           }
         }
-        else {
+        else if(!isNaN(volume)) {
           dateMetricMap.set(date, volume);
         }
       }

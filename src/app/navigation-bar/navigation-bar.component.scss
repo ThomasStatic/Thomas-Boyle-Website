@@ -21,8 +21,9 @@ a:active {
 }
 
 ul{
-    padding-left: 75%;
+    padding-left: 0;
     margin-top: 0;
+    display: flex;
 }
 
 @media (width <= 480px) {
@@ -33,4 +34,6 @@ ul{
 
 li{
     list-style: none;
+    width: fit-content;
+    margin-right: 128px;
 }

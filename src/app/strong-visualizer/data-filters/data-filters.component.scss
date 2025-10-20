@@ -1,62 +1,49 @@
 mat-card{
-    width: 20rem;
-    height: 35rem;
-    top: 15rem;
-    left: 2.5rem;    
-}
-
-@media (480px < width <= 1600px) {
-    mat-card {
-        top: 10rem;
-        overflow-y: auto;
-    }
-}
-
-@media (width <= 480px) {
-    mat-card {
-        top: 10rem;
-        height: 40rem;
-    }
+  width: 20rem;
+  height: 35rem;
+  // top: 15rem;
+  // left: 2.5rem;
+  
 }
 
 mat-card-title{
-    font-family: "VT323", Arimo, Roboto, Poppins;
-    font-size: 1.5rem;
-    color: ivory;
-    padding-bottom: 2rem;
+  font-family: "VT323", Arimo, Roboto, Poppins;
+  font-size: 1.5rem;
+  color: ivory;
+  padding-bottom: 2rem;
 }
 
 .metric-label {
-    font-family: "VT323", Arimo, Roboto, Poppins;
-    font-size: 1.35rem;
+  font-family: "VT323", Arimo, Roboto, Poppins;
+  font-size: 1.35rem;
 }
 
 mat-label, mat-hint {
-    color: ivory;
+  color: ivory;
 }
 
 mat-radio-button {
-    padding-left: 0.5rem;
+  padding-left: 0.5rem;
 }
 
 .radio-container {
-    padding-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
 }
 
 .from-datepicker-container {
-    padding-bottom: 2.5rem;
+  padding-bottom: 2.5rem;
 }
 
 .exercise-select-container {
-    padding-bottom: 1rem;
+  padding-bottom: 1rem;
 }
 
 .to-datepicker-container {
-    padding-bottom: 4rem;
+  padding-bottom: 4rem;
 }
 
 .button-container {
-    button {
-        margin-left: 5rem;
-    }
+  button {
+      margin-left: 5rem;
+  }
 }

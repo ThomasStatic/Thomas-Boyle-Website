@@ -3,21 +3,18 @@
 }
 
 p {
-    margin-top: 0;
-    padding-top: 15rem;
-    color: white;
+  margin-top: 0;
+  padding-top: 15rem;
+  color: white;
+}
+
+.filter-chart-container {
+  display: flex;
+  align-items: center;
+  padding-top: 200px;
+  padding-left: 1.75%;
 }
 
 .chart {
-    position: absolute;
-    top: 35%;
-    width: 75%;
-    left: 20%;
-}
-
-@media (480px < width <= 1600px) {
-    .chart {
-        width: 65%;
-        left: 30%;
-    } 
+  width: 80%;
 }
