@@ -107,7 +107,6 @@ export class BlackjackComponent implements OnInit {
     this.deck?.shuffle();
     this.dealersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
     this.playersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
-
     this.playersTotal.set(this.calcHandTotal(this.playersHand()));
     this.dealersTotal.set(this.calcHandTotal([this.dealersHand()[1]])); // Only show the player the dealer's face-up card
 
@@ -141,7 +140,7 @@ export class BlackjackComponent implements OnInit {
         if(typeof window !== 'undefined') {
           localStorage.setItem('blackjackBank', this.userBank().toString());
         }
-        this.initNewGame();
+        return;
       });
     }
   }
@@ -202,6 +201,11 @@ export class BlackjackComponent implements OnInit {
     if(typeof window !== 'undefined') {
       localStorage.setItem('blackjackBank', this.userBank().toString());
     }
+
+    // Reset for next game
+    this.playersHand.set([]);
+    this.dealersHand.set([]);
+    this.betPlaced.set(false);
   }
 
   private calcHandTotal(hand: PlayingCard[]): number {
