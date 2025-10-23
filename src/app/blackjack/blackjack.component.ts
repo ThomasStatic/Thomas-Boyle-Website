@@ -140,7 +140,7 @@ export class BlackjackComponent implements OnInit {
         if(typeof window !== 'undefined') {
           localStorage.setItem('blackjackBank', this.userBank().toString());
         }
-        return;
+        this.gameOver();
       });
     }
   }
@@ -153,59 +153,44 @@ export class BlackjackComponent implements OnInit {
       await this.sleep(500);
       this.hit('Dealer');
     }
-
+    let dialogTitle: string = "";
+    let dialogMessage: string = "";
     if(this.playersTotal() === 21 && this.dealersTotal() !== 21) { 
-      const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
-        height: '200px',
-        width: '500px',
-        data: { title: 'Blackjack!', message: `You got a blackjack! You win!` }
-      }).afterClosed().subscribe(() => {
-        this.userBank.set(this.userBank() + this.userBet()*2);
-      });
+      dialogTitle = "Blackjack!";
+      dialogMessage = "You got a blackjack! You win!";
+      this.userBank.set(this.userBank() + this.userBet()*2);
     }
     else if(this.dealersTotal() > 21) {
-      const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
-        height: '200px',
-        width: '500px',
-        data: { title: 'Dealer Bust!', message: `The dealer busted with ${this.dealersTotal()}... you win!` }
-      }).afterClosed().subscribe(() => {
-        this.userBank.set(this.userBank() + this.userBet());
-      });
+      dialogTitle = "Dealer Bust!";
+      dialogMessage = `The dealer busted with ${this.dealersTotal()}... you win!`;
+      this.userBank.set(this.userBank() + this.userBet());
     }
     else if(this.dealersTotal() > this.playersTotal()) {
-      const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
-        height: '200px',
-        width: '500px',
-        data: { title: 'Dealer Wins!', message: `The dealer beat your ${this.playersTotal()} with ${this.dealersTotal()}!` }
-      }).afterClosed().subscribe(() => {
-        this.userBank.set(this.userBank() - this.userBet());
-      });
+      dialogTitle = "Dealer Wins!";
+      dialogMessage = `The dealer beat your ${this.playersTotal()} with ${this.dealersTotal()}!`;
+      this.userBank.set(this.userBank() - this.userBet());
     }
     else if(this.dealersTotal() === this.playersTotal()) {
-      const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
-        height: '200px',
-        width: '500px',
-        data: { title: 'Push!', message: `It's a push! Both you and the dealer have ${this.playersTotal()}.` }
-      });
+      dialogTitle = "Push!";
+      dialogMessage = `It's a push! Both you and the dealer have ${this.playersTotal()}.`;
     }
     else if(this.dealersTotal() < this.playersTotal()) {
-      const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
-        height: '200px',
-        width: '500px',
-        data: { title: 'You Win!', message: `You beat the dealer with ${this.playersTotal()} to their ${this.dealersTotal()}!` }
-      }).afterClosed().subscribe(() => {
-        this.userBank.set(this.userBank() + this.userBet());
-      });
+      dialogTitle = "You Win!";
+      dialogMessage = `You beat the dealer with ${this.playersTotal()} to their ${this.dealersTotal()}!`;
+      this.userBank.set(this.userBank() + this.userBet());
     }
+
+    this.dialog.open(EndOfGameDialogComponent, {
+      height: '200px',
+      width: '500px',
+      data: { title: dialogTitle, message: dialogMessage }
+    });
 
     if(typeof window !== 'undefined') {
       localStorage.setItem('blackjackBank', this.userBank().toString());
     }
 
-    // Reset for next game
-    this.playersHand.set([]);
-    this.dealersHand.set([]);
-    this.betPlaced.set(false);
+    this.gameOver();
   }
 
   private calcHandTotal(hand: PlayingCard[]): number {
@@ -257,5 +242,11 @@ export class BlackjackComponent implements OnInit {
     this.userStanding.set(false);
 
     this.initNewGame();
+  }
+
+  gameOver(): void {
+    this.playersHand.set([]);
+    this.dealersHand.set([]);
+    this.betPlaced.set(false);
   }
 }
