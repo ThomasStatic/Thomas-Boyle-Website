@@ -26,8 +26,8 @@
 
 @if(betPlaced()) {
     <div class="controls centered">
-        <button mat-stroked-button (click)="hit('Player')">Hit</button>
-        <button mat-stroked-button (click)="stand()">Stand</button>
+        <button mat-stroked-button (click)="hit('Player')" [disabled]="!disableResetButton()">Hit</button>
+        <button mat-stroked-button (click)="stand()" [disabled]="!disableResetButton()">Stand</button>
     </div>
     <div>
         <p class="centered hand-totals">{{ !userStanding() ? "You have: " + playersTotal() : "Standing with: " + playersTotal()}}</p>
@@ -35,18 +35,33 @@
 }
 
 <div class="centered betting-container">
-    <button matFab class="betting-button" (click)="changeBet(-10)">
+    <button matFab class="betting-button" (click)="changeBet(-10)" [disabled]="betPlaced()">
         <mat-icon>arrow_left</mat-icon>
     </button>
     <mat-chip-set>
         <mat-chip>{{ userBet() }}</mat-chip>
     </mat-chip-set>
 
-    <button matFab class="betting-button" (click)="changeBet(10)">
+    <button matFab class="betting-button" (click)="changeBet(10)" [disabled]="betPlaced()">
         <mat-icon>arrow_right</mat-icon>
     </button>
 
-    <button class="centered place-bet" mat-stroked-button (click)="placeBet()">Place Bet</button>
+    <button 
+        class="centered place-bet" 
+        mat-stroked-button 
+        (click)="placeBet()"
+        [disabled]="betPlaced()"
+    >
+        Place Bet
+    </button>
+    <button 
+        class="centered place-bet" 
+        mat-stroked-button 
+        (click)="resetGame()" 
+        [disabled]="disableResetButton()"
+    >
+        Reset Game
+    </button>
 </div>
 
 <p class="bank-amount">Bank: {{ userBank()}}</p>

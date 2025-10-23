@@ -33,6 +33,9 @@ export class BlackjackComponent implements OnInit {
   userBet: WritableSignal<number> = signal(10);
   betPlaced: WritableSignal<boolean> = signal(false);
 
+  // setting to true on init so button is disabled until after first round
+  disableResetButton: WritableSignal<boolean> = signal(true);
+
   constructor() {
 
   }
@@ -102,6 +105,8 @@ export class BlackjackComponent implements OnInit {
   }
 
   private initNewGame(): void {
+    this.disableResetButton.set(true);
+
     localStorage.setItem('blackjackBank', this.userBank().toString());
     this.refreshDeck();
     this.deck?.shuffle();
@@ -140,12 +145,12 @@ export class BlackjackComponent implements OnInit {
         if(typeof window !== 'undefined') {
           localStorage.setItem('blackjackBank', this.userBank().toString());
         }
-        this.gameOver();
       });
     }
   }
 
   protected async stand(): Promise<void> {
+    this.disableResetButton.set(false);
     this.userStanding.set(true);
     this.dealersTotal.set(this.calcHandTotal(this.dealersHand()));
     this.playersTotal.set(this.calcHandTotal(this.playersHand()));
@@ -190,7 +195,6 @@ export class BlackjackComponent implements OnInit {
       localStorage.setItem('blackjackBank', this.userBank().toString());
     }
 
-    this.gameOver();
   }
 
   private calcHandTotal(hand: PlayingCard[]): number {
@@ -244,9 +248,10 @@ export class BlackjackComponent implements OnInit {
     this.initNewGame();
   }
 
-  gameOver(): void {
+  resetGame(): void {
     this.playersHand.set([]);
     this.dealersHand.set([]);
     this.betPlaced.set(false);
+    this.disableResetButton.set(true);
   }
 }
