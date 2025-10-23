@@ -142,6 +142,7 @@ export class BlackjackComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe(() => {
         this.userBank.set(this.userBank() - this.userBet());
+        this.disableResetButton.set(false);
         if(typeof window !== 'undefined') {
           localStorage.setItem('blackjackBank', this.userBank().toString());
         }
@@ -196,8 +197,6 @@ export class BlackjackComponent implements OnInit {
     if(typeof window !== 'undefined') {
       localStorage.setItem('blackjackBank', this.userBank().toString());
     }
-
-    //this.betPlaced.set(false);
   }
 
   private calcHandTotal(hand: PlayingCard[]): number {
