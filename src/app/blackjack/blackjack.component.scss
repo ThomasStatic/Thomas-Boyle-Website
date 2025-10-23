@@ -8,6 +8,12 @@
   }
 }
 
+@media (480px < width <= 1600px) {
+  .hand-of-cards {
+    padding-top: 7%;
+  }
+}
+
 .centered {
   display: flex;
   justify-content: center;
@@ -43,11 +49,11 @@ mat-chip-set {
   margin-left: 8px;
 }
 
-@media (min-width: 768px) {
+@media (480px < width <= 1600px) {
   .betting-container {
     position: absolute;
     left: 35.5%;
-    bottom: 10%;
+    top: 45%;
   }
 
   .bank-amount {

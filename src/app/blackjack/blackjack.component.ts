@@ -189,12 +189,15 @@ export class BlackjackComponent implements OnInit {
       height: '200px',
       width: '500px',
       data: { title: dialogTitle, message: dialogMessage }
+    }).afterClosed().subscribe(() => {
+      this.disableResetButton.set(false);
     });
 
     if(typeof window !== 'undefined') {
       localStorage.setItem('blackjackBank', this.userBank().toString());
     }
 
+    //this.betPlaced.set(false);
   }
 
   private calcHandTotal(hand: PlayingCard[]): number {
