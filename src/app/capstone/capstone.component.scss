@@ -22,7 +22,7 @@
 }
 
 
-.what-im-building {
+.subsection {
     padding-left: 1rem;
     padding-top: 2rem;
     h2 {
@@ -35,4 +35,10 @@
 .paragraph-image-block {
     display: flex;
     width: 95%;
+}
+
+.diagram {
+    height: 50%;
+    width: 47.5%;
+    margin-bottom: 2rem;
 }

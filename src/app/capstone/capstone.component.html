@@ -3,7 +3,7 @@
     <h4 class="site-text">MDP modeling, POMDP reality, and an RL agent trying to make money in between.</h4>
 </div>
 
-<div class="what-im-building">
+<div class="subsection">
     <div class="paragraph-image-block">
         <div>
             <h2 class="site-text">What I'm Actually Building</h2>
@@ -20,6 +20,19 @@
                 goal isn{{"’"}}t just convergence, but economically rational behavior under 
                 uncertainty.</p>
         </div>
-        <img src="capstone-electricity-demand.png" alt="">
+        <img class="diagram" src="capstone-electricity-demand.png" alt="">
+    </div>
+</div>
+<div class="subsection">
+    <div class="paragraph-image-block">
+        <div>
+            <h2 class="site-text">How It Works {{"("}}Without Pretending The World Is Simple{{")"}}</h2>
+            <p class="site-text">We model the market as an MDP for tractability, even though real 
+                electricity markets behave much closer to a POMDP. The agent constructs its state from 
+                load and price signals, selects hourly bids, and updates its policy based on realized 
+                profit — aiming for strategies that are not just optimal in simulation, but economically 
+                sensible.</p>
+        </div>
+        <img class="diagram" src="state-space-diagram.png" alt="">
     </div>
 </div>
