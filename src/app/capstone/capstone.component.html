@@ -51,3 +51,31 @@
         <img class="diagram" src="file-breakdown.png" alt="">
     </div>
 </div>
+<div class="subsection">
+    <div class="paragraph-image-block">
+        <div>
+            <h2 class="site-text">What We Care About</h2>
+            <p class="site-text">We're not just asking whether the agent converges...
+                we evaluate whether the learned policy is profitable, stable, and economically 
+                rational under realistic market conditions.</p>
+            <p class="site-text">Reinforcement learning agents are notoriously easy to “look 
+                good” in simulation while learning brittle or unrealistic policies. To avoid this, 
+                we benchmark against baseline strategies, monitor policy stability throughout 
+                training, and analyze whether the agent's behavior aligns with real economic 
+                intuition rather than exploiting artifacts of the environment.</p>
+            <p class="site-text">We also track the change in Q-values across episodes as a proxy 
+                for learning dynamics — large early updates followed by stabilization suggest the 
+                policy is converging toward a consistent strategy rather than oscillating between 
+                behaviors.</p>
+            <p class="site-text">Metrics include:</p>
+                <ul>
+                    <li class="site-text">Profit relative to baseline strategies</li>
+                    <li class="site-text">Policy stability during training</li>
+                    <li class="site-text">Convergence behavior</li>
+                    <li class="site-text">Economic plausiblity of bidding decisions</li>
+                </ul>
+            
+        </div>
+        <img class="diagram" src="delta_q_per_episode_500_episodes.png" alt="">
+    </div>
+</div>
