@@ -4,10 +4,22 @@
 </div>
 
 <div class="what-im-building">
-    <h2 class="site-text">What I'm Actually Building</h2>
-    <p class="site-text">A reinforcement learning agent that participates in 
-        ISO day-ahead electricity markets. It looks at historical load, price 
-        signals, and forecasts, learns how to place bids, and tries to make 
-        economically sensible decisions instead of just doing math tricks in 
-        a vacuum.</p>
+    <div class="paragraph-image-block">
+        <div>
+            <h2 class="site-text">What I'm Actually Building</h2>
+            <p class="site-text">A reinforcement learning agent that participates in 
+                ISO day-ahead electricity markets. It looks at historical load, price 
+                signals, and forecasts, learns how to place bids, and tries to make 
+                economically sensible decisions instead of just doing math tricks in 
+                a vacuum.</p>
+            <p class="site-text">We model the market as an MDP for tractability, even 
+                though real electricity markets behave much closer to a POMDP — partial 
+                observability, noisy forecasts, and strategic participants included. The 
+                agent builds its state from demand and price signals, selects hourly 
+                bidding strategies, and updates its policy based on realized profit. The 
+                goal isn’t just convergence, but economically rational behavior under 
+                uncertainty.</p>
+        </div>
+        <img src="capstone-electricity-demand.png" alt="">
+    </div>
 </div>

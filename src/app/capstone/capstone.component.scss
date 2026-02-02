@@ -23,8 +23,16 @@
 
 
 .what-im-building {
-    padding-left: 1rem;;
+    padding-left: 1rem;
+    padding-top: 2rem;
     h2 {
         font-size: 2rem;
+        padding-top: 0;
+        margin-top: 0;
     }
+}
+
+.paragraph-image-block {
+    display: flex;
+    width: 95%;
 }
