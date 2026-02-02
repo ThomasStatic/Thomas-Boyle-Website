@@ -4,11 +4,13 @@ import { NgModule } from '@angular/core';
 import { HeaderComponent } from './home-page/header/header.component';
 import { StrongVisualizerComponent } from './strong-visualizer/strong-visualizer.component';
 import { BlackjackComponent } from './blackjack/blackjack.component';
+import { CapstoneComponent } from './capstone/capstone.component';
 
 export const routes: Routes = [
     { path: '', component: HomePageComponent },
     { path: 'strong-visualizer', component: StrongVisualizerComponent},
     { path: 'blackjack', component: BlackjackComponent},
+    { path: 'capstone', component: CapstoneComponent},
     { path: '**', redirectTo: '' },
 ];
 

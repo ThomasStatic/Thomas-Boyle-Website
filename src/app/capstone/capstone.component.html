@@ -1,0 +1,94 @@
+<div class="header">
+    <h1 class="site-text">Making an RL Agent Trade Power Like a Real Market Player</h1>
+    <h4 class="site-text">MDP modeling, POMDP reality, and an RL agent trying to make money in between.</h4>
+</div>
+
+<div class="subsection">
+    <div class="paragraph-image-block">
+        <div>
+            <h2 class="site-text">What I'm Actually Building</h2>
+            <p class="site-text">A reinforcement learning agent that participates in 
+                ISO day-ahead electricity markets. It looks at historical load, price 
+                signals, and forecasts, learns how to place bids, and tries to make 
+                economically sensible decisions instead of just doing math tricks in 
+                a vacuum.</p>
+            <p class="site-text">We model the market as an MDP for tractability, even 
+                though real electricity markets behave much closer to a POMDP — partial 
+                observability, noisy forecasts, and strategic participants included. The 
+                agent builds its state from demand and price signals, selects hourly 
+                bidding strategies, and updates its policy based on realized profit. The 
+                goal isn{{"’"}}t just convergence, but economically rational behavior under 
+                uncertainty.</p>
+        </div>
+        <img class="diagram" src="capstone-electricity-demand.png" alt="">
+    </div>
+</div>
+<div class="subsection">
+    <div class="paragraph-image-block">
+        <div>
+            <h2 class="site-text">How It Works {{"("}}Without Pretending The World Is Simple{{")"}}</h2>
+            <p class="site-text">We model the market as an MDP for tractability, even though real 
+                electricity markets behave much closer to a POMDP. The agent constructs its state from 
+                load and price signals, selects hourly bids, and updates its policy based on realized 
+                profit — aiming for strategies that are not just optimal in simulation, but economically 
+                sensible.</p>
+        </div>
+        <img class="diagram" src="state-space-diagram.png" alt="">
+    </div>
+</div>
+<div class="subsection">
+    <div class="paragraph-image-block">
+        <div>
+            <h2 class="site-text">Under the hood</h2>
+            <ul>
+                <li class="site-text">Discretized state + action spaces so the agent doesn't panic</li>
+                <li class="site-text">Real load + price data instead of synthetic textbook examples</li>
+                <li class="site-text">Reward shaped around profit, risk penalties, and market realism</li>
+                <li class="site-text">Training until it stops behaving like a complete toddler</li>
+            </ul>
+            
+        </div>
+        <img class="diagram" src="file-breakdown.png" alt="">
+    </div>
+</div>
+<div class="subsection">
+    <div class="paragraph-image-block">
+        <div>
+            <h2 class="site-text">What We Care About</h2>
+            <p class="site-text">We're not just asking whether the agent converges...
+                we evaluate whether the learned policy is profitable, stable, and economically 
+                rational under realistic market conditions.</p>
+            <p class="site-text">Reinforcement learning agents are notoriously easy to “look 
+                good” in simulation while learning brittle or unrealistic policies. To avoid this, 
+                we benchmark against baseline strategies, monitor policy stability throughout 
+                training, and analyze whether the agent's behavior aligns with real economic 
+                intuition rather than exploiting artifacts of the environment.</p>
+            <p class="site-text">We also track the change in Q-values across episodes as a proxy 
+                for learning dynamics — large early updates followed by stabilization suggest the 
+                policy is converging toward a consistent strategy rather than oscillating between 
+                behaviors.</p>
+            <p class="site-text">Metrics include:</p>
+                <ul>
+                    <li class="site-text">Profit relative to baseline strategies</li>
+                    <li class="site-text">Policy stability during training</li>
+                    <li class="site-text">Convergence behavior</li>
+                    <li class="site-text">Economic plausiblity of bidding decisions</li>
+                </ul>
+            
+        </div>
+        <img class="diagram" src="delta_q_per_episode_500_episodes.png" alt="">
+    </div>
+</div>
+<div class="subsection">
+    <div class="paragraph-image-block">
+        <div>
+            <h2 class="site-text">If You Want To Dive Deeper</h2>
+            <ul>
+                <li class="site-text">GitHub: <a href="https://github.com/ThomasStatic/capstone-optimal-bidding">capstone-optimal-bidding</a></li>
+                <li class="site-text">Midterm Presentation (Outdated): <a href="493_Midterm_Presentation_MTHE13_Final.pdf">View Slides</a></li>
+                <li class="site-text">Finished Thesis - Coming Soon!</li>
+            </ul>
+            
+        </div>
+    </div>
+</div>
