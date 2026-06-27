@@ -3,32 +3,60 @@
     text-decoration: none;
     color: #f9fbf2;
     font-weight: 400;
+    font-size: 1.3rem;
+    line-height: 1.45;
+    margin-bottom: 0.6rem;
+}
+
+strong {
+    color: #f8d66d;
+    font-weight: 400;
+}
+
+a {
+    color: #7ee7d8;
+    text-decoration-color: rgba(126, 231, 216, 0.75);
+    text-underline-offset: 0.18em;
+
+    &:visited {
+        color: #f8d66d;
+        text-decoration-color: rgba(248, 214, 109, 0.75);
+    }
+
+    &:hover,
+    &:focus-visible {
+        color: #ffffff;
+        text-decoration-color: #ffffff;
+    }
 }
 
 .header {
     padding-top: 80px;
     padding-left: 1rem;
 
-    h1 {    
-        font-size: 2.75rem;
-        margin-bottom: 0;
+    h1 {
+        font-size: 3.5rem;
+        margin-bottom: 0.2rem;
     }
 
     h4 {
-        font-size: 1.5rem;
+        font-size: 2rem;
         padding-left: 3rem;
-        margin-top: 0.5rem;
+        margin-top: 0.2rem;
+        margin-bottom: 0;
     }
 }
 
 
 .subsection {
     padding-left: 1rem;
-    padding-top: 2rem;
+    padding-top: 1.2rem;
+
     h2 {
-        font-size: 2rem;
+        font-size: 2.6rem;
         padding-top: 0;
         margin-top: 0;
+        margin-bottom: 0.4rem;
     }
 }
 
@@ -45,8 +73,11 @@
 
 ul {
     margin-right: 11.5rem;
+    margin-top: 0.4rem;
+
     li {
-        margin-bottom: 8px;
-        width: 25rem;
+        margin-bottom: 6px;
+        max-width: 76rem;
+        font-size: 1.3rem;
     }
 }

@@ -1,94 +1,231 @@
 <div class="header">
-    <h1 class="site-text">Making an RL Agent Trade Power Like a Real Market Player</h1>
-    <h4 class="site-text">MDP modeling, POMDP reality, and an RL agent trying to make money in between.</h4>
+    <h1 class="site-text">Teaching an RL Agent to Bid in a Realistic Electricity Market</h1>
+    <h4 class="site-text">
+        A data-driven, multi-agent Q-learning thesis on how power generators can bid strategically when the market
+        refuses to sit still.
+    </h4>
 </div>
 
 <div class="subsection">
     <div class="paragraph-image-block">
         <div>
-            <h2 class="site-text">What I'm Actually Building</h2>
-            <p class="site-text">A reinforcement learning agent that participates in 
-                ISO day-ahead electricity markets. It looks at historical load, price 
-                signals, and forecasts, learns how to place bids, and tries to make 
-                economically sensible decisions instead of just doing math tricks in 
-                a vacuum.</p>
-            <p class="site-text">We model the market as an MDP for tractability, even 
-                though real electricity markets behave much closer to a POMDP — partial 
-                observability, noisy forecasts, and strategic participants included. The 
-                agent builds its state from demand and price signals, selects hourly 
-                bidding strategies, and updates its policy based on realized profit. The 
-                goal isn{{"’"}}t just convergence, but economically rational behavior under 
-                uncertainty.</p>
+            <h2 class="site-text">The Problem: Selling Power Is Not as Simple as &quot;Charge More&quot;</h2>
+            <p class="site-text">
+                Wholesale electricity markets are basically large, fast, slightly terrifying auctions. Every day,
+                generators submit bids describing how much electricity they are willing to sell and at what price.
+                The market then sorts those bids from cheapest to most expensive, clears enough supply to meet demand,
+                and determines who gets dispatched.
+            </p>
+            <p class="site-text">
+                The awkward part is that generators must submit those bids before they know exactly what demand,
+                renewable output, competitor behaviour, or clearing prices will look like. Bid too aggressively and you
+                might earn a great margin. Bid too aggressively at the wrong time and you may sell exactly zero
+                electricity, which is less fun.
+            </p>
+            <p class="site-text">
+                My thesis asks a practical question: can a reinforcement-learning agent learn when to bid
+                competitively, when to hold margin, and how to balance the two better than a fixed rule-based strategy?
+            </p>
         </div>
-        <img class="diagram" src="capstone-electricity-demand.png" alt="">
     </div>
 </div>
+
 <div class="subsection">
     <div class="paragraph-image-block">
         <div>
-            <h2 class="site-text">How It Works {{"("}}Without Pretending The World Is Simple{{")"}}</h2>
-            <p class="site-text">We model the market as an MDP for tractability, even though real 
-                electricity markets behave much closer to a POMDP. The agent constructs its state from 
-                load and price signals, selects hourly bids, and updates its policy based on realized 
-                profit — aiming for strategies that are not just optimal in simulation, but economically 
-                sensible.</p>
+            <h2 class="site-text">The Project</h2>
+            <p class="site-text">
+                For my undergraduate thesis, I built a reinforcement-learning framework for strategic bidding in
+                day-ahead electricity markets. The system uses historical ERCOT market data, including demand,
+                locational marginal prices, fuel mix information, and demand forecasts, to create a simulated
+                environment where generators can repeatedly submit bids and learn from the consequences.
+            </p>
+            <p class="site-text">
+                Each training episode represents a 24-hour operating day. At every hour, the agent observes the market
+                context, chooses a bid price and quantity, clears against a simulated supply stack, receives a
+                profit-based reward, and updates its estimate of which decisions were worth making.
+            </p>
+            <p class="site-text">
+                The goal was not to build a magic money printer for the electrical grid. It was to build a transparent
+                and reproducible framework for studying how strategic bidding policies emerge when demand, cost,
+                competition, and uncertainty all matter at the same time.
+            </p>
         </div>
-        <img class="diagram" src="state-space-diagram.png" alt="">
     </div>
 </div>
+
 <div class="subsection">
     <div class="paragraph-image-block">
         <div>
-            <h2 class="site-text">Under the hood</h2>
+            <h2 class="site-text">Turning a Messy Market Into Something an Agent Can Learn From</h2>
+            <p class="site-text">
+                Real electricity markets are not clean textbook environments. Generators do not know every competitor's
+                cost curve. Demand forecasts are imperfect. Renewable output moves around. Market participants can
+                influence one another. In other words: it is much closer to a partially observable game than a neat
+                little spreadsheet.
+            </p>
+            <p class="site-text">
+                To make the problem tractable, we modelled the market as a finite Markov Decision Process. The state
+                captures the information a generator could reasonably use when bidding, including recent price and load
+                history, a rolling demand forecast, and time-of-day features.
+            </p>
+            <p class="site-text">
+                The action is a discrete price-and-quantity bid. The reward is realized profit after market clearing,
+                with constraints and penalties to discourage infeasible or excessively risky bids. This lets the agent
+                learn from experience rather than assuming we know the exact market dynamics in advance, which,
+                thankfully, is useful because we very much do not.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="subsection">
+    <div class="paragraph-image-block">
+        <div>
+            <h2 class="site-text">What the Agent Actually Sees and Does</h2>
+            <p class="site-text">
+                The model uses tabular Q-learning: instead of hiding everything inside a black-box neural network, the
+                agent maintains an explicit value estimate for each discretized state-action pair. That makes the
+                learned policy inspectable, debuggable, and much easier to challenge when it does something
+                questionable.
+            </p>
             <ul>
-                <li class="site-text">Discretized state + action spaces so the agent doesn't panic</li>
-                <li class="site-text">Real load + price data instead of synthetic textbook examples</li>
-                <li class="site-text">Reward shaped around profit, risk penalties, and market realism</li>
-                <li class="site-text">Training until it stops behaving like a complete toddler</li>
+                <li class="site-text">
+                    <strong>State:</strong> recent demand and price behaviour, forecast demand, and time features
+                </li>
+                <li class="site-text">
+                    <strong>Action:</strong> a discrete bid price and bid quantity
+                </li>
+                <li class="site-text">
+                    <strong>Reward:</strong> realized profit after clearing, adjusted for feasibility and risk controls
+                </li>
+                <li class="site-text">
+                    <strong>Market logic:</strong> uniform-price clearing, partial clearing, merit-order dispatch, and
+                    simulated competitors
+                </li>
+                <li class="site-text">
+                    <strong>Learning:</strong> Q-learning with softmax exploration and decaying learning dynamics
+                </li>
+                <li class="site-text">
+                    <strong>Competition:</strong> single-agent, three-agent, and five-agent market scenarios
+                </li>
             </ul>
-            
+            <p class="site-text">
+                I also used warm starts based on economically sensible cost-plus policies. Starting from a reasonable
+                baseline gave the agents a better first guess than trying random things until the grid loses patience.
+            </p>
         </div>
-        <img class="diagram" src="file-breakdown.png" alt="">
     </div>
 </div>
+
 <div class="subsection">
     <div class="paragraph-image-block">
         <div>
-            <h2 class="site-text">What We Care About</h2>
-            <p class="site-text">We're not just asking whether the agent converges...
-                we evaluate whether the learned policy is profitable, stable, and economically 
-                rational under realistic market conditions.</p>
-            <p class="site-text">Reinforcement learning agents are notoriously easy to “look 
-                good” in simulation while learning brittle or unrealistic policies. To avoid this, 
-                we benchmark against baseline strategies, monitor policy stability throughout 
-                training, and analyze whether the agent's behavior aligns with real economic 
-                intuition rather than exploiting artifacts of the environment.</p>
-            <p class="site-text">We also track the change in Q-values across episodes as a proxy 
-                for learning dynamics — large early updates followed by stabilization suggest the 
-                policy is converging toward a consistent strategy rather than oscillating between 
-                behaviors.</p>
-            <p class="site-text">Metrics include:</p>
-                <ul>
-                    <li class="site-text">Profit relative to baseline strategies</li>
-                    <li class="site-text">Policy stability during training</li>
-                    <li class="site-text">Convergence behavior</li>
-                    <li class="site-text">Economic plausiblity of bidding decisions</li>
-                </ul>
-            
+            <h2 class="site-text">Multi-Agent Competition: Where It Gets Interesting</h2>
+            <p class="site-text">
+                A single generator learning in isolation is useful, but electricity markets are competitive by design.
+                To move beyond that simplified case, the framework supports multiple RL agents bidding into the same
+                market at the same time.
+            </p>
+            <p class="site-text">
+                Each agent maintains its own Q-table and chooses its own bid, while the market clears everyone together.
+                This introduces the inconvenient but realistic fact that one agent's &quot;good strategy&quot; may stop
+                being good once other agents begin adapting too.
+            </p>
+            <p class="site-text">
+                That turns the problem into a repeated stochastic game: agents are not only learning the market, they
+                are learning in a market shaped by other learners. That is a much more accurate reflection of
+                competitive environments than assuming every competitor politely remains frozen in place.
+            </p>
         </div>
-        <img class="diagram" src="delta_q_per_episode_500_episodes.png" alt="">
     </div>
 </div>
+
 <div class="subsection">
     <div class="paragraph-image-block">
         <div>
-            <h2 class="site-text">If You Want To Dive Deeper</h2>
+            <h2 class="site-text">Results: Did It Work?</h2>
+            <p class="site-text">
+                Yes, within the assumptions of the simulator, the learned policies outperformed the simpler benchmark
+                strategies we tested against.
+            </p>
+            <p class="site-text">
+                In the single-agent ERCOT evaluation, the RL policy achieved a mean episodic profit 29.2% higher than
+                the best cost-plus-markup baseline. In the five-agent scenario, that performance gap increased to
+                79.17%.
+            </p>
+            <p class="site-text">
+                The important part was not merely that the agent earned more simulated profit. It learned a different
+                kind of strategy: rather than applying the same percentage markup regardless of market conditions, it
+                adapted its bid price and quantity to where it expected to sit in the merit order.
+            </p>
+            <p class="site-text">
+                In plain English: it learned that sometimes the best move is not to bid the highest price possible.
+                Sometimes the smart move is to price competitively enough to actually clear. A lesson that applies to
+                more than just electricity markets.
+            </p>
             <ul>
-                <li class="site-text">GitHub: <a href="https://github.com/ThomasStatic/capstone-optimal-bidding">capstone-optimal-bidding</a></li>
-                <li class="site-text">Midterm Presentation (Outdated): <a href="493_Midterm_Presentation_MTHE13_Final.pdf">View Slides</a></li>
-                <li class="site-text">Finished Thesis - Coming Soon!</li>
+                <li class="site-text">Compared learned policies against cost-plus-markup and historical-quantile baselines</li>
+                <li class="site-text">Evaluated performance across single-agent, three-agent, and five-agent market settings</li>
+                <li class="site-text">Tracked Q-value stabilization, reward behaviour, and policy convergence diagnostics</li>
+                <li class="site-text">Tested sensitivity to warm starts, exploration schedules, risk controls, demand changes, and competition assumptions</li>
+                <li class="site-text">Examined learned bids for economic plausibility instead of treating raw profit as the only metric that matters</li>
             </ul>
-            
+        </div>
+    </div>
+</div>
+
+<div class="subsection">
+    <div class="paragraph-image-block">
+        <div>
+            <h2 class="site-text">What I Learned From Building It</h2>
+            <p class="site-text">
+                The hardest part of this project was not implementing Q-learning. It was deciding what the agent should
+                be allowed to know, what the simulator should approximate, and how to test whether a strong result
+                reflected useful learning instead of an accidental loophole in the environment.
+            </p>
+            <p class="site-text">
+                That meant treating model validation as part of the engineering work, not an appendix written after the
+                fun part. I evaluated baseline performance, explored sensitivity to modelling assumptions, monitored
+                convergence behaviour, and documented limitations around discretization, opponent modelling, market
+                constraints, and missing operational details.
+            </p>
+            <p class="site-text">
+                The project reinforced something I enjoy about quantitative software work: the code is only useful when
+                the modelling choices behind it are defensible. A clean implementation of the wrong market is still the
+                wrong market.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="subsection">
+    <div class="paragraph-image-block">
+        <div>
+            <h2 class="site-text">Want the Technical Version?</h2>
+            <p class="site-text">
+                The full thesis covers the MDP formulation, simulated market-clearing process, learning algorithm,
+                validation approach, convergence analysis, results, limitations, and future work toward deeper function
+                approximation and more realistic operational constraints.
+            </p>
+            <ul>
+                <li class="site-text">
+                    GitHub:
+                    <a href="https://github.com/ThomasStatic/capstone-optimal-bidding">
+                        capstone-optimal-bidding
+                    </a>
+                </li>
+                <li class="site-text">
+                    Finished Thesis:
+                    <a href="MTHE493_Thesis.pdf">Read the full paper</a>
+                </li>
+                <li class="site-text">
+                    Final Presentation:
+                    <a href="MTHE_493_Final_Presentation.pptx">
+                        View the project presentation
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
