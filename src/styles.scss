@@ -26,6 +26,24 @@ $thomas-boyle-website-theme: mat.define-theme((
 // that you are using.
 :root {
   @include mat.all-component-themes($thomas-boyle-website-theme);
+  --cursor-default: url("/cursors/light/pointer.png") 0 0, auto;
+  --cursor-link: url("/cursors/light/link2.png") 7 1, pointer;
+  --cursor-link-active: url("/cursors/light/link3.png") 7 1, pointer;
+  --cursor-text: url("/cursors/light/beam.png") 16 16, text;
+  --cursor-handwriting: url("/cursors/light/handwriting.png") 2 30, text;
+  --cursor-help: url("/cursors/light/help.png") 3 2, help;
+  --cursor-grab: url("/cursors/light/grab.png") 16 10, grab;
+  --cursor-grabbing: url("/cursors/light/grab_hover.png") 16 10, grabbing;
+  --cursor-dgn1: url("/cursors/light/dgn1.png") 16 16, nwse-resize;
+  --cursor-dgn2: url("/cursors/light/dgn2.png") 16 16, nesw-resize;
+  --cursor-move: url("/cursors/light/move.png") 16 16, move;
+  --cursor-person: url("/cursors/light/person.png") 3 2, auto;
+  --cursor-precision: url("/cursors/light/precision4.png") 16 16, crosshair;
+  --cursor-resize-x: url("/cursors/light/horz.png") 16 16, ew-resize;
+  --cursor-resize-y: url("/cursors/light/vert.png") 16 16, ns-resize;
+  --cursor-unavailable: url("/cursors/light/unavailable.png") 16 16, not-allowed;
+  --cursor-working: url("/cursors/light/working.gif") 1 1, progress;
+  --cursor-busy: url("/cursors/light/busy.gif") 16 16, wait;
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.
@@ -37,7 +55,107 @@ $thomas-boyle-website-theme: mat.define-theme((
 /* You can add global styles to this file, and also import other style files */
 body {
     background-color: #333232;
+    cursor: var(--cursor-default);
     margin: 0;
 }
 html, body { height: 100; overflow-x: hidden;}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+:is(p, li, td, th, figcaption, mat-card-title, mat-card-content, mat-dialog-content, h1, h2, h3, h4, h5, h6) {
+    cursor: var(--cursor-text);
+}
+
+:is(a, button, summary, [role="button"], .mat-mdc-button-base, .mat-mdc-select, mat-option, mat-chip, mat-radio-button, mat-datepicker-toggle) {
+    cursor: var(--cursor-link) !important;
+}
+
+:is(a, button, summary, [role="button"], .mat-mdc-button-base, .mat-mdc-select, mat-option, mat-chip, mat-radio-button, mat-datepicker-toggle):active {
+    cursor: var(--cursor-link-active) !important;
+}
+
+:is(button:disabled, input:disabled, select:disabled, textarea:disabled, [aria-disabled="true"], .mat-mdc-button-disabled, .mat-mdc-option-disabled) {
+    cursor: var(--cursor-unavailable) !important;
+}
+
+:is(input, textarea, [contenteditable="true"], .mat-mdc-input-element) {
+    cursor: var(--cursor-text);
+}
+
+:is(input[type="button"], input[type="submit"], input[type="reset"], input[type="checkbox"], input[type="radio"], input[type="range"], input[type="file"]) {
+    cursor: var(--cursor-link);
+}
+
+:is([title]:not(a):not(button), abbr[title]) {
+    cursor: var(--cursor-help);
+}
+
+:is([draggable="true"], .cdk-drag) {
+    cursor: var(--cursor-grab);
+}
+
+:is([draggable="true"], .cdk-drag):active {
+    cursor: var(--cursor-grabbing);
+}
+
+:is([aria-busy="true"], .is-loading, .loading) {
+    cursor: var(--cursor-working);
+}
+
+:is(.parameter-table-wrapper, .model-settings-table-wrapper, .results-table-wrapper, .wide-result-scroll) {
+    cursor: var(--cursor-grab);
+}
+
+:is(.parameter-table-wrapper, .model-settings-table-wrapper, .results-table-wrapper, .wide-result-scroll):active {
+    cursor: var(--cursor-grabbing);
+}
+
+.wide-result-scroll img {
+    cursor: var(--cursor-grab);
+}
+
+.wide-result-scroll:active img {
+    cursor: var(--cursor-grabbing);
+}
+
+:is(
+    html.cursor-native-drag-link,
+    html.cursor-native-drag-link *,
+    html.cursor-autoscroll-all,
+    html.cursor-autoscroll-all *
+) {
+    cursor: var(--cursor-grabbing) !important;
+}
+
+:is(html.cursor-native-drag-text, html.cursor-native-drag-text *) {
+    cursor: var(--cursor-text) !important;
+}
+
+:is(html.cursor-native-drag-unavailable, html.cursor-native-drag-unavailable *) {
+    cursor: var(--cursor-unavailable) !important;
+}
+
+:is(html.cursor-autoscroll-horizontal, html.cursor-autoscroll-horizontal *) {
+    cursor: var(--cursor-resize-x) !important;
+}
+
+:is(html.cursor-autoscroll-vertical, html.cursor-autoscroll-vertical *) {
+    cursor: var(--cursor-resize-y) !important;
+}
+
+:is(html.cursor-autoscroll-dgn1, html.cursor-autoscroll-dgn1 *) {
+    cursor: var(--cursor-dgn1) !important;
+}
+
+:is(html.cursor-autoscroll-dgn2, html.cursor-autoscroll-dgn2 *) {
+    cursor: var(--cursor-dgn2) !important;
+}
+
+:is(
+    html.cursor-autoscroll-all,
+    html.cursor-autoscroll-horizontal,
+    html.cursor-autoscroll-vertical,
+    html.cursor-autoscroll-dgn1,
+    html.cursor-autoscroll-dgn2
+) {
+    user-select: none;
+}

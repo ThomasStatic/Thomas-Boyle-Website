@@ -25,6 +25,7 @@
 .circular-image {
   aspect-ratio: 1;
   border-radius: 25%;
+  cursor: var(--cursor-person);
   flex: 0 0 clamp(14rem, 20vw, 23rem);
   height: auto;
   object-fit: cover;
@@ -37,6 +38,7 @@
 
 .header-slogan {
   color: #f9fbf2;
+  cursor: var(--cursor-default);
   font-family: "VT323", Arimo, Roboto, Poppins;
   font-size: clamp(3rem, 3.4vw, 4.15rem);
   font-weight: 400;
