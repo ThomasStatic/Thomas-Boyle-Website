@@ -1,50 +1,125 @@
-a{
+:host {
+    display: block;
+    color: #f9fbf2;
+    font-family: "VT323", Arimo, Roboto, Poppins;
+}
+
+a {
     color: #246EB9;
     font-weight: bolder;
 }
 
-a:active{
+a:active {
     color: #BF9ACA;
 }
 
-.font{
-    font-family: "VT323", Arimo, Roboto, Poppins;
+.landing-screen {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    padding-top: clamp(4.75rem, 8vh, 6.5rem);
 }
 
-.interesting-header{
-    font-size: 3rem;
-    font-weight: 400;
+app-header {
+    display: block;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.interesting-header {
+    box-sizing: border-box;
     color: #f9fbf2;
-    padding-top: 1rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    display: block;
+    font-size: clamp(1.75rem, 3vw, 3rem);
+    font-weight: 400;
+    line-height: 1;
+    margin: 0;
+    padding: 0 clamp(1rem, 4vw, 3rem) clamp(1rem, 3vh, 2rem);
 }
 
-@media (width <= 1600px) {
-    .interesting-header {
-        font-size: 1.5rem;
-    }
+.scroll-arrow {
+    display: inline-block;
+    line-height: 1;
+    margin-left: 0.15rem;
+    transform: translateY(0.12em);
+    vertical-align: baseline;
 }
 
-.interesting-body{
-    padding-left: 4rem;
-    padding-bottom: 1.5rem;
-    
+.scroll-arrow::before {
+    animation: scroll-arrow-blink 1.5s steps(2) infinite;
+    content: "\25BE";
+}
+
+.interesting-body {
+    box-sizing: border-box;
+    padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1.25rem, 6vw, 4rem) 2rem;
+
     div {
-        padding-top: 2rem;
-        padding-right: 4rem;
-        
+        max-width: 76rem;
+        padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+
         h3 {
+            color: #f9fbf2;
+            font-size: clamp(1.7rem, 2.4vw, 2.15rem);
             font-weight: 400;
-            font-size: 2rem;
-            color: #f9fbf2;
-        }
-        
-        p{
-            color: #f9fbf2;
-            font-size: 1.3rem;
+            line-height: 1.05;
+            margin: 0 0 0.75rem;
         }
 
+        p {
+            color: #f9fbf2;
+            font-size: clamp(1.2rem, 1.8vw, 1.35rem);
+            line-height: 1.2;
+            margin: 0 0 1rem;
+        }
     }
-    
+}
+
+@media (width <= 1024px) {
+    .landing-screen {
+        padding-top: 5.25rem;
+    }
+
+    .interesting-header {
+        font-size: clamp(1.65rem, 4vw, 2.35rem);
+        padding-bottom: 1.25rem;
+    }
+}
+
+@media (width <= 640px) {
+    .landing-screen {
+        padding-top: 6.25rem;
+    }
+
+    .interesting-header {
+        font-size: clamp(1.45rem, 8vw, 1.85rem);
+        padding: 0 1rem 1rem;
+    }
+
+    .interesting-body {
+        padding-inline: 1rem;
+
+        div {
+            h3 {
+                font-size: 1.55rem;
+            }
+
+            p {
+                font-size: 1.15rem;
+            }
+        }
+    }
+}
+
+@keyframes cursor-blink {
+    0% {
+        opacity: 0;
+    }
+}
+
+@keyframes scroll-arrow-blink {
+    50% {
+        opacity: 0;
+    }
 }
