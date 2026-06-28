@@ -7,7 +7,7 @@
 </div>
 
 <div class="subsection">
-    <div class="paragraph-image-block">
+    <div class="paragraph-image-block problem-block">
         <div>
             <h2 class="site-text">The Problem: Selling Power Is Not as Simple as &quot;Charge More&quot;</h2>
             <p class="site-text">
@@ -27,11 +27,16 @@
                 competitively, when to hold margin, and how to balance the two better than a fixed rule-based strategy?
             </p>
         </div>
+        <img
+            class="diagram supply-stack-diagram"
+            src="supply-stack.jpg"
+            alt="Supply stack diagram showing how market demand sets the clearing price and which generators clear."
+        >
     </div>
 </div>
 
 <div class="subsection">
-    <div class="paragraph-image-block">
+    <div class="paragraph-image-block project-block">
         <div>
             <h2 class="site-text">The Project</h2>
             <p class="site-text">
@@ -51,11 +56,16 @@
                 competition, and uncertainty all matter at the same time.
             </p>
         </div>
+        <img
+            class="diagram market-process-diagram"
+            src="market-clearing-process.png"
+            alt="Flowchart showing generator, submit bid, market clears, cleared or not cleared, and profit outcome."
+        >
     </div>
 </div>
 
 <div class="subsection">
-    <div class="paragraph-image-block">
+    <div class="paragraph-image-block mdp-block">
         <div>
             <h2 class="site-text">Turning a Messy Market Into Something an Agent Can Learn From</h2>
             <p class="site-text">
@@ -64,6 +74,11 @@
                 influence one another. In other words: it is much closer to a partially observable game than a neat
                 little spreadsheet.
             </p>
+            <img
+                class="markov-decision-process-diagram"
+                src="markov-decision-process.png"
+                alt="Diagram of a Markov Decision Process with three states and transition probabilities."
+            >
             <p class="site-text">
                 To make the problem tractable, we modelled the market as a finite Markov Decision Process. The state
                 captures the information a generator could reasonably use when bidding, including recent price and load
@@ -80,7 +95,7 @@
 </div>
 
 <div class="subsection">
-    <div class="paragraph-image-block">
+    <div class="paragraph-image-block agent-block">
         <div>
             <h2 class="site-text">What the Agent Actually Sees and Does</h2>
             <p class="site-text">
@@ -114,12 +129,202 @@
                 I also used warm starts based on economically sensible cost-plus policies. Starting from a reasonable
                 baseline gave the agents a better first guess than trying random things until the grid loses patience.
             </p>
+            <div class="parameter-table-wrapper" aria-label="Selected model parameters">
+                <table class="parameter-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter Name</th>
+                            <th>Type</th>
+                            <th>What it controls</th>
+                            <th>1-Agent</th>
+                            <th>3-Agent</th>
+                            <th>5-Agent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>brgap k eval</td>
+                            <td>Threshold</td>
+                            <td>How often the bid-reward gap is evaluated for convergence checks.</td>
+                            <td>60</td>
+                            <td>60</td>
+                            <td>60</td>
+                        </tr>
+                        <tr>
+                            <td>brgap late save threshold</td>
+                            <td>Threshold</td>
+                            <td>Minimum late-training improvement needed before saving a policy.</td>
+                            <td>0.10</td>
+                            <td>0.25</td>
+                            <td>0.25</td>
+                        </tr>
+                        <tr>
+                            <td>brgap train mode</td>
+                            <td>Threshold</td>
+                            <td>Policy used when the bid-reward gap routine continues training.</td>
+                            <td>greedy q</td>
+                            <td>greedy q</td>
+                            <td>greedy q</td>
+                        </tr>
+                        <tr>
+                            <td>late save min episodes</td>
+                            <td>Threshold</td>
+                            <td>Earliest episode where late-training save logic can activate.</td>
+                            <td>1500</td>
+                            <td>1750</td>
+                            <td>1750</td>
+                        </tr>
+                        <tr>
+                            <td>q delta threshold</td>
+                            <td>Threshold</td>
+                            <td>Q-value movement threshold used to judge whether learning has stabilized.</td>
+                            <td>0.2</td>
+                            <td>0.2</td>
+                            <td>0.2</td>
+                        </tr>
+                        <tr>
+                            <td>q delta window</td>
+                            <td>Threshold</td>
+                            <td>Number of recent Q-delta measurements used for stabilization checks.</td>
+                            <td>10</td>
+                            <td>10</td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td>risk penalty lambda</td>
+                            <td>Risk</td>
+                            <td>Strength of the penalty applied to riskier bidding behaviour.</td>
+                            <td>0.0</td>
+                            <td>0.0</td>
+                            <td>0.0</td>
+                        </tr>
+                        <tr>
+                            <td>max notional q</td>
+                            <td>Risk</td>
+                            <td>Upper bound on the notional bid quantity exposed to the policy.</td>
+                            <td>0.95</td>
+                            <td>0.95</td>
+                            <td>0.95</td>
+                        </tr>
+                        <tr>
+                            <td>warm start q</td>
+                            <td>Learning</td>
+                            <td>Whether the Q-table starts from an economically sensible baseline.</td>
+                            <td>True</td>
+                            <td>True</td>
+                            <td>True</td>
+                        </tr>
+                        <tr>
+                            <td>policy freeze k</td>
+                            <td>Learning</td>
+                            <td>How long a learned policy is held fixed before updating again.</td>
+                            <td>5</td>
+                            <td>10</td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td>learning rate</td>
+                            <td>Learning</td>
+                            <td>Initial size of each Q-learning update.</td>
+                            <td>1.0</td>
+                            <td>1.0</td>
+                            <td>1.0</td>
+                        </tr>
+                        <tr>
+                            <td>learning rate exponent</td>
+                            <td>Learning</td>
+                            <td>Controls how quickly learning-rate effects decay over training.</td>
+                            <td>0.7</td>
+                            <td>0.7</td>
+                            <td>0.7</td>
+                        </tr>
+                        <tr>
+                            <td>temperature</td>
+                            <td>Temperature</td>
+                            <td>Initial softness of the action-selection distribution.</td>
+                            <td>1.0</td>
+                            <td>1.0</td>
+                            <td>1.0</td>
+                        </tr>
+                        <tr>
+                            <td>temperature decay</td>
+                            <td>Temperature</td>
+                            <td>Rate at which exploration cools as training progresses.</td>
+                            <td>0.9993</td>
+                            <td>0.9993</td>
+                            <td>0.9995*</td>
+                        </tr>
+                        <tr>
+                            <td>temperature min</td>
+                            <td>Temperature</td>
+                            <td>Lower bound on exploration temperature.</td>
+                            <td>0.05</td>
+                            <td>0.05</td>
+                            <td>0.05</td>
+                        </tr>
+                        <tr>
+                            <td>temperature mode</td>
+                            <td>Temperature</td>
+                            <td>Schedule used to reduce exploration over time.</td>
+                            <td>exp decay</td>
+                            <td>exp decay</td>
+                            <td>exp decay</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="parameter-table-note">
+                    *Slower decay in the 5-agent case sustains exploration over a larger joint action space.
+                </p>
+            </div>
+            <div class="model-settings-table-wrapper" aria-label="Related model settings">
+                <table class="model-settings-table">
+                    <thead>
+                        <tr>
+                            <th>Model Setting</th>
+                            <th>Value Used</th>
+                            <th>Why it matters</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>State representation</td>
+                            <td>Discretized price, load, forecast, and time features</td>
+                            <td>Turns noisy market context into a finite state space the Q-table can learn over.</td>
+                        </tr>
+                        <tr>
+                            <td>Action representation</td>
+                            <td>Finite bid grid over price and quantity</td>
+                            <td>Keeps bidding decisions transparent and compatible with tabular Q-learning.</td>
+                        </tr>
+                        <tr>
+                            <td>Reward definition</td>
+                            <td>Profit from cleared quantity, clearing price, and sampled marginal cost</td>
+                            <td>Aligns learning with economic payoff instead of only dispatch frequency.</td>
+                        </tr>
+                        <tr>
+                            <td>Market clearing</td>
+                            <td>Uniform-price, merit-order clearing with partial clearing at the margin</td>
+                            <td>Captures the supply-stack mechanics that determine whether bids clear.</td>
+                        </tr>
+                        <tr>
+                            <td>Opponent model</td>
+                            <td>Fuel-band Gaussian bid sampling in multi-agent cases</td>
+                            <td>Creates heterogeneous competitors without needing private plant-level cost curves.</td>
+                        </tr>
+                        <tr>
+                            <td>Marginal cost proxy</td>
+                            <td>Henry Hub gas price distribution</td>
+                            <td>Grounds generation cost variation in real energy-market data.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="subsection">
-    <div class="paragraph-image-block">
+    <div class="paragraph-image-block multi-agent-block">
         <div>
             <h2 class="site-text">Multi-Agent Competition: Where It Gets Interesting</h2>
             <p class="site-text">
@@ -137,6 +342,11 @@
                 are learning in a market shaped by other learners. That is a much more accurate reflection of
                 competitive environments than assuming every competitor politely remains frozen in place.
             </p>
+            <img
+                class="policy-freeze-ablation-diagram"
+                src="policy-freeze-ablation-agent-comparison.png"
+                alt="Policy freeze ablation chart comparing cumulative reward over episodes for different agent counts and freeze windows."
+            >
         </div>
     </div>
 </div>
@@ -171,6 +381,232 @@
                 <li class="site-text">Tested sensitivity to warm starts, exploration schedules, risk controls, demand changes, and competition assumptions</li>
                 <li class="site-text">Examined learned bids for economic plausibility instead of treating raw profit as the only metric that matters</li>
             </ul>
+            <h3 class="site-text results-subheading">Training Diagnostics</h3>
+            <p class="site-text">
+                The reward curves show how realized profit evolved during training, while the max Q-value change plots
+                track whether the learned value function was stabilizing. Across the one-, three-, and five-agent
+                settings, the early updates are large and noisy before settling into smaller policy adjustments.
+            </p>
+            <div class="result-figure-grid">
+                <figure>
+                    <img src="reward-1-agent.png" alt="Reward per episode for the single-agent training case.">
+                    <figcaption>Single-agent reward per episode.</figcaption>
+                </figure>
+                <figure>
+                    <img src="max-delta-q-1-agent.png" alt="Max Q-value change per episode for the single-agent training case.">
+                    <figcaption>Single-agent max Q-value change.</figcaption>
+                </figure>
+                <figure>
+                    <img src="reward-3-agent.png" alt="Reward per episode for the three-agent training case.">
+                    <figcaption>Three-agent reward per episode.</figcaption>
+                </figure>
+                <figure>
+                    <img src="max-delta-q-3-agent.png" alt="Max Q-value change per episode for the three-agent training case.">
+                    <figcaption>Three-agent max Q-value change.</figcaption>
+                </figure>
+                <figure>
+                    <img src="reward-5-agent.png" alt="Reward per episode for the five-agent training case.">
+                    <figcaption>Five-agent reward per episode.</figcaption>
+                </figure>
+                <figure>
+                    <img src="max-delta-q-5-agent.png" alt="Max Q-value change per episode for the five-agent training case.">
+                    <figcaption>Five-agent max Q-value change.</figcaption>
+                </figure>
+            </div>
+
+            <h3 class="site-text results-subheading">Benchmark Results</h3>
+            <p class="site-text">
+                The raw benchmark tables compare the learned RL policies against fixed cost-plus bidding rules. The
+                three-agent case is dominated by an undercutting strategy, while the five-agent case shows a more
+                sophisticated policy tracking the marginal resource.
+            </p>
+            <div class="results-table-wrapper" aria-label="Three-agent benchmark results">
+                <table class="results-table">
+                    <caption>Three-agent case</caption>
+                    <thead>
+                        <tr>
+                            <th>Policy</th>
+                            <th>Mean Profit ($)</th>
+                            <th>Profit Std ($)</th>
+                            <th>Win Rate (%)</th>
+                            <th>Profit Share (%)</th>
+                            <th>Mean Bid ($/MWh)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cost-Plus 25%</td>
+                            <td>51,086</td>
+                            <td>61,127</td>
+                            <td>10.71</td>
+                            <td>10.45</td>
+                            <td>294.55</td>
+                        </tr>
+                        <tr>
+                            <td>Cost-Plus 30%</td>
+                            <td>49,091</td>
+                            <td>58,893</td>
+                            <td>3.57</td>
+                            <td>10.00</td>
+                            <td>294.55</td>
+                        </tr>
+                        <tr>
+                            <td>Cost-Plus 35%</td>
+                            <td>45,872</td>
+                            <td>53,992</td>
+                            <td>3.57</td>
+                            <td>9.35</td>
+                            <td>294.55</td>
+                        </tr>
+                        <tr>
+                            <td>RL Agent 0</td>
+                            <td>56,353</td>
+                            <td>61,714</td>
+                            <td>35.71</td>
+                            <td>27.94</td>
+                            <td>64.70</td>
+                        </tr>
+                        <tr>
+                            <td>RL Agent 1</td>
+                            <td>74,392</td>
+                            <td>92,194</td>
+                            <td>28.57</td>
+                            <td>22.60</td>
+                            <td>58.52</td>
+                        </tr>
+                        <tr>
+                            <td>RL Agent 2</td>
+                            <td>66,661</td>
+                            <td>86,542</td>
+                            <td>17.86</td>
+                            <td>19.65</td>
+                            <td>63.66</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="results-table-wrapper" aria-label="Five-agent benchmark results">
+                <table class="results-table wide-results-table">
+                    <caption>Five-agent case</caption>
+                    <thead>
+                        <tr>
+                            <th>Policy</th>
+                            <th>Mean Profit ($)</th>
+                            <th>Profit Std ($)</th>
+                            <th>Win Rate (%)</th>
+                            <th>Profit Share (%)</th>
+                            <th>Mean Bid ($/MWh)</th>
+                            <th>Min ($)</th>
+                            <th>CVaR10 ($)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cost-Plus 25%</td>
+                            <td>41,814</td>
+                            <td>51,638</td>
+                            <td>7.14</td>
+                            <td>7.49</td>
+                            <td>294.55</td>
+                            <td>0.00</td>
+                            <td>0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Cost-Plus 30%</td>
+                            <td>44,488</td>
+                            <td>50,992</td>
+                            <td>0.00</td>
+                            <td>7.48</td>
+                            <td>294.55</td>
+                            <td>0.00</td>
+                            <td>0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Cost-Plus 35%</td>
+                            <td>43,664</td>
+                            <td>49,461</td>
+                            <td>3.57</td>
+                            <td>7.40</td>
+                            <td>294.55</td>
+                            <td>0.00</td>
+                            <td>0.00</td>
+                        </tr>
+                        <tr>
+                            <td>RL Agent 0</td>
+                            <td>54,373</td>
+                            <td>68,429</td>
+                            <td>17.86</td>
+                            <td>15.61</td>
+                            <td>63.82</td>
+                            <td>2,034</td>
+                            <td>3,206</td>
+                        </tr>
+                        <tr>
+                            <td>RL Agent 1</td>
+                            <td>80,295</td>
+                            <td>98,088</td>
+                            <td>42.86</td>
+                            <td>20.94</td>
+                            <td>81.68</td>
+                            <td>2,018</td>
+                            <td>2,285</td>
+                        </tr>
+                        <tr>
+                            <td>RL Agent 2</td>
+                            <td>56,320</td>
+                            <td>65,311</td>
+                            <td>3.57</td>
+                            <td>13.43</td>
+                            <td>78.75</td>
+                            <td>1,380</td>
+                            <td>1,930</td>
+                        </tr>
+                        <tr>
+                            <td>RL Agent 3</td>
+                            <td>63,471</td>
+                            <td>91,224</td>
+                            <td>0.00</td>
+                            <td>13.82</td>
+                            <td>79.90</td>
+                            <td>-2,265</td>
+                            <td>-159</td>
+                        </tr>
+                        <tr>
+                            <td>RL Agent 4</td>
+                            <td>71,663</td>
+                            <td>108,618</td>
+                            <td>25.00</td>
+                            <td>13.80</td>
+                            <td>60.61</td>
+                            <td>-806</td>
+                            <td>2,092</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="site-text results-subheading">Validation Checks</h3>
+            <p class="site-text">
+                I also checked whether the learned policies behaved sensibly under market-mechanism and robustness
+                diagnostics: best-response gaps, merit-order clearing behaviour, and demand elasticity perturbations.
+            </p>
+            <div class="validation-figure-grid">
+                <figure>
+                    <img src="brgap-per-episode.png" alt="Best-response gap per episode across agents.">
+                    <figcaption>Best-response gap across late training episodes.</figcaption>
+                </figure>
+                <figure>
+                    <img src="elasticity-perturbation-cumulative-reward.png" alt="Cumulative reward under different demand elasticity perturbations.">
+                    <figcaption>Reward sensitivity under demand-elasticity perturbations.</figcaption>
+                </figure>
+            </div>
+            <figure class="wide-result-figure">
+                <div class="wide-result-scroll">
+                    <img src="merit-order-per-episode.png" alt="Merit-order curves across selected training episodes.">
+                </div>
+                <figcaption>Merit-order clearing snapshots show whether simulated dispatch follows plausible supply-stack structure.</figcaption>
+            </figure>
         </div>
     </div>
 </div>
