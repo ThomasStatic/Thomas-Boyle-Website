@@ -28,7 +28,33 @@ a {
     font-family: "VT323", Arimo, Roboto, Poppins;
     font-size: clamp(1.4rem, 2.5vw, 2rem);
     line-height: 1;
+    position: relative;
     text-decoration: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+a:hover,
+a:focus-visible {
+    color: #ffd66b;
+    transform: translateY(-1px);
+}
+
+a::after {
+    background-color: currentColor;
+    bottom: -0.2rem;
+    content: "";
+    height: 2px;
+    left: 0;
+    position: absolute;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s ease;
+    width: 100%;
+}
+
+a:hover::after,
+a:focus-visible::after {
+    transform: scaleX(1);
 }
 
 a:active {
@@ -76,6 +102,11 @@ a:active {
         text-wrap: balance;
         white-space: normal;
         width: 100%;
+    }
+
+    a:hover,
+    a:focus-visible {
+        background-color: #444343;
     }
 
     .nav-label-full {
