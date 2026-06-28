@@ -1,15 +1,49 @@
 <nav>
     <ul>
-        <li><a href="/">Home</a></li>
         <li>
-            <a href="/capstone" aria-label="Machine Learning Thesis">
+            <a
+                routerLink="/"
+                routerLinkActive="active-route"
+                [routerLinkActiveOptions]="{ exact: true }"
+                ariaCurrentWhenActive="page"
+                (click)="refreshIfCurrentRoute($event, '/')"
+            >
+                Home
+            </a>
+        </li>
+        <li>
+            <a
+                routerLink="/capstone"
+                routerLinkActive="active-route"
+                [routerLinkActiveOptions]="{ exact: true }"
+                ariaCurrentWhenActive="page"
+                aria-label="Machine Learning Thesis"
+                (click)="refreshIfCurrentRoute($event, '/capstone')"
+            >
                 <span class="nav-label-full">Machine Learning Thesis</span>
                 <span class="nav-label-short">Thesis</span>
             </a>
         </li>
-        <li><a href="/blackjack">Blackjack</a></li>
         <li>
-            <a href="/strong-visualizer" aria-label="Strong Visualizer">
+            <a
+                routerLink="/blackjack"
+                routerLinkActive="active-route"
+                [routerLinkActiveOptions]="{ exact: true }"
+                ariaCurrentWhenActive="page"
+                (click)="refreshIfCurrentRoute($event, '/blackjack')"
+            >
+                Blackjack
+            </a>
+        </li>
+        <li>
+            <a
+                routerLink="/strong-visualizer"
+                routerLinkActive="active-route"
+                [routerLinkActiveOptions]="{ exact: true }"
+                ariaCurrentWhenActive="page"
+                aria-label="Strong Visualizer"
+                (click)="refreshIfCurrentRoute($event, '/strong-visualizer')"
+            >
                 <span class="nav-label-full">Strong Visualizer</span>
                 <span class="nav-label-short">Visualizer</span>
             </a>

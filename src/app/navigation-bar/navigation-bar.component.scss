@@ -39,6 +39,10 @@ a:focus-visible {
     transform: translateY(-1px);
 }
 
+a.active-route:hover {
+    cursor: var(--cursor-refresh) !important;
+}
+
 a::after {
     background-color: currentColor;
     bottom: -0.2rem;
