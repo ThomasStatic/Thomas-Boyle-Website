@@ -5,12 +5,20 @@
 }
 
 a {
-    color: #246EB9;
-    font-weight: bolder;
-}
+    color: #7ee7d8;
+    text-decoration-color: rgba(126, 231, 216, 0.75);
+    text-underline-offset: 0.18em;
 
-a:active {
-    color: #BF9ACA;
+    &:visited {
+        color: #f8d66d;
+        text-decoration-color: rgba(248, 214, 109, 0.75);
+    }
+
+    &:hover,
+    &:focus-visible {
+        color: #ffffff;
+        text-decoration-color: #ffffff;
+    }
 }
 
 .landing-screen {
