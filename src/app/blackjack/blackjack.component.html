@@ -1,67 +1,65 @@
-<div class="hand-of-cards">
-    @if(!userStanding() && betPlaced()) {
-        <img src="playing-cards/red_backing.png" alt="" class="card">
-        <img [src]="getImagePath(dealersHand()[1])" alt="" class="card">
-    }
-    @else {
-        @for(card of dealersHand(); track $index) {
-            <img [src]="getImagePath(card)" alt="" class="card">
+<section class="blackjack-table">
+    <section class="hand-section dealer-hand-section">
+        <div class="hand-of-cards" aria-label="Dealer hand">
+            @if(!userStanding() && betPlaced()) {
+                <img src="playing-cards/red_backing.png" alt="" class="card">
+                <img [src]="getImagePath(dealersHand()[1])" alt="" class="card">
+            }
+            @else {
+                @for(card of dealersHand(); track $index) {
+                    <img [src]="getImagePath(card)" alt="" class="card">
+                }
+            }
+        </div>
+        @if(betPlaced()) {
+            <p class="centered hand-totals">{{ !userStanding() ? "Dealer showing: " + dealersTotal() : "Dealer has: " + dealersTotal()}}</p>
         }
-    }
-    
-</div>
-@if(betPlaced()) {
-    <div>
-        <p class="centered hand-totals">{{ !userStanding() ? "Dealer showing: " + dealersTotal() : "Dealer has: " + dealersTotal()}}</p>
+    </section>
+
+    <section class="hand-section player-hand-section">
+        <div class="hand-of-cards" aria-label="Player hand">
+            @for(card of playersHand(); track $index) {
+                <img [src]="getImagePath(card)" alt="" class="card">
+            }
+        </div>
+        @if(betPlaced()) {
+            <div class="controls centered">
+                <button mat-stroked-button (click)="hit('Player')" [disabled]="!disableResetButton()">Hit</button>
+                <button mat-stroked-button (click)="stand()" [disabled]="!disableResetButton()">Stand</button>
+            </div>
+            <p class="centered hand-totals">{{ !userStanding() ? "You have: " + playersTotal() : "Standing with: " + playersTotal()}}</p>
+        }
+    </section>
+
+    <div class="centered betting-container">
+        <button matFab class="betting-button" (click)="changeBet(-10)" [disabled]="betPlaced()">
+            <mat-icon>arrow_left</mat-icon>
+        </button>
+        <mat-chip-set>
+            <mat-chip>{{ userBet() }}</mat-chip>
+        </mat-chip-set>
+
+        <button matFab class="betting-button" (click)="changeBet(10)" [disabled]="betPlaced()">
+            <mat-icon>arrow_right</mat-icon>
+        </button>
+
+        <button 
+            class="centered place-bet" 
+            mat-stroked-button 
+            (click)="placeBet()"
+            [disabled]="betPlaced()"
+        >
+            Place Bet
+        </button>
+        <button 
+            class="centered place-bet" 
+            mat-stroked-button 
+            (click)="resetGame()" 
+            [disabled]="disableResetButton()"
+        >
+            Reset Game
+        </button>
     </div>
-}
 
-<div class="hand-of-cards">
-    @for(card of playersHand(); track $index) {
-        <img [src]="getImagePath(card)" alt="" class="card">
-    }
-
-    
-</div>
-
-@if(betPlaced()) {
-    <div class="controls centered">
-        <button mat-stroked-button (click)="hit('Player')" [disabled]="!disableResetButton()">Hit</button>
-        <button mat-stroked-button (click)="stand()" [disabled]="!disableResetButton()">Stand</button>
-    </div>
-    <div>
-        <p class="centered hand-totals">{{ !userStanding() ? "You have: " + playersTotal() : "Standing with: " + playersTotal()}}</p>
-    </div>
-}
-
-<div class="centered betting-container">
-    <button matFab class="betting-button" (click)="changeBet(-10)" [disabled]="betPlaced()">
-        <mat-icon>arrow_left</mat-icon>
-    </button>
-    <mat-chip-set>
-        <mat-chip>{{ userBet() }}</mat-chip>
-    </mat-chip-set>
-
-    <button matFab class="betting-button" (click)="changeBet(10)" [disabled]="betPlaced()">
-        <mat-icon>arrow_right</mat-icon>
-    </button>
-
-    <button 
-        class="centered place-bet" 
-        mat-stroked-button 
-        (click)="placeBet()"
-        [disabled]="betPlaced()"
-    >
-        Place Bet
-    </button>
-    <button 
-        class="centered place-bet" 
-        mat-stroked-button 
-        (click)="resetGame()" 
-        [disabled]="disableResetButton()"
-    >
-        Reset Game
-    </button>
-</div>
-
-<p class="bank-amount">Bank: {{ userBank()}}</p>
+    <p class="bank-amount">Bank: {{ userBank()}}</p>
+</section>
