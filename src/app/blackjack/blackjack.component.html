@@ -30,6 +30,9 @@
                             <div class="controls centered">
                                 <button mat-stroked-button (click)="hit('Player')" [disabled]="!canHitActiveHand()">Hit</button>
                                 <button mat-stroked-button (click)="stand()" [disabled]="!canActOnActiveHand()">Stand</button>
+                                @if(shouldShowSplitButton($index)) {
+                                    <button mat-stroked-button (click)="split($index)" [disabled]="!canSplit($index)">Split</button>
+                                }
                             </div>
                         }
                         <p class="centered hand-totals">{{ getPlayerHandTotalText($index) }}</p>
@@ -47,8 +50,8 @@
                 <div class="controls centered">
                     <button mat-stroked-button (click)="hit('Player')" [disabled]="!canHitActiveHand()">Hit</button>
                     <button mat-stroked-button (click)="stand()" [disabled]="!canActOnActiveHand()">Stand</button>
-                    @if(shouldShowSplitButton()) {
-                        <button mat-stroked-button (click)="split()" [disabled]="!canSplit()">Split</button>
+                    @if(shouldShowSplitButton(0)) {
+                        <button mat-stroked-button (click)="split(0)" [disabled]="!canSplit(0)">Split</button>
                     }
                 </div>
                 <p class="centered hand-totals">{{ getPlayerHandTotalText(0) }}</p>

@@ -222,33 +222,46 @@ export class BlackjackComponent implements OnInit {
     return this.canActOnActiveHand() && this.getPlayerHandTotal(this.activePlayerHandIndex()) < 21;
   }
 
-  protected shouldShowSplitButton(): boolean {
-    const hand = this.playerHands()[0];
+  protected shouldShowSplitButton(handIndex: number): boolean {
+    const hand = this.playerHands()[handIndex] ?? [];
     return this.betPlaced()
-      && !this.splitActive()
       && !this.userStanding()
       && this.disableResetButton()
-      && this.activePlayerHandIndex() === 0
+      && this.isActivePlayerHand(handIndex)
       && hand.length === 2
       && this.cardSplitValue(hand[0]) === this.cardSplitValue(hand[1]);
   }
 
-  protected canSplit(): boolean {
-    return this.shouldShowSplitButton() && this.userBank() >= this.userBet() * 2;
+  protected canSplit(handIndex: number): boolean {
+    const wagerAfterSplit = this.userBet() * (this.playerHands().length + 1);
+    return this.shouldShowSplitButton(handIndex) && this.userBank() >= wagerAfterSplit;
   }
 
-  protected split(): void {
-    if(!this.canSplit()) {
+  protected split(handIndex: number): void {
+    if(!this.canSplit(handIndex)) {
       return;
     }
 
-    const [firstCard, secondCard] = this.playerHands()[0];
-    this.playerHands.set([
+    const currentHands = this.playerHands();
+    const currentStatuses = this.playerHandStatuses();
+    const [firstCard, secondCard] = currentHands[handIndex];
+    const splitHands = [
       [firstCard, this.deck?.takeCard() as PlayingCard],
       [secondCard, this.deck?.takeCard() as PlayingCard]
+    ];
+
+    this.playerHands.set([
+      ...currentHands.slice(0, handIndex),
+      ...splitHands,
+      ...currentHands.slice(handIndex + 1)
     ]);
-    this.playerHandStatuses.set(['playing', 'playing']);
-    this.activePlayerHandIndex.set(0);
+    this.playerHandStatuses.set([
+      ...currentStatuses.slice(0, handIndex),
+      'playing',
+      'playing',
+      ...currentStatuses.slice(handIndex + 1)
+    ]);
+    this.activePlayerHandIndex.set(handIndex);
     this.splitActive.set(true);
   }
 

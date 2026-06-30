@@ -6,6 +6,7 @@
   justify-content: center;
   min-height: 100vh;
   min-height: 100svh;
+  overflow-x: hidden;
   padding: clamp(5rem, 9vh, 6rem) clamp(1rem, 4vw, 2.5rem) clamp(6rem, 12vh, 7.5rem);
 }
 
@@ -47,27 +48,30 @@
 }
 
 .controls {
+  flex-wrap: wrap;
+  gap: 8px;
   min-height: 40px;
   padding-top: 16px;
 
   button {
-    margin: 0 4px;
+    margin: 0;
   }
 }
 
 .split-hands {
   align-items: start;
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: clamp(1.5rem, 8vw, 6rem);
-  grid-template-columns: repeat(2, minmax(8rem, 1fr));
   justify-content: center;
-  max-width: 38rem;
-  width: min(100%, 38rem);
+  max-width: min(100%, 72rem);
+  width: 100%;
 }
 
 .split-hand {
   align-items: center;
   display: flex;
+  flex: 0 1 clamp(8.5rem, 18vw, 13rem);
   flex-direction: column;
   min-width: 0;
 }
@@ -200,13 +204,16 @@ mat-chip-set {
 
   .split-hands {
     gap: 0.75rem;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
+  }
+
+  .split-hand {
+    flex-basis: min(100%, 11rem);
   }
 
   .split-hand .controls {
     button {
-      min-width: 4.5rem;
+      min-width: 4rem;
       padding-inline: 0.75rem;
     }
   }
