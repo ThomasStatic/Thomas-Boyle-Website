@@ -44,34 +44,38 @@
             </button>
         </div>
 
-        <div class="centered betting-container">
-            <button matFab class="betting-button" (click)="changeBet(-10)" [disabled]="!canDecreaseBet()">
-                <mat-icon>arrow_left</mat-icon>
-            </button>
-            <mat-chip-set>
-                <mat-chip>{{ userBet() }}</mat-chip>
-            </mat-chip-set>
+        <div class="betting-container">
+            <div class="bet-amount-controls">
+                <button matFab class="betting-button" (click)="changeBet(-10)" [disabled]="!canDecreaseBet()">
+                    <mat-icon>arrow_left</mat-icon>
+                </button>
+                <mat-chip-set>
+                    <mat-chip>{{ userBet() }}</mat-chip>
+                </mat-chip-set>
 
-            <button matFab class="betting-button" (click)="changeBet(10)" [disabled]="!canIncreaseBet()">
-                <mat-icon>arrow_right</mat-icon>
-            </button>
+                <button matFab class="betting-button" (click)="changeBet(10)" [disabled]="!canIncreaseBet()">
+                    <mat-icon>arrow_right</mat-icon>
+                </button>
+            </div>
 
-            <button 
-                class="centered place-bet" 
-                mat-stroked-button 
-                (click)="placeBet()"
-                [disabled]="!canPlaceBet()"
-            >
-                Place Bet
-            </button>
-            <button 
-                class="centered place-bet" 
-                mat-stroked-button 
-                (click)="resetGame()" 
-                [disabled]="disableResetButton()"
-            >
-                Reset Game
-            </button>
+            <div class="bet-action-buttons">
+                <button 
+                    class="centered place-bet" 
+                    mat-stroked-button 
+                    (click)="placeBet()"
+                    [disabled]="!canPlaceBet()"
+                >
+                    Place Bet
+                </button>
+                <button 
+                    class="centered place-bet" 
+                    mat-stroked-button 
+                    (click)="resetGame()" 
+                    [disabled]="disableResetButton()"
+                >
+                    Reset Game
+                </button>
+            </div>
         </div>
     </div>
 </section>
