@@ -55,6 +55,29 @@
   }
 }
 
+.split-hands {
+  align-items: start;
+  display: grid;
+  gap: clamp(1.5rem, 8vw, 6rem);
+  grid-template-columns: repeat(2, minmax(8rem, 1fr));
+  justify-content: center;
+  max-width: 38rem;
+  width: min(100%, 38rem);
+}
+
+.split-hand {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.active-split-hand {
+  .hand-of-cards .card {
+    filter: drop-shadow(0 0 6px rgba(191, 154, 202, 0.65));
+  }
+}
+
 p {
   color: #f9fbf2;
   font-family: "VT323", Arimo, Roboto, Poppins;
@@ -173,5 +196,22 @@ mat-chip-set {
 
   .bank-amount {
     font-size: 1.65rem;
+  }
+
+  .split-hands {
+    gap: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .split-hand .controls {
+    button {
+      min-width: 4.5rem;
+      padding-inline: 0.75rem;
+    }
+  }
+
+  .split-hand .hand-totals {
+    font-size: 1.45rem;
   }
 }

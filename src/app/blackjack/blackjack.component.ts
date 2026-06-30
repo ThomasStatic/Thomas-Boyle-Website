@@ -6,6 +6,14 @@ import { EndOfGameDialogComponent } from './end-of-game-dialog/end-of-game-dialo
 import {MatChipsModule} from '@angular/material/chips';
 import {MatIconModule} from '@angular/material/icon';
 
+type PlayerHandStatus = 'playing' | 'stood' | 'busted';
+
+interface RoundResult {
+  title: string;
+  message: string;
+  bankDelta: number;
+}
+
 @Component({
   selector: 'app-blackjack',
   standalone: true,
@@ -24,12 +32,14 @@ export class BlackjackComponent implements OnInit {
   cards: ICard[] = [];
 
   dealersHand: WritableSignal<PlayingCard[]> = signal([]);
-  playersHand: WritableSignal<PlayingCard[]> = signal([]);
+  playerHands: WritableSignal<PlayingCard[][]> = signal([[]]);
+  playerHandStatuses: WritableSignal<PlayerHandStatus[]> = signal(['playing']);
+  activePlayerHandIndex: WritableSignal<number> = signal(0);
 
-  playersTotal: WritableSignal<number> = signal(0);
   dealersTotal: WritableSignal<number> = signal(0);
 
   userStanding: WritableSignal<boolean> = signal(false);
+  splitActive: WritableSignal<boolean> = signal(false);
 
   userBank: WritableSignal<number> = signal(100);
   userBet: WritableSignal<number> = signal(10);
@@ -50,7 +60,8 @@ export class BlackjackComponent implements OnInit {
   }
 
   refreshDeck(): void {
-   for(const cardName of this.validCardNumbers) {
+    this.cards = [];
+    for(const cardName of this.validCardNumbers) {
       for(const suit of this.validCardSuits) {
         this.cards.push(new PlayingCard(cardName, suit));
       }
@@ -115,81 +126,287 @@ export class BlackjackComponent implements OnInit {
     this.refreshDeck();
     this.deck?.shuffle();
     this.dealersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
-    this.playersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
-    this.playersTotal.set(this.calcHandTotal(this.playersHand()));
+    this.playerHands.set([[this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]]);
+    this.playerHandStatuses.set(['playing']);
+    this.activePlayerHandIndex.set(0);
+    this.splitActive.set(false);
     this.dealersTotal.set(this.calcHandTotal([this.dealersHand()[1]])); // Only show the player the dealer's face-up card
 
     // If the player has blackjack, they shouldn't be able to hit
-    if(this.playersTotal() === 21) {
+    if(this.calcHandTotal(this.activePlayerHand()) === 21) {
       this.stand();
     }
   }
 
-  protected hit(whoHit: 'Player' | 'Dealer' = 'Dealer'): void {
-    if(whoHit === 'Player') {
-      this.playersHand.update(hand => [...hand, this.deck?.takeCard() as PlayingCard]);
-      this.playersTotal.set(this.calcHandTotal(this.playersHand()));
-    } else {
-      this.dealersHand.update(hand => [...hand, this.deck?.takeCard() as PlayingCard]);
-      this.dealersTotal.set(this.calcHandTotal(this.dealersHand()));
+  protected async hit(whoHit: 'Player' | 'Dealer' = 'Dealer'): Promise<void> {
+    if(whoHit === 'Dealer') {
+      this.hitDealer();
+      return;
     }
-    if(this.playersTotal() > 21) {
-      const dialogRef = this.dialog.open(EndOfGameDialogComponent, {
-        height: '200px',
-        width: '500px',
-        data: { title: 'Player Bust!', message: `You busted with ${this.playersTotal()}... dealer wins!` }
-      });
 
-      dialogRef.afterClosed().subscribe(() => {
-        this.setUserBank(this.userBank() - this.userBet());
-        this.disableResetButton.set(false);
+    if(!this.canHitActiveHand()) {
+      return;
+    }
+
+    const handIndex = this.activePlayerHandIndex();
+    this.addCardToPlayerHand(handIndex);
+
+    if(this.calcHandTotal(this.playerHands()[handIndex]) > 21) {
+      this.setPlayerHandStatus(handIndex, 'busted');
+
+      if(this.splitActive()) {
+        await this.advanceSplitHandOrResolve();
+        return;
+      }
+
+      this.openRoundDialog({
+        title: 'Player Bust!',
+        message: `You busted with ${this.getPlayerHandTotal(0)}... dealer wins!`,
+        bankDelta: -this.userBet()
       });
     }
   }
 
   protected async stand(): Promise<void> {
-    this.disableResetButton.set(false);
-    this.userStanding.set(true);
-    this.dealersTotal.set(this.calcHandTotal(this.dealersHand()));
-    this.playersTotal.set(this.calcHandTotal(this.playersHand()));
-    while(this.calcHandTotal(this.dealersHand()) < 17) {
-      await this.sleep(500);
-      this.hit('Dealer');
-    }
-    let dialogTitle: string = "";
-    let dialogMessage: string = "";
-    if(this.playersTotal() === 21 && this.dealersTotal() !== 21) { 
-      dialogTitle = "Blackjack!";
-      dialogMessage = "You got a blackjack! You win!";
-      this.setUserBank(this.userBank() + this.userBet()*2);
-    }
-    else if(this.dealersTotal() > 21) {
-      dialogTitle = "Dealer Bust!";
-      dialogMessage = `The dealer busted with ${this.dealersTotal()}... you win!`;
-      this.setUserBank(this.userBank() + this.userBet());
-    }
-    else if(this.dealersTotal() > this.playersTotal()) {
-      dialogTitle = "Dealer Wins!";
-      dialogMessage = `The dealer beat your ${this.playersTotal()} with ${this.dealersTotal()}!`;
-      this.setUserBank(this.userBank() - this.userBet());
-    }
-    else if(this.dealersTotal() === this.playersTotal()) {
-      dialogTitle = "Push!";
-      dialogMessage = `It's a push! Both you and the dealer have ${this.playersTotal()}.`;
-    }
-    else if(this.dealersTotal() < this.playersTotal()) {
-      dialogTitle = "You Win!";
-      dialogMessage = `You beat the dealer with ${this.playersTotal()} to their ${this.dealersTotal()}!`;
-      this.setUserBank(this.userBank() + this.userBet());
+    if(!this.canActOnActiveHand()) {
+      return;
     }
 
+    const handIndex = this.activePlayerHandIndex();
+    this.setPlayerHandStatus(handIndex, 'stood');
+
+    if(this.splitActive()) {
+      await this.advanceSplitHandOrResolve();
+      return;
+    }
+
+    await this.resolveRound();
+  }
+
+  protected handTotal(hand: PlayingCard[]): number {
+    return this.calcHandTotal(hand);
+  }
+
+  protected getPlayerHandTotal(handIndex: number): number {
+    return this.calcHandTotal(this.playerHands()[handIndex] ?? []);
+  }
+
+  protected getPlayerHandTotalText(handIndex: number): string {
+    const status = this.playerHandStatuses()[handIndex];
+    const total = this.getPlayerHandTotal(handIndex);
+
+    if(this.splitActive()) {
+      if(status === 'busted') {
+        return `Hand ${handIndex + 1} busted: ${total}`;
+      }
+
+      if(status === 'stood') {
+        return `Hand ${handIndex + 1} standing: ${total}`;
+      }
+
+      return `Hand ${handIndex + 1}: ${total}`;
+    }
+
+    return !this.userStanding() ? `You have: ${total}` : `Standing with: ${total}`;
+  }
+
+  protected isActivePlayerHand(handIndex: number): boolean {
+    return this.activePlayerHandIndex() === handIndex && this.playerHandStatuses()[handIndex] === 'playing';
+  }
+
+  protected canActOnActiveHand(): boolean {
+    return this.betPlaced() && this.disableResetButton() && this.isActivePlayerHand(this.activePlayerHandIndex());
+  }
+
+  protected canHitActiveHand(): boolean {
+    return this.canActOnActiveHand() && this.getPlayerHandTotal(this.activePlayerHandIndex()) < 21;
+  }
+
+  protected shouldShowSplitButton(): boolean {
+    const hand = this.playerHands()[0];
+    return this.betPlaced()
+      && !this.splitActive()
+      && !this.userStanding()
+      && this.disableResetButton()
+      && this.activePlayerHandIndex() === 0
+      && hand.length === 2
+      && this.cardSplitValue(hand[0]) === this.cardSplitValue(hand[1]);
+  }
+
+  protected canSplit(): boolean {
+    return this.shouldShowSplitButton() && this.userBank() >= this.userBet() * 2;
+  }
+
+  protected split(): void {
+    if(!this.canSplit()) {
+      return;
+    }
+
+    const [firstCard, secondCard] = this.playerHands()[0];
+    this.playerHands.set([
+      [firstCard, this.deck?.takeCard() as PlayingCard],
+      [secondCard, this.deck?.takeCard() as PlayingCard]
+    ]);
+    this.playerHandStatuses.set(['playing', 'playing']);
+    this.activePlayerHandIndex.set(0);
+    this.splitActive.set(true);
+  }
+
+  private activePlayerHand(): PlayingCard[] {
+    return this.playerHands()[this.activePlayerHandIndex()] ?? [];
+  }
+
+  private addCardToPlayerHand(handIndex: number): void {
+    this.playerHands.update(hands => hands.map((hand, index) => {
+      if(index !== handIndex) {
+        return hand;
+      }
+
+      return [...hand, this.deck?.takeCard() as PlayingCard];
+    }));
+  }
+
+  private hitDealer(): void {
+    this.dealersHand.update(hand => [...hand, this.deck?.takeCard() as PlayingCard]);
+    this.dealersTotal.set(this.calcHandTotal(this.dealersHand()));
+  }
+
+  private setPlayerHandStatus(handIndex: number, status: PlayerHandStatus): void {
+    this.playerHandStatuses.update(statuses => statuses.map((currentStatus, index) => {
+      return index === handIndex ? status : currentStatus;
+    }));
+  }
+
+  private async advanceSplitHandOrResolve(): Promise<void> {
+    const nextHandIndex = this.playerHandStatuses().findIndex((status, index) => {
+      return index > this.activePlayerHandIndex() && status === 'playing';
+    });
+
+    if(nextHandIndex !== -1) {
+      this.activePlayerHandIndex.set(nextHandIndex);
+      return;
+    }
+
+    await this.resolveRound();
+  }
+
+  private async resolveRound(): Promise<void> {
+    this.userStanding.set(true);
+    this.activePlayerHandIndex.set(-1);
+    this.dealersTotal.set(this.calcHandTotal(this.dealersHand()));
+
+    if(this.playerHandStatuses().some(status => status !== 'busted')) {
+      while(this.calcHandTotal(this.dealersHand()) < 17) {
+        await this.sleep(500);
+        this.hitDealer();
+      }
+    }
+
+    this.openRoundDialog(this.splitActive() ? this.getSplitRoundResult() : this.getSingleRoundResult());
+  }
+
+  private getSingleRoundResult(): RoundResult {
+    const playerTotal = this.getPlayerHandTotal(0);
+    const dealerTotal = this.dealersTotal();
+
+    if(playerTotal > 21) {
+      return {
+        title: 'Player Bust!',
+        message: `You busted with ${playerTotal}... dealer wins!`,
+        bankDelta: -this.userBet()
+      };
+    }
+
+    if(playerTotal === 21 && dealerTotal !== 21) {
+      return {
+        title: 'Blackjack!',
+        message: 'You got a blackjack! You win!',
+        bankDelta: this.userBet() * 2
+      };
+    }
+
+    if(dealerTotal > 21) {
+      return {
+        title: 'Dealer Bust!',
+        message: `The dealer busted with ${dealerTotal}... you win!`,
+        bankDelta: this.userBet()
+      };
+    }
+
+    if(dealerTotal > playerTotal) {
+      return {
+        title: 'Dealer Wins!',
+        message: `The dealer beat your ${playerTotal} with ${dealerTotal}!`,
+        bankDelta: -this.userBet()
+      };
+    }
+
+    if(dealerTotal === playerTotal) {
+      return {
+        title: 'Push!',
+        message: `It's a push! Both you and the dealer have ${playerTotal}.`,
+        bankDelta: 0
+      };
+    }
+
+    return {
+      title: 'You Win!',
+      message: `You beat the dealer with ${playerTotal} to their ${dealerTotal}!`,
+      bankDelta: this.userBet()
+    };
+  }
+
+  private getSplitRoundResult(): RoundResult {
+    const dealerTotal = this.dealersTotal();
+    let bankDelta = 0;
+    const messages = this.playerHands().map((hand, index) => {
+      const handTotal = this.calcHandTotal(hand);
+      const handName = `Hand ${index + 1}`;
+      const status = this.playerHandStatuses()[index];
+
+      if(status === 'busted' || handTotal > 21) {
+        bankDelta -= this.userBet();
+        return `${handName} busted with ${handTotal}`;
+      }
+
+      if(dealerTotal > 21) {
+        bankDelta += this.userBet();
+        return `${handName} wins with ${handTotal}`;
+      }
+
+      if(dealerTotal > handTotal) {
+        bankDelta -= this.userBet();
+        return `${handName} loses ${handTotal} to ${dealerTotal}`;
+      }
+
+      if(dealerTotal === handTotal) {
+        return `${handName} pushes at ${handTotal}`;
+      }
+
+      bankDelta += this.userBet();
+      return `${handName} wins ${handTotal} to ${dealerTotal}`;
+    });
+
+    return {
+      title: bankDelta > 0 ? 'Split Win!' : bankDelta < 0 ? 'Split Loss!' : 'Split Push!',
+      message: messages.join('. '),
+      bankDelta
+    };
+  }
+
+  private openRoundDialog(result: RoundResult): void {
+    this.setUserBank(this.userBank() + result.bankDelta);
     this.dialog.open(EndOfGameDialogComponent, {
       height: '200px',
       width: '500px',
-      data: { title: dialogTitle, message: dialogMessage }
+      data: { title: result.title, message: result.message }
     }).afterClosed().subscribe(() => {
       this.disableResetButton.set(false);
     });
+  }
+
+  private cardSplitValue(card: PlayingCard): number {
+    return this.getCardValue(card.cardName);
   }
 
   private calcHandTotal(hand: PlayingCard[]): number {
@@ -277,8 +494,13 @@ export class BlackjackComponent implements OnInit {
   }
 
   resetGame(): void {
-    this.playersHand.set([]);
     this.dealersHand.set([]);
+    this.playerHands.set([[]]);
+    this.playerHandStatuses.set(['playing']);
+    this.activePlayerHandIndex.set(0);
+    this.splitActive.set(false);
+    this.userStanding.set(false);
+    this.dealersTotal.set(0);
     this.betPlaced.set(false);
     this.disableResetButton.set(true);
     this.syncBetToBank();
