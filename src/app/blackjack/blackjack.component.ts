@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { CardName, Deck, ICard, PlayingCard, Suit } from 'typedeck';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,6 +15,8 @@ import {MatIconModule} from '@angular/material/icon';
 })
 export class BlackjackComponent implements OnInit {
   readonly dialog = inject(MatDialog);
+  private readonly minimumBet = 10;
+  private readonly betStep = 10;
   
   validCardNumbers: CardName[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   validCardSuits: Suit[] = [0, 1, 2, 3]; // Suit is an enum with values 0-3
@@ -29,7 +31,7 @@ export class BlackjackComponent implements OnInit {
 
   userStanding: WritableSignal<boolean> = signal(false);
 
-  userBank: WritableSignal<number> = signal(0);
+  userBank: WritableSignal<number> = signal(100);
   userBet: WritableSignal<number> = signal(10);
   betPlaced: WritableSignal<boolean> = signal(false);
 
@@ -41,8 +43,10 @@ export class BlackjackComponent implements OnInit {
   }
   ngOnInit(): void {
     if(typeof window !== 'undefined') {
-        localStorage.getItem('blackjackBank') === null ? this.userBank.set(100) : this.userBank.set(Number(localStorage.getItem('blackjackBank')));
+      const savedBank = localStorage.getItem('blackjackBank');
+      this.setUserBank(savedBank === null ? 100 : Number(savedBank));
     }
+    this.syncBetToBank();
   }
 
   refreshDeck(): void {
@@ -107,7 +111,7 @@ export class BlackjackComponent implements OnInit {
   private initNewGame(): void {
     this.disableResetButton.set(true);
 
-    localStorage.setItem('blackjackBank', this.userBank().toString());
+    this.saveBank();
     this.refreshDeck();
     this.deck?.shuffle();
     this.dealersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
@@ -137,11 +141,8 @@ export class BlackjackComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(() => {
-        this.userBank.set(this.userBank() - this.userBet());
+        this.setUserBank(this.userBank() - this.userBet());
         this.disableResetButton.set(false);
-        if(typeof window !== 'undefined') {
-          localStorage.setItem('blackjackBank', this.userBank().toString());
-        }
       });
     }
   }
@@ -160,17 +161,17 @@ export class BlackjackComponent implements OnInit {
     if(this.playersTotal() === 21 && this.dealersTotal() !== 21) { 
       dialogTitle = "Blackjack!";
       dialogMessage = "You got a blackjack! You win!";
-      this.userBank.set(this.userBank() + this.userBet()*2);
+      this.setUserBank(this.userBank() + this.userBet()*2);
     }
     else if(this.dealersTotal() > 21) {
       dialogTitle = "Dealer Bust!";
       dialogMessage = `The dealer busted with ${this.dealersTotal()}... you win!`;
-      this.userBank.set(this.userBank() + this.userBet());
+      this.setUserBank(this.userBank() + this.userBet());
     }
     else if(this.dealersTotal() > this.playersTotal()) {
       dialogTitle = "Dealer Wins!";
       dialogMessage = `The dealer beat your ${this.playersTotal()} with ${this.dealersTotal()}!`;
-      this.userBank.set(this.userBank() - this.userBet());
+      this.setUserBank(this.userBank() - this.userBet());
     }
     else if(this.dealersTotal() === this.playersTotal()) {
       dialogTitle = "Push!";
@@ -179,7 +180,7 @@ export class BlackjackComponent implements OnInit {
     else if(this.dealersTotal() < this.playersTotal()) {
       dialogTitle = "You Win!";
       dialogMessage = `You beat the dealer with ${this.playersTotal()} to their ${this.dealersTotal()}!`;
-      this.userBank.set(this.userBank() + this.userBet());
+      this.setUserBank(this.userBank() + this.userBet());
     }
 
     this.dialog.open(EndOfGameDialogComponent, {
@@ -189,10 +190,6 @@ export class BlackjackComponent implements OnInit {
     }).afterClosed().subscribe(() => {
       this.disableResetButton.set(false);
     });
-
-    if(typeof window !== 'undefined') {
-      localStorage.setItem('blackjackBank', this.userBank().toString());
-    }
   }
 
   private calcHandTotal(hand: PlayingCard[]): number {
@@ -234,12 +231,45 @@ export class BlackjackComponent implements OnInit {
   }
 
   protected changeBet(amount: 10 | -10) : void {
-    if(this.userBet() + amount >= 10) {
-      this.userBet.set(this.userBet() + amount);
+    if(this.betPlaced()) {
+      return;
+    }
+
+    const nextBet = this.userBet() + amount;
+    if(nextBet >= this.minimumBet && nextBet <= this.userBank()) {
+      this.userBet.set(nextBet);
     }
   }
 
+  protected canDecreaseBet(): boolean {
+    return !this.betPlaced() && this.userBet() > this.minimumBet;
+  }
+
+  protected canIncreaseBet(): boolean {
+    return !this.betPlaced() && this.userBet() + this.betStep <= this.userBank();
+  }
+
+  protected canPlaceBet(): boolean {
+    return !this.betPlaced() && this.userBet() >= this.minimumBet && this.userBet() <= this.userBank();
+  }
+
+  protected canResetBank(): boolean {
+    return !this.betPlaced();
+  }
+
+  protected resetBank(): void {
+    if(!this.canResetBank()) {
+      return;
+    }
+
+    this.setUserBank(100);
+  }
+
   placeBet(): void {
+    if(!this.canPlaceBet()) {
+      return;
+    }
+
     this.betPlaced.set(true);
     this.userStanding.set(false);
 
@@ -251,5 +281,41 @@ export class BlackjackComponent implements OnInit {
     this.dealersHand.set([]);
     this.betPlaced.set(false);
     this.disableResetButton.set(true);
+    this.syncBetToBank();
+  }
+
+  private setUserBank(amount: number): void {
+    const nextBank = Number.isFinite(amount) ? Math.max(0, amount) : 0;
+    this.userBank.set(nextBank);
+
+    if(!this.betPlaced()) {
+      this.syncBetToBank();
+    }
+
+    this.saveBank();
+  }
+
+  private syncBetToBank(): void {
+    const bank = this.userBank();
+
+    if(bank < this.minimumBet) {
+      this.userBet.set(0);
+      return;
+    }
+
+    if(this.userBet() < this.minimumBet) {
+      this.userBet.set(this.minimumBet);
+      return;
+    }
+
+    if(this.userBet() > bank) {
+      this.userBet.set(bank - (bank % this.betStep));
+    }
+  }
+
+  private saveBank(): void {
+    if(typeof window !== 'undefined') {
+      localStorage.setItem('blackjackBank', this.userBank().toString());
+    }
   }
 }
