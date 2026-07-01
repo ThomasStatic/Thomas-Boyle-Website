@@ -102,19 +102,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     cursor: var(--cursor-working);
 }
 
-:is(.parameter-table-wrapper, .model-settings-table-wrapper, .results-table-wrapper, .wide-result-scroll) {
+:is(.parameter-table-wrapper, .model-settings-table-wrapper, .results-table-wrapper) {
     cursor: var(--cursor-grab);
 }
 
-:is(.parameter-table-wrapper, .model-settings-table-wrapper, .results-table-wrapper, .wide-result-scroll):active {
-    cursor: var(--cursor-grabbing);
-}
-
-.wide-result-scroll img {
-    cursor: var(--cursor-grab);
-}
-
-.wide-result-scroll:active img {
+:is(.parameter-table-wrapper, .model-settings-table-wrapper, .results-table-wrapper):active {
     cursor: var(--cursor-grabbing);
 }
 
