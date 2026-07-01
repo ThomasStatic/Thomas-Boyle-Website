@@ -39,6 +39,8 @@ $thomas-boyle-website-theme: mat.define-theme((
   --cursor-move: url("/cursors/light/move.png") 16 16, move;
   --cursor-person: url("/cursors/light/person.png") 3 2, auto;
   --cursor-precision: url("/cursors/light/precision4.png") 16 16, crosshair;
+  --cursor-expand: url("/cursors/light/lens_maximize.png") 16 16, zoom-in;
+  --cursor-collapse: url("/cursors/light/lens_minimize.png") 16 16, zoom-out;
   --cursor-refresh: url("/cursors/light/rotate.png") 16 16, pointer;
   --cursor-resize-x: url("/cursors/light/horz.png") 16 16, ew-resize;
   --cursor-resize-y: url("/cursors/light/vert.png") 16 16, ns-resize;
@@ -72,6 +74,19 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 :is(a, button, summary, [role="button"], .mat-mdc-button-base, .mat-mdc-select, mat-option, mat-chip, mat-radio-button, mat-datepicker-toggle):active {
     cursor: var(--cursor-link-active) !important;
+}
+
+.expandable-image {
+    cursor: var(--cursor-expand) !important;
+}
+
+.expandable-image:active {
+    cursor: var(--cursor-link-active) !important;
+}
+
+.expandable-image:focus-visible {
+    outline: 2px solid #7ee7d8;
+    outline-offset: 0.25rem;
 }
 
 :is(button:disabled, input:disabled, select:disabled, textarea:disabled, [aria-disabled="true"], .mat-mdc-button-disabled, .mat-mdc-option-disabled) {
@@ -108,6 +123,23 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 :is(.parameter-table-wrapper, .model-settings-table-wrapper, .results-table-wrapper):active {
     cursor: var(--cursor-grabbing);
+}
+
+.image-lightbox-backdrop {
+    background: rgba(7, 8, 8, 0.82);
+    cursor: var(--cursor-collapse);
+}
+
+.image-lightbox-panel {
+    cursor: var(--cursor-default);
+
+    .mat-mdc-dialog-container,
+    .mat-mdc-dialog-surface,
+    .mdc-dialog__surface {
+        background: transparent !important;
+        box-shadow: none !important;
+        overflow: visible;
+    }
 }
 
 :is(

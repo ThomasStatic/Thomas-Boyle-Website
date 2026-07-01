@@ -1,0 +1,16 @@
+<div class="lightbox-shell">
+    <button type="button" class="lightbox-close" aria-label="Close expanded image" (click)="close()">
+        &times;
+    </button>
+    <div class="lightbox-frame">
+        <img
+            class="lightbox-image"
+            [src]="data.src"
+            [alt]="data.alt"
+            [style.width]="imageWidth"
+            [style.height]="imageHeight"
+            draggable="false"
+            (load)="handleImageLoad($event)"
+        >
+    </div>
+</div>

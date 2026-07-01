@@ -28,6 +28,7 @@
             </p>
         </div>
         <img
+            appExpandableImage
             class="diagram supply-stack-diagram"
             src="supply-stack.jpg"
             alt="Supply stack diagram showing how market demand sets the clearing price and which generators clear."
@@ -57,6 +58,7 @@
             </p>
         </div>
         <img
+            appExpandableImage
             class="diagram market-process-diagram"
             src="market-clearing-process.png"
             alt="Flowchart showing generator, submit bid, market clears, cleared or not cleared, and profit outcome."
@@ -75,6 +77,7 @@
                 little spreadsheet.
             </p>
             <img
+                appExpandableImage
                 class="markov-decision-process-diagram"
                 src="markov-decision-process.png"
                 alt="Diagram of a Markov Decision Process with three states and transition probabilities."
@@ -343,6 +346,7 @@
                 competitive environments than assuming every competitor politely remains frozen in place.
             </p>
             <img
+                appExpandableImage
                 class="policy-freeze-ablation-diagram"
                 src="policy-freeze-ablation-agent-comparison.png"
                 alt="Policy freeze ablation chart comparing cumulative reward over episodes for different agent counts and freeze windows."
@@ -389,27 +393,27 @@
             </p>
             <div class="result-figure-grid">
                 <figure>
-                    <img src="reward-1-agent.png" alt="Reward per episode for the single-agent training case.">
+                    <img appExpandableImage src="reward-1-agent.png" alt="Reward per episode for the single-agent training case.">
                     <figcaption>Single-agent reward per episode.</figcaption>
                 </figure>
                 <figure>
-                    <img src="max-delta-q-1-agent.png" alt="Max Q-value change per episode for the single-agent training case.">
+                    <img appExpandableImage src="max-delta-q-1-agent.png" alt="Max Q-value change per episode for the single-agent training case.">
                     <figcaption>Single-agent max Q-value change.</figcaption>
                 </figure>
                 <figure>
-                    <img src="reward-3-agent.png" alt="Reward per episode for the three-agent training case.">
+                    <img appExpandableImage src="reward-3-agent.png" alt="Reward per episode for the three-agent training case.">
                     <figcaption>Three-agent reward per episode.</figcaption>
                 </figure>
                 <figure>
-                    <img src="max-delta-q-3-agent.png" alt="Max Q-value change per episode for the three-agent training case.">
+                    <img appExpandableImage src="max-delta-q-3-agent.png" alt="Max Q-value change per episode for the three-agent training case.">
                     <figcaption>Three-agent max Q-value change.</figcaption>
                 </figure>
                 <figure>
-                    <img src="reward-5-agent.png" alt="Reward per episode for the five-agent training case.">
+                    <img appExpandableImage src="reward-5-agent.png" alt="Reward per episode for the five-agent training case.">
                     <figcaption>Five-agent reward per episode.</figcaption>
                 </figure>
                 <figure>
-                    <img src="max-delta-q-5-agent.png" alt="Max Q-value change per episode for the five-agent training case.">
+                    <img appExpandableImage src="max-delta-q-5-agent.png" alt="Max Q-value change per episode for the five-agent training case.">
                     <figcaption>Five-agent max Q-value change.</figcaption>
                 </figure>
             </div>
@@ -593,17 +597,18 @@
             </p>
             <div class="validation-figure-grid">
                 <figure>
-                    <img src="brgap-per-episode.png" alt="Best-response gap per episode across agents.">
+                    <img appExpandableImage src="brgap-per-episode.png" alt="Best-response gap per episode across agents.">
                     <figcaption>Best-response gap across late training episodes.</figcaption>
                 </figure>
                 <figure>
-                    <img src="elasticity-perturbation-cumulative-reward.png" alt="Cumulative reward under different demand elasticity perturbations.">
+                    <img appExpandableImage src="elasticity-perturbation-cumulative-reward.png" alt="Cumulative reward under different demand elasticity perturbations.">
                     <figcaption>Reward sensitivity under demand-elasticity perturbations.</figcaption>
                 </figure>
             </div>
             <figure class="wide-result-figure">
                 <div class="wide-result-scroll">
                     <img
+                        appExpandableImage
                         src="merit-order-per-episode.png"
                         alt="Merit-order curves across selected training episodes."
                         draggable="false"
