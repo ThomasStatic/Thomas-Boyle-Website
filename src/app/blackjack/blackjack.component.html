@@ -29,6 +29,9 @@
                         @if(isActivePlayerHand($index)) {
                             <div class="controls centered">
                                 <button mat-stroked-button (click)="hit('Player')" [disabled]="!canHitActiveHand()">Hit</button>
+                                @if(shouldShowDoubleButton($index)) {
+                                    <button mat-stroked-button (click)="double($index)" [disabled]="!canDouble($index)">Double</button>
+                                }
                                 <button mat-stroked-button (click)="stand()" [disabled]="!canActOnActiveHand()">Stand</button>
                                 @if(shouldShowSplitButton($index)) {
                                     <button mat-stroked-button (click)="split($index)" [disabled]="!canSplit($index)">Split</button>
@@ -49,6 +52,9 @@
             @if(betPlaced()) {
                 <div class="controls centered">
                     <button mat-stroked-button (click)="hit('Player')" [disabled]="!canHitActiveHand()">Hit</button>
+                    @if(shouldShowDoubleButton(0)) {
+                        <button mat-stroked-button (click)="double(0)" [disabled]="!canDouble(0)">Double</button>
+                    }
                     <button mat-stroked-button (click)="stand()" [disabled]="!canActOnActiveHand()">Stand</button>
                     @if(shouldShowSplitButton(0)) {
                         <button mat-stroked-button (click)="split(0)" [disabled]="!canSplit(0)">Split</button>

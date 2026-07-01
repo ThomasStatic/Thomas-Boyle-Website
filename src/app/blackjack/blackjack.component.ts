@@ -33,6 +33,7 @@ export class BlackjackComponent implements OnInit {
 
   dealersHand: WritableSignal<PlayingCard[]> = signal([]);
   playerHands: WritableSignal<PlayingCard[][]> = signal([[]]);
+  playerHandBets: WritableSignal<number[]> = signal([10]);
   playerHandStatuses: WritableSignal<PlayerHandStatus[]> = signal(['playing']);
   activePlayerHandIndex: WritableSignal<number> = signal(0);
 
@@ -127,6 +128,7 @@ export class BlackjackComponent implements OnInit {
     this.deck?.shuffle();
     this.dealersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
     this.playerHands.set([[this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]]);
+    this.playerHandBets.set([this.userBet()]);
     this.playerHandStatuses.set(['playing']);
     this.activePlayerHandIndex.set(0);
     this.splitActive.set(false);
@@ -151,7 +153,9 @@ export class BlackjackComponent implements OnInit {
     const handIndex = this.activePlayerHandIndex();
     this.addCardToPlayerHand(handIndex);
 
-    if(this.calcHandTotal(this.playerHands()[handIndex]) > 21) {
+    const handTotal = this.getPlayerHandTotal(handIndex);
+
+    if(handTotal > 21) {
       this.setPlayerHandStatus(handIndex, 'busted');
 
       if(this.splitActive()) {
@@ -162,8 +166,20 @@ export class BlackjackComponent implements OnInit {
       this.openRoundDialog({
         title: 'Player Bust!',
         message: `You busted with ${this.getPlayerHandTotal(0)}... dealer wins!`,
-        bankDelta: -this.userBet()
+        bankDelta: -this.getPlayerHandBet(0)
       });
+      return;
+    }
+
+    if(handTotal === 21) {
+      this.setPlayerHandStatus(handIndex, 'stood');
+
+      if(this.splitActive()) {
+        await this.advanceSplitHandOrResolve();
+        return;
+      }
+
+      await this.resolveRound();
     }
   }
 
@@ -189,6 +205,10 @@ export class BlackjackComponent implements OnInit {
 
   protected getPlayerHandTotal(handIndex: number): number {
     return this.calcHandTotal(this.playerHands()[handIndex] ?? []);
+  }
+
+  protected getPlayerHandBet(handIndex: number): number {
+    return this.playerHandBets()[handIndex] ?? this.userBet();
   }
 
   protected getPlayerHandTotalText(handIndex: number): string {
@@ -222,6 +242,40 @@ export class BlackjackComponent implements OnInit {
     return this.canActOnActiveHand() && this.getPlayerHandTotal(this.activePlayerHandIndex()) < 21;
   }
 
+  protected shouldShowDoubleButton(handIndex: number): boolean {
+    const hand = this.playerHands()[handIndex] ?? [];
+    return this.betPlaced()
+      && !this.userStanding()
+      && this.disableResetButton()
+      && this.isActivePlayerHand(handIndex)
+      && hand.length === 2;
+  }
+
+  protected canDouble(handIndex: number): boolean {
+    return this.shouldShowDoubleButton(handIndex)
+      && this.totalWagerAfterAdding(this.getPlayerHandBet(handIndex)) <= this.userBank();
+  }
+
+  protected async double(handIndex: number): Promise<void> {
+    if(!this.canDouble(handIndex)) {
+      return;
+    }
+
+    this.playerHandBets.update(bets => bets.map((bet, index) => {
+      return index === handIndex ? bet * 2 : bet;
+    }));
+
+    this.addCardToPlayerHand(handIndex);
+    this.setPlayerHandStatus(handIndex, this.getPlayerHandTotal(handIndex) > 21 ? 'busted' : 'stood');
+
+    if(this.splitActive()) {
+      await this.advanceSplitHandOrResolve();
+      return;
+    }
+
+    await this.resolveRound();
+  }
+
   protected shouldShowSplitButton(handIndex: number): boolean {
     const hand = this.playerHands()[handIndex] ?? [];
     return this.betPlaced()
@@ -233,8 +287,8 @@ export class BlackjackComponent implements OnInit {
   }
 
   protected canSplit(handIndex: number): boolean {
-    const wagerAfterSplit = this.userBet() * (this.playerHands().length + 1);
-    return this.shouldShowSplitButton(handIndex) && this.userBank() >= wagerAfterSplit;
+    return this.shouldShowSplitButton(handIndex)
+      && this.totalWagerAfterAdding(this.getPlayerHandBet(handIndex)) <= this.userBank();
   }
 
   protected split(handIndex: number): void {
@@ -243,8 +297,10 @@ export class BlackjackComponent implements OnInit {
     }
 
     const currentHands = this.playerHands();
+    const currentBets = this.playerHandBets();
     const currentStatuses = this.playerHandStatuses();
     const [firstCard, secondCard] = currentHands[handIndex];
+    const splitBet = currentBets[handIndex];
     const splitHands = [
       [firstCard, this.deck?.takeCard() as PlayingCard],
       [secondCard, this.deck?.takeCard() as PlayingCard]
@@ -255,6 +311,12 @@ export class BlackjackComponent implements OnInit {
       ...splitHands,
       ...currentHands.slice(handIndex + 1)
     ]);
+    this.playerHandBets.set([
+      ...currentBets.slice(0, handIndex),
+      splitBet,
+      splitBet,
+      ...currentBets.slice(handIndex + 1)
+    ]);
     this.playerHandStatuses.set([
       ...currentStatuses.slice(0, handIndex),
       'playing',
@@ -263,6 +325,19 @@ export class BlackjackComponent implements OnInit {
     ]);
     this.activePlayerHandIndex.set(handIndex);
     this.splitActive.set(true);
+  }
+
+  private totalCurrentWager(): number {
+    return this.playerHandBets().reduce((total, bet) => total + bet, 0);
+  }
+
+  private totalWagerAfterAdding(amount: number): number {
+    return this.totalCurrentWager() + amount;
+  }
+
+  private isNaturalBlackjack(handIndex: number): boolean {
+    const hand = this.playerHands()[handIndex] ?? [];
+    return !this.splitActive() && hand.length === 2 && this.calcHandTotal(hand) === 21;
   }
 
   private activePlayerHand(): PlayingCard[] {
@@ -321,20 +396,21 @@ export class BlackjackComponent implements OnInit {
   private getSingleRoundResult(): RoundResult {
     const playerTotal = this.getPlayerHandTotal(0);
     const dealerTotal = this.dealersTotal();
+    const handBet = this.getPlayerHandBet(0);
 
     if(playerTotal > 21) {
       return {
         title: 'Player Bust!',
         message: `You busted with ${playerTotal}... dealer wins!`,
-        bankDelta: -this.userBet()
+        bankDelta: -handBet
       };
     }
 
-    if(playerTotal === 21 && dealerTotal !== 21) {
+    if(this.isNaturalBlackjack(0) && dealerTotal !== 21) {
       return {
         title: 'Blackjack!',
         message: 'You got a blackjack! You win!',
-        bankDelta: this.userBet() * 2
+        bankDelta: handBet * 2
       };
     }
 
@@ -342,7 +418,7 @@ export class BlackjackComponent implements OnInit {
       return {
         title: 'Dealer Bust!',
         message: `The dealer busted with ${dealerTotal}... you win!`,
-        bankDelta: this.userBet()
+        bankDelta: handBet
       };
     }
 
@@ -350,7 +426,7 @@ export class BlackjackComponent implements OnInit {
       return {
         title: 'Dealer Wins!',
         message: `The dealer beat your ${playerTotal} with ${dealerTotal}!`,
-        bankDelta: -this.userBet()
+        bankDelta: -handBet
       };
     }
 
@@ -365,7 +441,7 @@ export class BlackjackComponent implements OnInit {
     return {
       title: 'You Win!',
       message: `You beat the dealer with ${playerTotal} to their ${dealerTotal}!`,
-      bankDelta: this.userBet()
+      bankDelta: handBet
     };
   }
 
@@ -375,20 +451,21 @@ export class BlackjackComponent implements OnInit {
     const messages = this.playerHands().map((hand, index) => {
       const handTotal = this.calcHandTotal(hand);
       const handName = `Hand ${index + 1}`;
+      const handBet = this.getPlayerHandBet(index);
       const status = this.playerHandStatuses()[index];
 
       if(status === 'busted' || handTotal > 21) {
-        bankDelta -= this.userBet();
+        bankDelta -= handBet;
         return `${handName} busted with ${handTotal}`;
       }
 
       if(dealerTotal > 21) {
-        bankDelta += this.userBet();
+        bankDelta += handBet;
         return `${handName} wins with ${handTotal}`;
       }
 
       if(dealerTotal > handTotal) {
-        bankDelta -= this.userBet();
+        bankDelta -= handBet;
         return `${handName} loses ${handTotal} to ${dealerTotal}`;
       }
 
@@ -396,7 +473,7 @@ export class BlackjackComponent implements OnInit {
         return `${handName} pushes at ${handTotal}`;
       }
 
-      bankDelta += this.userBet();
+      bankDelta += handBet;
       return `${handName} wins ${handTotal} to ${dealerTotal}`;
     });
 
@@ -509,6 +586,7 @@ export class BlackjackComponent implements OnInit {
   resetGame(): void {
     this.dealersHand.set([]);
     this.playerHands.set([[]]);
+    this.playerHandBets.set([this.userBet()]);
     this.playerHandStatuses.set(['playing']);
     this.activePlayerHandIndex.set(0);
     this.splitActive.set(false);
