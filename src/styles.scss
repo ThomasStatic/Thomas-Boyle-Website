@@ -26,6 +26,11 @@ $thomas-boyle-website-theme: mat.define-theme((
 // that you are using.
 :root {
   @include mat.all-component-themes($thomas-boyle-website-theme);
+  --site-grid-background:
+    linear-gradient(rgba(126, 231, 216, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 231, 216, 0.05) 1px, transparent 1px),
+    #282d2d;
+  --site-grid-size: 3.5rem 3.5rem;
   --cursor-default: url("/cursors/light-24/pointer.png") 0 0, auto;
   --cursor-link: url("/cursors/light-24/link2.png") 5 1, pointer;
   --cursor-link-active: url("/cursors/light-24/link3.png") 5 1, pointer;
@@ -57,12 +62,19 @@ $thomas-boyle-website-theme: mat.define-theme((
 // @include mat.color-variants-backwards-compatibility($thomas-boyle-website-theme);
 /* You can add global styles to this file, and also import other style files */
 body {
-    background-color: #333232;
+    background: var(--site-grid-background);
+    background-size: var(--site-grid-size);
     cursor: var(--cursor-default);
     margin: 0;
 }
 html, body { height: 100; overflow-x: hidden;}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+@media (width <= 640px) {
+    :root {
+        --site-grid-size: 2.25rem 2.25rem;
+    }
+}
 
 :is(p, li, td, th, figcaption, mat-card-title, mat-card-content, mat-dialog-content, h1, h2, h3, h4, h5, h6) {
     cursor: var(--cursor-text);
