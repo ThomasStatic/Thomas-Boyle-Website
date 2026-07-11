@@ -26,25 +26,25 @@ $thomas-boyle-website-theme: mat.define-theme((
 // that you are using.
 :root {
   @include mat.all-component-themes($thomas-boyle-website-theme);
-  --cursor-default: url("/cursors/light/pointer.png") 0 0, auto;
-  --cursor-link: url("/cursors/light/link2.png") 7 1, pointer;
-  --cursor-link-active: url("/cursors/light/link3.png") 7 1, pointer;
-  --cursor-text: url("/cursors/light/beam.png") 16 16, text;
-  --cursor-handwriting: url("/cursors/light/handwriting.png") 2 30, text;
-  --cursor-help: url("/cursors/light/help.png") 3 2, help;
-  --cursor-grab: url("/cursors/light/grab.png") 16 10, grab;
-  --cursor-grabbing: url("/cursors/light/grab_hover.png") 16 10, grabbing;
-  --cursor-dgn1: url("/cursors/light/dgn1.png") 16 16, nwse-resize;
-  --cursor-dgn2: url("/cursors/light/dgn2.png") 16 16, nesw-resize;
-  --cursor-move: url("/cursors/light/move.png") 16 16, move;
-  --cursor-person: url("/cursors/light/person.png") 3 2, auto;
-  --cursor-precision: url("/cursors/light/precision4.png") 16 16, crosshair;
-  --cursor-expand: url("/cursors/light/lens_maximize.png") 16 16, zoom-in;
-  --cursor-collapse: url("/cursors/light/lens_minimize.png") 16 16, zoom-out;
-  --cursor-refresh: url("/cursors/light/rotate.png") 16 16, pointer;
-  --cursor-resize-x: url("/cursors/light/horz.png") 16 16, ew-resize;
-  --cursor-resize-y: url("/cursors/light/vert.png") 16 16, ns-resize;
-  --cursor-unavailable: url("/cursors/light/unavailable.png") 16 16, not-allowed;
+  --cursor-default: url("/cursors/light-24/pointer.png") 0 0, auto;
+  --cursor-link: url("/cursors/light-24/link2.png") 5 1, pointer;
+  --cursor-link-active: url("/cursors/light-24/link3.png") 5 1, pointer;
+  --cursor-text: url("/cursors/light-24/beam.png") 12 12, text;
+  --cursor-handwriting: url("/cursors/light-24/handwriting.png") 2 23, text;
+  --cursor-help: url("/cursors/light-24/help.png") 2 2, help;
+  --cursor-grab: url("/cursors/light-24/grab.png") 12 8, grab;
+  --cursor-grabbing: url("/cursors/light-24/grab_hover.png") 12 8, grabbing;
+  --cursor-dgn1: url("/cursors/light-24/dgn1.png") 12 12, nwse-resize;
+  --cursor-dgn2: url("/cursors/light-24/dgn2.png") 12 12, nesw-resize;
+  --cursor-move: url("/cursors/light-24/move.png") 12 12, move;
+  --cursor-person: url("/cursors/light-24/person.png") 2 2, auto;
+  --cursor-precision: url("/cursors/light-24/precision4.png") 12 12, crosshair;
+  --cursor-expand: url("/cursors/light-24/lens_maximize.png") 12 12, zoom-in;
+  --cursor-collapse: url("/cursors/light-24/lens_minimize.png") 12 12, zoom-out;
+  --cursor-refresh: url("/cursors/light-24/rotate.png") 12 12, pointer;
+  --cursor-resize-x: url("/cursors/light-24/horz.png") 12 12, ew-resize;
+  --cursor-resize-y: url("/cursors/light-24/vert.png") 12 12, ns-resize;
+  --cursor-unavailable: url("/cursors/light-24/unavailable.png") 12 12, not-allowed;
   --cursor-working: url("/cursors/light/working.gif") 1 1, progress;
   --cursor-busy: url("/cursors/light/busy.gif") 16 16, wait;
 }
