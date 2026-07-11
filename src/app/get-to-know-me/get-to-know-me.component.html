@@ -1,0 +1,45 @@
+<section class="get-to-know-page" aria-labelledby="get-to-know-heading">
+    <div class="get-to-know-shell">
+        <div class="get-to-know-copy">
+            <p class="section-kicker">Outside the resume</p>
+            <h1 id="get-to-know-heading">Get to know me</h1>
+            <p>
+                I wanted this section to show a little more of who I am outside of the resume and project writeups.
+                So, in an extremely normal and human decision, I had a robot ask me questions about my personality,
+                my habits, my opinions, and the things I care about. Here's what came out of that conversation.
+            </p>
+            <p class="signature-line">Never relaxing, always blasting music.</p>
+        </div>
+
+        <div class="qa-browser" [style.--selected-accent]="selectedKnowMeItem.accent">
+            <article class="answer-panel" aria-live="polite">
+                <div class="answer-meta">
+                    <span>{{ selectedKnowMeItem.tag }}</span>
+                    <span>{{ selectedKnowMeIndex + 1 }} / {{ knowMeItems.length }}</span>
+                </div>
+                <h2>{{ selectedKnowMeItem.question }}</h2>
+                <p>{{ selectedKnowMeItem.answer }}</p>
+                <button type="button" class="next-answer-button" (click)="showNextKnowMeItem()">
+                    Next answer
+                    <span aria-hidden="true">></span>
+                </button>
+            </article>
+
+            <div class="prompt-grid" aria-label="Get to know me questions">
+                @for (item of knowMeItems; track item.question; let index = $index) {
+                    <button
+                        type="button"
+                        class="prompt-button"
+                        [class.is-active]="index === selectedKnowMeIndex"
+                        [style.--prompt-accent]="item.accent"
+                        [attr.aria-pressed]="index === selectedKnowMeIndex"
+                        (click)="selectKnowMeItem(index)"
+                    >
+                        <span class="prompt-tag">{{ item.tag }}</span>
+                        <span class="prompt-question">{{ item.question }}</span>
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</section>

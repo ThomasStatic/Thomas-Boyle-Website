@@ -5,9 +5,11 @@ import { HeaderComponent } from './home-page/header/header.component';
 import { StrongVisualizerComponent } from './strong-visualizer/strong-visualizer.component';
 import { BlackjackComponent } from './blackjack/blackjack.component';
 import { CapstoneComponent } from './capstone/capstone.component';
+import { GetToKnowMeComponent } from './get-to-know-me/get-to-know-me.component';
 
 export const routes: Routes = [
     { path: '', component: HomePageComponent },
+    { path: 'get-to-know-me', component: GetToKnowMeComponent },
     { path: 'strong-visualizer', component: StrongVisualizerComponent},
     { path: 'blackjack', component: BlackjackComponent},
     { path: 'capstone', component: CapstoneComponent},

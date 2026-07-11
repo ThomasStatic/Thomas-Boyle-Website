@@ -26,6 +26,19 @@
         </li>
         <li>
             <a
+                routerLink="/get-to-know-me"
+                routerLinkActive="active-route"
+                [routerLinkActiveOptions]="{ exact: true }"
+                ariaCurrentWhenActive="page"
+                aria-label="Get to Know Me"
+                (click)="refreshIfCurrentRoute($event, '/get-to-know-me')"
+            >
+                <span class="nav-label-full">Get to Know Me</span>
+                <span class="nav-label-short">About Me</span>
+            </a>
+        </li>
+        <li>
+            <a
                 routerLink="/blackjack"
                 routerLinkActive="active-route"
                 [routerLinkActiveOptions]="{ exact: true }"

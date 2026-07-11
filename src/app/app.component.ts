@@ -2,7 +2,6 @@ import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, NgZone, OnDestroy, PLATFORM_ID } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavigationBarComponent } from './navigation-bar/navigation-bar.component';
-import { HomePageComponent } from './home-page/home-page.component';
 
 type CursorStateClass =
   | 'cursor-native-drag-link'
@@ -45,7 +44,7 @@ const CURSOR_STATE_CLASSES: readonly CursorStateClass[] = [
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavigationBarComponent, HomePageComponent],
+  imports: [RouterOutlet, NavigationBarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
