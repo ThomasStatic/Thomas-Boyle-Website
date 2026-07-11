@@ -13,19 +13,6 @@
         </li>
         <li>
             <a
-                routerLink="/capstone"
-                routerLinkActive="active-route"
-                [routerLinkActiveOptions]="{ exact: true }"
-                ariaCurrentWhenActive="page"
-                aria-label="Machine Learning Thesis"
-                (click)="refreshIfCurrentRoute($event, '/capstone')"
-            >
-                <span class="nav-label-full">Machine Learning Thesis</span>
-                <span class="nav-label-short">Thesis</span>
-            </a>
-        </li>
-        <li>
-            <a
                 routerLink="/get-to-know-me"
                 routerLinkActive="active-route"
                 [routerLinkActiveOptions]="{ exact: true }"
@@ -35,6 +22,19 @@
             >
                 <span class="nav-label-full">Get to Know Me</span>
                 <span class="nav-label-short">About Me</span>
+            </a>
+        </li>
+        <li>
+            <a
+                routerLink="/capstone"
+                routerLinkActive="active-route"
+                [routerLinkActiveOptions]="{ exact: true }"
+                ariaCurrentWhenActive="page"
+                aria-label="Machine Learning Thesis"
+                (click)="refreshIfCurrentRoute($event, '/capstone')"
+            >
+                <span class="nav-label-full">Machine Learning Thesis</span>
+                <span class="nav-label-short">Thesis</span>
             </a>
         </li>
         <li>
