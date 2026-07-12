@@ -8,6 +8,7 @@
     --terminal-green: #c7f07c;
     --terminal-red: #ff8d7d;
     display: block;
+    padding-top: var(--shared-nav-height);
 }
 
 .site-text {
@@ -21,7 +22,7 @@
 .market-ticker {
     box-sizing: border-box;
     width: min(100rem, calc(100% - clamp(2rem, 8vw, 4rem)));
-    margin: 5.2rem auto 0;
+    margin: 0 auto;
     overflow: hidden;
     border: 1px solid rgba(126, 231, 216, 0.45);
     border-radius: 8px;
@@ -318,7 +319,7 @@
 @media (max-width: 900px) {
     .market-ticker {
         width: calc(100% - 2rem);
-        margin-top: 5rem;
+        margin-top: 0;
     }
 
     .ticker-track {
@@ -354,7 +355,7 @@
 @media (max-width: 640px) {
     .market-ticker {
         width: calc(100% - 1.4rem);
-        margin-top: 4.85rem;
+        margin-top: 0;
     }
 
     .ticker-track {

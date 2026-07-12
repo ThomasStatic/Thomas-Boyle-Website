@@ -1,7 +1,11 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, NgZone, OnDestroy, PLATFORM_ID, signal } from '@angular/core';
+import { Component, ElementRef, Inject, NgZone, OnDestroy, PLATFORM_ID, ViewChild, effect, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavigationBarComponent } from './navigation-bar/navigation-bar.component';
+import { AchievementToastComponent } from './achievements/achievement-toast.component';
+import { AchievementService } from './achievements/achievement.service';
+import { SectorStatusComponent } from './achievements/sector-status.component';
+import { OverlayScrollLockService } from './shared/overlay-scroll-lock.service';
 
 type CursorStateClass =
   | 'cursor-native-drag-link'
@@ -29,6 +33,8 @@ interface MiddleScrollState {
   originY: number;
   target: ScrollTarget;
 }
+type BootLineKind='boot'|'ready'|'countdown'|'prompt'|'copy';
+interface BootTranscriptLine{kind:BootLineKind;text:string}
 
 const CURSOR_STATE_CLASSES: readonly CursorStateClass[] = [
   'cursor-native-drag-link',
@@ -44,13 +50,13 @@ const CURSOR_STATE_CLASSES: readonly CursorStateClass[] = [
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavigationBarComponent],
+  imports: [RouterOutlet, NavigationBarComponent, AchievementToastComponent, SectorStatusComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnDestroy {
   title = 'personalProject';
-  protected readonly bootSequenceLines = [
+  private readonly bootSequenceLines = [
     'Initializing...',
     'Retuning The Guitar...',
     'Adding Shameless Self-Promotion...',
@@ -60,32 +66,44 @@ export class AppComponent implements OnDestroy {
   ];
   protected readonly bootSequenceVisible = signal(false);
   protected readonly bootSequenceExiting = signal(false);
+  protected readonly bootReady = signal(false);
+  protected readonly bootCountdown = signal(20);
+  protected readonly bootTranscriptLines=signal<BootTranscriptLine[]>([]);
+  protected readonly touchFirst = signal(false);
+  @ViewChild('bootTranscript') private bootTranscript?:ElementRef<HTMLElement>;
 
   private activeDragKind: NativeDragKind | null = null;
   private middleScrollState: MiddleScrollState | null = null;
-  private readonly bootSequenceTimers: number[] = [];
+  private bootController?:AbortController;
+  private bootScrollFrame=0;
   private readonly removeListeners: Array<() => void> = [];
   private scrollAnimationFrame = 0;
   private suppressNextAuxClick = false;
   private readonly view: Window | null;
+  private konamiLocked=false; private rootLocked=false;
 
   constructor(
     @Inject(DOCUMENT) private readonly document: Document,
     @Inject(PLATFORM_ID) platformId: object,
-    private readonly ngZone: NgZone
+    private readonly ngZone: NgZone,
+    protected readonly achievements: AchievementService,
+    private readonly scrollLock: OverlayScrollLockService
   ) {
     this.view = this.document.defaultView;
+    effect(()=>{const active=this.achievements.konamiSequenceActive();if(active&&!this.konamiLocked){this.scrollLock.lock();this.konamiLocked=true}else if(!active&&this.konamiLocked){this.scrollLock.unlock();this.konamiLocked=false}});
+    effect(()=>{const active=this.achievements.rootCelebrationActive();if(active&&!this.rootLocked){this.scrollLock.lock();this.rootLocked=true}else if(!active&&this.rootLocked){this.scrollLock.unlock();this.rootLocked=false}});
+    effect(()=>{this.bootTranscriptLines().map(line=>line.text).join('');this.scheduleBootScroll();});
 
     if (isPlatformBrowser(platformId)) {
       this.startBootSequence();
+      this.touchFirst.set(this.view?.matchMedia('(hover: none), (pointer: coarse)').matches ?? false);
       this.ngZone.runOutsideAngular(() => this.bindCursorEvents());
     }
   }
 
   ngOnDestroy(): void {
-    for (const timer of this.bootSequenceTimers) {
-      this.view?.clearTimeout(timer);
-    }
+    this.bootController?.abort();
+    if(this.bootScrollFrame&&this.view)this.view.cancelAnimationFrame(this.bootScrollFrame);
 
     for (const removeListener of this.removeListeners) {
       removeListener();
@@ -93,6 +111,8 @@ export class AppComponent implements OnDestroy {
 
     this.clearMiddleScrollState();
     this.setCursorState(null);
+    if (this.bootSequenceVisible()) this.scrollLock.unlock();
+    if(this.konamiLocked)this.scrollLock.unlock();if(this.rootLocked)this.scrollLock.unlock();
   }
 
   private startBootSequence(): void {
@@ -101,15 +121,38 @@ export class AppComponent implements OnDestroy {
     }
 
     this.bootSequenceVisible.set(true);
-    this.bootSequenceExiting.set(false);
-
-    this.bootSequenceTimers.push(
-      this.view.setTimeout(() => this.bootSequenceExiting.set(true), 7600),
-      this.view.setTimeout(() => this.bootSequenceVisible.set(false), 8000)
-    );
+    this.bootSequenceExiting.set(false);this.bootTranscriptLines.set([]);this.bootReady.set(false);
+    this.scrollLock.lock();
+    this.bootController=new AbortController();void this.runBootSequence(this.bootController.signal);
   }
 
+  private async runBootSequence(signal:AbortSignal):Promise<void>{
+    if(!this.view)return;const reduced=this.view.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduced){this.bootReady.set(true);this.bootCountdown.set(12);this.bootTranscriptLines.set([...this.bootSequenceLines.map(text=>({kind:'boot' as const,text})),{kind:'ready',text:'SYSTEM READY'},{kind:'countdown',text:''},{kind:'prompt',text:`> ${this.touchFirst()?'TAP':'PRESS ANY KEY'} TO ENTER`},{kind:'copy',text:'For real. Go ahead. This site does stuff.'},{kind:'copy',text:'I may have gotten carried away with the interactive elements...'},{kind:'copy',text:'Things escalated quickly.'},{kind:'copy',text:'I regret nothing.'}]);await this.runBootCountdown(12,signal);return;}
+    for(const [index,text] of this.bootSequenceLines.entries()){if(!await this.typeBootLine(text,'boot',signal))return;if(index<this.bootSequenceLines.length-1&&!await this.bootDelay(500,signal))return;}
+    if(!await this.bootDelay(100,signal))return;this.bootReady.set(true);this.bootCountdown.set(20);void this.runBootCountdown(20,signal);
+    if(!await this.typeBootLine('SYSTEM READY','ready',signal))return;
+    this.appendBootLine('', 'countdown');
+    if(!await this.bootDelay(225,signal))return;
+    if(!await this.typeBootLine(`> ${this.touchFirst()?'TAP':'PRESS ANY KEY'} TO ENTER`,'prompt',signal))return;
+    const copy=['For real. Go ahead. This site does stuff.','I may have gotten carried away with the interactive elements...','Things escalated quickly.','I regret nothing.'];
+    for(const text of copy){if(!await this.bootDelay(550,signal))return;if(!await this.typeBootLine(text,'copy',signal))return;}
+  }
+  private async typeBootLine(text:string,kind:BootLineKind,signal:AbortSignal):Promise<boolean>{const index=this.appendBootLine('',kind);for(const character of text){if(!await this.bootDelay(28,signal))return false;this.bootTranscriptLines.update(lines=>lines.map((line,i)=>i===index?{...line,text:line.text+character}:line));}return true;}
+  private appendBootLine(text:string,kind:BootLineKind):number{const index=this.bootTranscriptLines().length;this.bootTranscriptLines.update(lines=>[...lines,{kind,text}]);return index;}
+  private async runBootCountdown(seconds:number,signal:AbortSignal):Promise<void>{const deadline=Date.now()+seconds*1000;while(!signal.aborted){const remaining=Math.max(0,Math.ceil((deadline-Date.now())/1000));this.bootCountdown.set(remaining);if(remaining===0){this.enterBoot();return;}if(!await this.bootDelay(200,signal))return;}}
+  private bootDelay(ms:number,signal:AbortSignal):Promise<boolean>{return new Promise(resolve=>{if(signal.aborted){resolve(false);return}const timer=this.view!.setTimeout(()=>{signal.removeEventListener('abort',cancel);resolve(true);},ms);const cancel=()=>{this.view!.clearTimeout(timer);resolve(false)};signal.addEventListener('abort',cancel,{once:true});});}
+  private scheduleBootScroll():void{if(!this.view||this.bootScrollFrame||!this.bootSequenceVisible())return;this.bootScrollFrame=this.view.requestAnimationFrame(()=>{this.bootScrollFrame=0;const element=this.bootTranscript?.nativeElement;if(!element)return;const required=Math.max(0,element.scrollHeight-element.clientHeight);if(element.scrollTop<required)element.scrollTop=required;});}
+
+  protected enterBoot(event?:Event): void {
+    if(!this.bootReady()||!this.bootSequenceVisible())return;event?.preventDefault();event?.stopPropagation();
+    this.bootController?.abort();this.bootSequenceVisible.set(false);this.scrollLock.unlock();this.achievements.recordBootSequenceComplete();
+  }
+
+  protected continueKonami(event?:Event):void{if(!this.achievements.konamiReady())return;event?.preventDefault();event?.stopPropagation();this.achievements.dismissKonamiSequence();}
+
   private bindCursorEvents(): void {
+    this.listen(this.document, 'keydown', this.handleTerminalContinue, { capture: true });
     this.listen(this.document, 'dragstart', this.handleDragStart, { capture: true });
     this.listen(this.document, 'dragenter', this.handleDragOver, { capture: true });
     this.listen(this.document, 'dragover', this.handleDragOver, { capture: true });
@@ -124,6 +167,8 @@ export class AppComponent implements OnDestroy {
       this.listen(this.view, 'blur', this.handleWindowBlur);
     }
   }
+
+  private readonly handleTerminalContinue:EventListener=(raw):void=>{const event=raw as KeyboardEvent;if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||['Alt','Control','Meta','Shift'].includes(event.key))return;if(this.bootReady()&&this.bootSequenceVisible()){this.enterBoot(event);return}if(this.achievements.konamiSequenceActive()&&this.achievements.konamiReady())this.continueKonami(event);};
 
   private listen(
     target: EventTarget,

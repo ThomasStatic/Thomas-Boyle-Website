@@ -1,10 +1,10 @@
-import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, HostListener, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { CardName, PlayingCard, Suit } from 'typedeck';
-import { MatDialog } from '@angular/material/dialog';
-import { EndOfGameDialogComponent } from './end-of-game-dialog/end-of-game-dialog.component';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatIconModule} from '@angular/material/icon';
+import { AchievementService } from '../achievements/achievement.service';
+import { SystemTickerComponent, SystemTickerTone } from '../shared/system-ticker.component';
 
 type PlayerHandStatus = 'playing' | 'stood' | 'busted';
 
@@ -17,12 +17,12 @@ interface RoundResult {
 @Component({
   selector: 'app-blackjack',
   standalone: true,
-  imports: [MatButtonModule, MatChipsModule, MatIconModule],
+  imports: [MatButtonModule, MatChipsModule, MatIconModule, SystemTickerComponent],
   templateUrl: './blackjack.component.html',
   styleUrl: './blackjack.component.scss'
 })
 export class BlackjackComponent implements OnInit {
-  readonly dialog = inject(MatDialog);
+  private readonly achievements = inject(AchievementService);
   private readonly minimumBet = 10;
   private readonly betStep = 10;
   private readonly maxSplitHands = 4;
@@ -48,6 +48,8 @@ export class BlackjackComponent implements OnInit {
 
   // setting to true on init so button is disabled until after first round
   disableResetButton: WritableSignal<boolean> = signal(true);
+  protected readonly roundResultText = signal('');
+  protected readonly roundResultTone = signal<SystemTickerTone>('neutral');
 
   constructor() {
 
@@ -284,7 +286,7 @@ export class BlackjackComponent implements OnInit {
     }
 
     if(this.userStanding()) {
-      return 'ROUND CLOSED';
+      return 'CLOSED';
     }
 
     if(this.splitActive()) {
@@ -294,25 +296,12 @@ export class BlackjackComponent implements OnInit {
     return 'PLAYER TURN';
   }
 
-  protected activeSeatText(): string {
-    if(!this.betPlaced()) {
-      return 'STANDBY';
-    }
-
-    if(this.userStanding()) {
-      return 'STANDING';
-    }
-
-    if(this.splitActive()) {
-      return `HAND ${this.activePlayerHandIndex() + 1}/${this.playerHands().length}`;
-    }
-
-    return 'ACTIVE_HAND';
-  }
-
   protected remainingCardsText(): string {
-    return this.betPlaced() ? `${this.deck.length} CARDS` : 'READY';
+    return this.betPlaced() ? `${this.deck.length}` : 'READY';
   }
+
+  protected dealerHandLabel(): string { return this.betPlaced() ? `// ${this.dealersTotal()}` : '// STANDBY'; }
+  protected playerHandLabel(handIndex = 0): string { return this.betPlaced() ? `// ${this.getPlayerHandTotal(handIndex)}` : '// STANDBY'; }
 
   protected isActivePlayerHand(handIndex: number): boolean {
     return this.activePlayerHandIndex() === handIndex && this.playerHandStatuses()[handIndex] === 'playing';
@@ -344,6 +333,7 @@ export class BlackjackComponent implements OnInit {
     if(!this.canDouble(handIndex)) {
       return;
     }
+    this.achievements.unlock('double-trouble');
 
     this.playerHandBets.update(bets => bets.map((bet, index) => {
       return index === handIndex ? bet * 2 : bet;
@@ -380,6 +370,7 @@ export class BlackjackComponent implements OnInit {
     if(!this.canSplit(handIndex)) {
       return;
     }
+    this.achievements.unlock('split-decision');
 
     const currentHands = this.playerHands();
     const currentBets = this.playerHandBets();
@@ -570,16 +561,23 @@ export class BlackjackComponent implements OnInit {
   }
 
   private openRoundDialog(result: RoundResult): void {
+    this.userStanding.set(true); this.activePlayerHandIndex.set(-1);
+    const dealerTotal = this.dealersTotal();
+    const totals = this.playerHands().map(hand => this.calcHandTotal(hand));
+    const won = totals.some(total => total <= 21 && (dealerTotal > 21 || total > dealerTotal));
+    const pushed = totals.some(total => total <= 21 && total === dealerTotal);
+    this.achievements.recordBlackjackHandCompleted({ won, pushed, totals, naturalBlackjack: this.isNaturalBlackjack(0) });
     this.setUserBank(this.userBank() + result.bankDelta);
-    this.dialog.open(EndOfGameDialogComponent, {
-      width: 'min(92vw, 520px)',
-      maxWidth: '92vw',
-      panelClass: 'blackjack-round-dialog',
-      data: { title: result.title, message: result.message }
-    }).afterClosed().subscribe(() => {
-      this.disableResetButton.set(false);
-    });
+    const natural=this.isNaturalBlackjack(0);const playerLabel=totals.map((total,index)=>`${totals.length>1?'HAND '+(index+1):'PLAYER'} ${total}`).join(' // ');
+    const outcome=natural?'BLACKJACK':result.bankDelta>0?'ROUND WON':result.bankDelta<0?'ROUND LOST':'PUSH';
+    const credits=result.bankDelta===0?'BET RETURNED':`${result.bankDelta>0?'+':''}${result.bankDelta} CREDITS`;
+    this.roundResultTone.set(natural?'warning':result.bankDelta>0?'success':result.bankDelta<0?'danger':'info');
+    this.roundResultText.set(`${outcome} // DEALER ${dealerTotal} // ${playerLabel} // ${credits}`);
+    this.disableResetButton.set(false);
   }
+
+  protected dealAgain():void{if(this.disableResetButton())return;this.roundResultText.set('');this.resetGame();}
+  @HostListener('document:keydown.enter',['$event']) protected dealAgainFromEnter(event:KeyboardEvent):void{if(!this.userStanding()||this.disableResetButton())return;event.preventDefault();event.stopPropagation();this.dealAgain();}
 
   private cardSplitValue(card: PlayingCard): CardName {
     return card.cardName;
@@ -662,6 +660,7 @@ export class BlackjackComponent implements OnInit {
     if(!this.canPlaceBet()) {
       return;
     }
+    this.achievements.unlock('first-bet');
 
     this.betPlaced.set(true);
     this.userStanding.set(false);
@@ -680,6 +679,7 @@ export class BlackjackComponent implements OnInit {
     this.dealersTotal.set(0);
     this.betPlaced.set(false);
     this.disableResetButton.set(true);
+    this.roundResultText.set('');
     this.syncBetToBank();
   }
 

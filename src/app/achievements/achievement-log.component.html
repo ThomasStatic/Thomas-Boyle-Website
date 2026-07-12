@@ -1,0 +1,35 @@
+<button class="sys-log-trigger" [class.root-trigger]="service.isUnlocked('root-access')" type="button" (click)="openPanel($event)" [attr.aria-expanded]="open()" aria-controls="achievement-log">
+  {{ service.isUnlocked('root-access') ? 'ROOT.LOG' : 'SYS.LOG' }} {{ service.unlockedCount() }}/{{ service.totalCount }}
+</button>
+@if (open()) {
+  <div class="log-backdrop" (mousedown)="backdrop($event)">
+    <section id="achievement-log" class="log-panel" role="dialog" aria-modal="true" aria-labelledby="log-title">
+      <header><div><small>DISCOVERY DATABASE</small><h2 id="log-title">SYSTEM PROGRESS</h2></div><button #closeButton type="button" (click)="closePanel()" aria-label="Close achievement log">[X]</button></header>
+      <div class="summary"><strong>{{ service.unlockedCount() }} / {{ service.totalCount }}</strong><span>{{ service.completionPercentage() }}%</span></div>
+      <div class="progress" role="progressbar" [attr.aria-valuenow]="service.completionPercentage()" aria-valuemin="0" aria-valuemax="100"><span [style.width.%]="service.completionPercentage()"></span></div>
+      @if (!service.isUnlocked('konami-code')) { <div class="bonus-signal"><strong>BONUS SIGNAL DETECTED</strong><p>Konami input protocol suspected.</p>@if(touchFirst()){<p class="keyboard-warning"><strong>KEYBOARD INPUT REQUIRED</strong><br>This particular bit of nonsense is desktop-only.</p>}</div> }
+      @if (service.isUnlocked('konami-code')) { <div class="rgb-control"><span>BONUS PROTOCOL AUTHENTICATED</span><p>RGB MODE: {{ service.rgbEnabled() ? 'ONLINE' : 'OFFLINE' }}</p><button type="button" (click)="service.toggleRgbMode()" [attr.aria-pressed]="service.rgbEnabled()">[TOGGLE]</button></div> }
+      @if (service.isUnlocked('root-access')) { <div class="root-state"><strong>ACCESS LEVEL: ROOT</strong><p>All available systems inspected.<br>No additional permissions remain.<br><br>Thanks for exploring this little corner of the internet.<br>Now go build something cool.</p></div> }
+      <div class="entries">
+        @for (category of categories; track category) {
+          <section class="category">
+            <button class="category-toggle" type="button" (click)="toggleCategory(category)" [attr.aria-expanded]="isExpanded(category)" [attr.aria-controls]="'achievement-category-' + category">
+              <span>{{ category }}</span><span>{{ categoryUnlocked(category) }} / {{ categoryTotal(category) }}</span>
+            </button>
+            @if (isExpanded(category)) {
+              <div [id]="'achievement-category-' + category" class="category-content">
+                @for (item of entries(category); track item.id) {
+                  <article [class.unlocked]="service.isUnlocked(item.id)" [class.bonus-entry]="item.isBonus">
+                    <span class="entry-status">{{ service.isUnlocked(item.id) ? '[DECRYPTED]' : '[LOCKED]' }}</span>
+                    <strong class="entry-title">{{ item.title }}</strong>
+                    <p>{{ service.isUnlocked(item.id) ? item.description : 'Continue exploring the system.' }}</p>
+                  </article>
+                }
+              </div>
+            }
+          </section>
+        }
+      </div>
+    </section>
+  </div>
+}

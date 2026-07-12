@@ -1,6 +1,9 @@
-import { Directive, ElementRef, HostBinding, HostListener, inject } from '@angular/core';
+import { Directive, ElementRef, HostBinding, HostListener, Input, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ImageLightboxDialogComponent, ImageLightboxData } from './image-lightbox-dialog.component';
+import { AchievementService } from '../achievements/achievement.service';
+import { Router } from '@angular/router';
+import { OverlayScrollLockService } from './overlay-scroll-lock.service';
 
 @Directive({
   selector: 'img[appExpandableImage]',
@@ -9,6 +12,10 @@ import { ImageLightboxDialogComponent, ImageLightboxData } from './image-lightbo
 export class ExpandableImageDirective {
   private readonly dialog = inject(MatDialog);
   private readonly image = inject(ElementRef<HTMLImageElement>);
+  private readonly achievements = inject(AchievementService);
+  private readonly router = inject(Router);
+  private readonly scrollLock = inject(OverlayScrollLockService);
+  @Input() achievementOnOpen?: string;
 
   @HostBinding('class.expandable-image')
   protected readonly expandableImageClass = true;
@@ -60,6 +67,7 @@ export class ExpandableImageDirective {
       renderedHeight: bounds.height
     };
 
+    this.scrollLock.lock();
     this.dialog.open(ImageLightboxDialogComponent, {
       autoFocus: 'dialog',
       backdropClass: 'image-lightbox-backdrop',
@@ -70,6 +78,8 @@ export class ExpandableImageDirective {
       panelClass: 'image-lightbox-panel',
       restoreFocus: true,
       width: '96vw'
-    });
+    }).afterClosed().subscribe(()=>this.scrollLock.unlock());
+    const achievementId = this.achievementOnOpen ?? (this.router.url.split(/[?#]/)[0] === '/capstone' ? 'enhance' : undefined);
+    if (achievementId) this.achievements.unlock(achievementId);
   }
 }

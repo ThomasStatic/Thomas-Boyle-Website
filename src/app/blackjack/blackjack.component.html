@@ -27,7 +27,7 @@
                 <strong>{{ userBet() }}</strong>
             </div>
             <div class="status-cell">
-                <span>Round State</span>
+                <span>State</span>
                 <strong>{{ roundStatusText() }}</strong>
             </div>
             <div class="status-cell">
@@ -40,7 +40,7 @@
             <section class="hand-section dealer-hand-section">
                 <div class="hand-label">
                     <span>Dealer Node</span>
-                    <span>HOUSE_AI</span>
+                    <span>{{ dealerHandLabel() }}</span>
                 </div>
                 <div class="hand-of-cards" aria-label="Dealer hand">
                     @if(!userStanding() && betPlaced()) {
@@ -54,14 +54,13 @@
                     }
                 </div>
                 @if(betPlaced()) {
-                    <p class="centered hand-totals">{{ !userStanding() ? "Dealer showing: " + dealersTotal() : "Dealer has: " + dealersTotal()}}</p>
                 }
             </section>
 
             <section class="hand-section player-hand-section">
                 <div class="hand-label">
                     <span>Player Node</span>
-                    <span>{{ activeSeatText() }}</span>
+                    <span>{{ playerHandLabel(activePlayerHandIndex() < 0 ? 0 : activePlayerHandIndex()) }}</span>
                 </div>
                 @if(splitActive()) {
                     <div class="split-hands">
@@ -95,7 +94,7 @@
                             <img [src]="getImagePath(card)" alt="" class="card">
                         }
                     </div>
-                    @if(betPlaced()) {
+                    @if(betPlaced() && !userStanding()) {
                         <div class="controls centered">
                             <button mat-stroked-button (click)="hit('Player')" [disabled]="!canHitActiveHand()">Hit</button>
                             @if(shouldShowDoubleButton(0)) {
@@ -106,25 +105,17 @@
                                 <button mat-stroked-button (click)="split(0)" [disabled]="!canSplit(0)">Split</button>
                             }
                         </div>
-                        <p class="centered hand-totals">{{ getPlayerHandTotalText(0) }}</p>
                     }
                 }
             </section>
 
-            <div class="blackjack-actions">
-                <div class="bank-container">
-                    <p class="bank-amount">Bank: {{ userBank()}}</p>
-                    <button
-                        mat-stroked-button
-                        class="reset-bank-button"
-                        (click)="resetBank()"
-                        [disabled]="!canResetBank()"
-                    >
-                        Reset Bank
-                    </button>
-                </div>
+            @if (roundResultText()) { <app-system-ticker class="round-ticker" [text]="roundResultText()" [tone]="roundResultTone()" prefix="CASINO"></app-system-ticker> }
 
+            <div class="blackjack-actions">
                 <div class="betting-container">
+                    @if (userStanding() && !disableResetButton()) {
+                      <button class="centered place-bet deal-again" mat-stroked-button (click)="dealAgain()">Deal Again</button>
+                    } @else {
                     <div class="bet-amount-controls">
                         <button matFab class="betting-button" (click)="changeBet(-10)" [disabled]="!canDecreaseBet()" aria-label="Decrease bet">
                             <mat-icon>arrow_left</mat-icon>
@@ -147,15 +138,9 @@
                         >
                             Place Bet
                         </button>
-                        <button
-                            class="centered place-bet"
-                            mat-stroked-button
-                            (click)="resetGame()"
-                            [disabled]="disableResetButton()"
-                        >
-                            Reset Game
-                        </button>
                     </div>
+                    <button mat-stroked-button class="reset-bank-button" (click)="resetBank()" [disabled]="!canResetBank()" aria-label="Restore bankroll to 100 credits before a hand">Reset Bank</button>
+                    }
                 </div>
             </div>
         </section>

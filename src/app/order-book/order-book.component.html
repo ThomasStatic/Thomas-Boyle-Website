@@ -93,6 +93,24 @@
             </table>
         </section>
 
+        <section class="terminal-panel matching-demo" aria-labelledby="matching-demo-title">
+            <div class="terminal-titlebar"><span id="matching-demo-title">ILLUSTRATIVE DEMO</span><span>RUN MATCHING CYCLE</span></div>
+            <div class="matching-body">
+                <p>The resting book holds queued buy bids and sell asks. The demo introduces a buy priced high enough to trade with the cheapest asks.</p>
+                <div class="resting-book" [class.stage-pulse]="matchState() === 'resting-book'"><strong>RESTING BOOK</strong>
+                    @for(level of demo.restingBids;track level.price){<span>BID {{level.quantity}} &#64; {{level.price.toFixed(2)}}</span>}
+                    @for(level of demo.restingAsks;track level.price){<span [class.crossed]="matchState() === 'matching-best-ask' && $index === 0 || matchState() === 'matching-next-ask' && $index === 1">ASK {{askQuantity(level)}} &#64; {{level.price.toFixed(2)}}</span>}
+                </div>
+                @if(matchState() !== 'idle' && matchState() !== 'resting-book'){<div class="incoming-order" [class.stage-pulse]="matchState() === 'incoming-order'"><strong>INCOMING BUY</strong><span>{{demo.incomingBuy.quantity}} units &#64; limit {{demo.incomingBuy.limitPrice.toFixed(2)}}</span></div>}
+                @if (matchState() === 'execution-complete') { <div class="match-result stage-pulse" role="status"><strong>MATCH COMPLETE</strong>@for(fill of demo.fills;track fill.price){<span>{{fill.quantity}} filled &#64; {{fill.price.toFixed(2)}}</span>}<span>{{askQuantity(demo.restingAsks[1])}} remain on the ask &#64; {{demo.restingAsks[1].price.toFixed(2)}}</span></div> }
+                @if(visibleLog().length){<div class="match-log">@for(line of visibleLog();track line){<span>{{line}}</span>}</div>}
+                <div class="matching-actions">
+                    <button type="button" (click)="executeMatch()" [disabled]="matchState() !== 'idle'">[EXECUTE DEMO]</button>
+                    <button type="button" (click)="resetMatch()" [disabled]="matchState() === 'idle' || isRunning()">[RESET]</button>
+                </div>
+            </div>
+        </section>
+
         <section class="feature-grid" aria-label="Order book project focus areas">
             @for(card of featureCards; track card.title) {
                 <article class="feature-card" [style.--card-accent]="card.accent">

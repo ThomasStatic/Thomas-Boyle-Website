@@ -6,6 +6,7 @@ nav {
     position: fixed;
     width: 100%;
     z-index: 10;
+    min-height: var(--shared-nav-height);
 }
 
 ul {
@@ -21,6 +22,7 @@ li {
     list-style: none;
     width: fit-content;
 }
+.sys-log-slot{position:absolute}
 
 a {
     color: #f9fbf2;
@@ -69,9 +71,18 @@ a:active {
     display: none;
 }
 
+:host-context(.rgb-mode) nav { box-shadow:0 2px 10px rgba(248,214,109,.14) }
+:host-context(.rgb-mode) nav::after{animation:rgb-wave 10s linear infinite;background:linear-gradient(90deg,#ee7187,#f8d66d,#7ee7d8,#8da9ff,#ee7187) 0 0 / 200% 100%;bottom:0;content:"";height:2px;left:0;position:absolute;right:0}
+:host-context(.rgb-mode) a::after { background:linear-gradient(90deg,#ee7187,#f8d66d,#7ee7d8,#8da9ff) }
+:host-context(.rgb-mode) a.active-route::after { transform:scaleX(1) }
+:host-context(.rgb-sweep) nav { animation:rgb-diagnostic 1.5s ease-out }
+@keyframes rgb-diagnostic { 0%{box-shadow:inset -100vw 0 #ee718733} 45%{box-shadow:inset 0 0 #7ee7d844} 70%{box-shadow:inset 100vw 0 #8da9ff33} 100%{box-shadow:0 2px 10px rgba(248,214,109,.14)} }
+@keyframes rgb-wave{to{background-position:200% 0}}@media(prefers-reduced-motion:reduce){:host-context(.rgb-sweep) nav,:host-context(.rgb-mode) nav::after{animation:none}}
+
 @media (width <= 640px) {
     nav {
-        padding: 0.55rem 0.75rem;
+        min-height: 0;
+        padding: 0.3rem 0.75rem 0.55rem;
     }
 
     ul {
@@ -87,6 +98,7 @@ a:active {
         min-width: 0;
         width: auto;
     }
+    .sys-log-slot{position:static}
 
     a {
         align-items: center;

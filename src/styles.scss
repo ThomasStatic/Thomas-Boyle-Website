@@ -31,6 +31,7 @@ $thomas-boyle-website-theme: mat.define-theme((
     linear-gradient(90deg, rgba(126, 231, 216, 0.05) 1px, transparent 1px),
     #282d2d;
   --site-grid-size: 3.5rem 3.5rem;
+  --shared-nav-height: 4.5rem;
   --cursor-default: url("/cursors/light-24/pointer.png") 0 0, auto;
   --cursor-link: url("/cursors/light-24/link2.png") 5 1, pointer;
   --cursor-link-active: url("/cursors/light-24/link3.png") 5 1, pointer;
@@ -68,11 +69,14 @@ body {
     margin: 0;
 }
 html, body { height: 100; overflow-x: hidden;}
+html { scrollbar-gutter: stable; }
+.cdk-global-scrollblock { overflow-y: scroll !important; position: static !important; width: auto !important; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 @media (width <= 640px) {
     :root {
         --site-grid-size: 2.25rem 2.25rem;
+        --shared-nav-height: 5.7rem;
     }
 }
 
@@ -145,16 +149,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .image-lightbox-panel {
     cursor: var(--cursor-default);
 
-    .mat-mdc-dialog-container,
-    .mat-mdc-dialog-surface,
-    .mdc-dialog__surface {
-        background: transparent !important;
-        box-shadow: none !important;
-        overflow: visible;
-    }
-}
-
-.blackjack-round-dialog {
     .mat-mdc-dialog-container,
     .mat-mdc-dialog-surface,
     .mdc-dialog__surface {

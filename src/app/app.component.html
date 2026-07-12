@@ -3,7 +3,7 @@
         class="boot-sequence"
         [class.is-exiting]="bootSequenceExiting()"
         aria-label="Portfolio boot sequence"
-        aria-live="polite"
+        (click)="enterBoot($event)"
     >
         <div class="boot-window">
             <div class="boot-titlebar">
@@ -11,15 +11,47 @@
                 <span>v1.0</span>
             </div>
 
-            <div class="boot-lines">
-                @for (line of bootSequenceLines; track line) {
-                    <p>{{ line }}</p>
+            <div class="boot-lines" #bootTranscript>
+                @for (line of bootTranscriptLines(); track $index) {
+                    <p class="boot-line" [class.is-boot]="line.kind === 'boot'" [class.is-done]="line.kind === 'boot' && line.text === 'Done!'" [class.is-ready]="line.kind === 'ready'" [class.is-prompt]="line.kind === 'prompt'" [class.is-copy]="line.kind === 'copy'">
+                      @if(line.kind === 'countdown'){ AUTO-ENTERING IN {{bootCountdown()}}... } @else { {{line.text}} }
+                      @if(line.kind === 'prompt'){<span class="prompt-cursor" aria-hidden="true">_</span>}
+                    </p>
                 }
-                <span class="boot-cursor" aria-hidden="true"></span>
             </div>
+            @if(bootReady()){<span class="boot-ready-announcement" aria-live="polite">System ready. {{touchFirst()?'Tap':'Press any key'}} to enter.</span>}
         </div>
     </section>
 }
 
+<div class="app-shell" [class.rgb-mode]="achievements.rgbEnabled()" [class.rgb-sweep]="achievements.rgbSweepActive()">
 <app-navigation-bar></app-navigation-bar>
+<app-sector-status></app-sector-status>
 <router-outlet></router-outlet>
+</div>
+<app-achievement-toast></app-achievement-toast>
+@if (achievements.konamiSequenceActive()) {
+  <section class="konami-sequence" role="status" aria-live="assertive" aria-label="Konami protocol accepted" (click)="continueKonami($event)">
+    <div class="konami-terminal">
+      <p>UNAUTHORIZED INPUT DETECTED<br>LEGACY SEQUENCE MATCHED</p>
+      <h2>KONAMI PROTOCOL ACCEPTED</h2>
+      <p>INSTALLING CHROMATIC OVERRIDE...</p>
+      <div class="konami-progress" aria-hidden="true"><span></span></div>
+      @if (achievements.konamiReady()) { <strong>RGB MODE ONLINE</strong><p class="continue-prompt">&gt; {{ touchFirst() ? 'TAP' : 'PRESS ANY KEY' }} TO CONTINUE<span>_</span></p> }
+    </div>
+  </section>
+}
+@if (achievements.rootCelebrationActive()) {
+  <section class="root-celebration" role="status" aria-live="assertive" aria-label="Root access granted">
+    <button type="button" (click)="achievements.dismissRootCelebration()" aria-label="Dismiss root access sequence">[SKIP]</button>
+    <div class="root-terminal">
+      <p>FINAL ENTRY DECRYPTED</p>
+      <p>{{ achievements.totalCount }} / {{ achievements.totalCount }} SYSTEM RECORDS VERIFIED</p>
+      <p>ESCALATING PERMISSIONS...</p>
+      <h2>ACCESS LEVEL: ROOT</h2>
+    </div>
+    <div class="root-particles" aria-hidden="true">
+      @for (particle of ['0','1','█','+','$','>','1','+','0','█','>','$']; track $index) { <span [style.--i]="$index">{{ particle }}</span> }
+    </div>
+  </section>
+}

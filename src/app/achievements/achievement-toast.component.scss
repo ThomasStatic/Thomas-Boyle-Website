@@ -1,0 +1,7 @@
+.achievement-toast { animation: toast-in .22s steps(3); background:#101818; border:1px solid #7ee7d8; bottom:1rem; box-shadow:4px 4px 0 #050808,0 0 22px rgba(126,231,216,.18); color:#f9fbf2; font-family:"VT323",monospace; max-width:22rem; padding:1rem; pointer-events:none; position:fixed; right:1rem; width:calc(100vw - 4rem); z-index:1100 }
+strong,small { color:#7ee7d8; letter-spacing:.08em } h2 { color:#c7f07c; font-size:1.45rem; margin:.65rem 0 .2rem } p { font-size:1.08rem; margin:.2rem 0 .8rem }
+.bonus-toast { border-color:#f8d66d;box-shadow:4px 4px 0 #050808,0 0 24px rgba(248,214,109,.2) }.bonus-toast>strong,.rgb-message { color:#f8d66d }
+.external-trace{color:#f8d66d;display:block;font-weight:700;letter-spacing:.08em;margin-bottom:.45rem}
+@keyframes toast-in { from { opacity:0; transform:translateY(1rem) } }
+@media (width <= 520px) { .achievement-toast { bottom:.6rem; left:.6rem; right:.6rem; width:auto } }
+@media (prefers-reduced-motion:reduce) { .achievement-toast { animation:none } }

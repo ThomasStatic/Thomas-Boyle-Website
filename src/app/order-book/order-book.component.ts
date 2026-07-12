@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, computed, signal } from '@angular/core';
+import { AchievementService } from '../achievements/achievement.service';
 
 type OrderBookLevel = {
   bidSize: string;
@@ -18,6 +19,10 @@ type FeatureCard = {
   text: string;
   accent: string;
 };
+type MatchingDemoStage='idle'|'resting-book'|'incoming-order'|'matching-best-ask'|'matching-next-ask'|'execution-complete';
+interface DemoLevel{price:number;quantity:number}
+interface DemoFill{price:number;quantity:number}
+const MATCHING_DEMO={restingBids:[{price:100.95,quantity:12},{price:100.90,quantity:15}],restingAsks:[{price:101.05,quantity:8},{price:101.10,quantity:6},{price:101.20,quantity:10}],incomingBuy:{limitPrice:101.10,quantity:10},fills:[{price:101.05,quantity:8},{price:101.10,quantity:2}]} as const;
 
 @Component({
   selector: 'app-order-book',
@@ -25,7 +30,36 @@ type FeatureCard = {
   templateUrl: './order-book.component.html',
   styleUrl: './order-book.component.scss'
 })
-export class OrderBookComponent {
+export class OrderBookComponent implements OnDestroy {
+  protected readonly demo=MATCHING_DEMO;
+  protected readonly matchState=signal<MatchingDemoStage>('idle');
+  protected readonly completedStageCount=signal(0);
+  protected readonly visibleLog=computed(()=>this.demoLog.slice(0,this.completedStageCount()));
+  protected readonly isRunning=computed(()=>!['idle','execution-complete'].includes(this.matchState()));
+  private readonly demoLog=[
+    '> RESTING BOOK LOADED',
+    `> BUY ${MATCHING_DEMO.incomingBuy.quantity} @ ${MATCHING_DEMO.incomingBuy.limitPrice.toFixed(2)} RECEIVED`,
+    `> FILLED ${MATCHING_DEMO.fills[0].quantity} @ ${MATCHING_DEMO.fills[0].price.toFixed(2)}`,
+    `> FILLED ${MATCHING_DEMO.fills[1].quantity} @ ${MATCHING_DEMO.fills[1].price.toFixed(2)}`,
+    `> ORDER FILLED ${MATCHING_DEMO.incomingBuy.quantity} / ${MATCHING_DEMO.incomingBuy.quantity}`,
+    `> REMAINING ASK ${MATCHING_DEMO.restingAsks[1].quantity-MATCHING_DEMO.fills[1].quantity} @ ${MATCHING_DEMO.restingAsks[1].price.toFixed(2)}`
+  ];
+  private readonly matchTimers:ReturnType<typeof setTimeout>[]=[];
+  constructor(private readonly achievements: AchievementService) {}
+  protected executeMatch(): void {
+    if (this.matchState() !== 'idle') return;
+    const reduced=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches??false;
+    const stage=(delay:number,fn:()=>void)=>this.matchTimers.push(setTimeout(fn,reduced?0:delay));
+    this.setDemoStage('resting-book',1);
+    stage(650,()=>this.setDemoStage('incoming-order',2));
+    stage(1300,()=>this.setDemoStage('matching-best-ask',3));
+    stage(1950,()=>this.setDemoStage('matching-next-ask',4));
+    stage(2600,()=>{this.setDemoStage('execution-complete',6);this.achievements.unlock('match-found');});
+  }
+  protected askQuantity(level:DemoLevel):number{const fill=this.demo.fills.find(item=>item.price===level.price);const firstApplied=['matching-best-ask','matching-next-ask','execution-complete'].includes(this.matchState())&&level.price===this.demo.restingAsks[0].price;const secondApplied=['matching-next-ask','execution-complete'].includes(this.matchState())&&level.price===this.demo.restingAsks[1].price;return level.quantity-(firstApplied||secondApplied?(fill?.quantity??0):0)}
+  protected resetMatch(): void { this.matchTimers.forEach(clearTimeout);this.matchTimers.length=0;this.matchState.set('idle');this.completedStageCount.set(0); }
+  private setDemoStage(stage:MatchingDemoStage,logCount:number){this.matchState.set(stage);this.completedStageCount.set(logCount);}
+  ngOnDestroy(): void { this.matchTimers.forEach(clearTimeout); }
   protected readonly progressSegments = Array.from({ length: 10 }, (_, index) => index === 0);
 
   protected readonly orderBookLevels: OrderBookLevel[] = [

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { AchievementService } from '../achievements/achievement.service';
+import { ABOUT_CARD_IDS } from '../achievements/achievement-definitions';
 
 type KnowMeItem = {
   tag: string;
@@ -14,6 +16,10 @@ type KnowMeItem = {
   styleUrl: './get-to-know-me.component.scss'
 })
 export class GetToKnowMeComponent {
+  protected readonly cardIds = ABOUT_CARD_IDS;
+  constructor(private readonly achievements: AchievementService) {
+    this.achievements.configureAboutCards(this.cardIds);
+  }
   protected readonly knowMeItems: KnowMeItem[] = [
     {
       tag: 'How I show up',
@@ -109,9 +115,12 @@ export class GetToKnowMeComponent {
 
   protected selectKnowMeItem(index: number): void {
     this.selectedKnowMeIndex = index;
+    this.achievements.recordAboutCardViewed(this.cardIds[index]);
   }
 
   protected showNextKnowMeItem(): void {
+    this.achievements.recordAboutCardViewed(this.cardIds[this.selectedKnowMeIndex]);
     this.selectedKnowMeIndex = (this.selectedKnowMeIndex + 1) % this.knowMeItems.length;
+    this.achievements.recordAboutCardViewed(this.cardIds[this.selectedKnowMeIndex]);
   }
 }
