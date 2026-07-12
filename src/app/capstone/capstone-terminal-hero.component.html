@@ -1,0 +1,72 @@
+<div class="market-ticker" aria-label="Market ticker">
+    <div class="ticker-track">
+        @for (item of tickerItems; track item) {
+            <span>{{ item }}</span>
+        }
+        @for (item of tickerItems; track item) {
+            <span>{{ item }}</span>
+        }
+    </div>
+</div>
+
+<div class="header thesis-hero">
+    <div class="hero-copy">
+        <p class="terminal-kicker">RL-LAB TERMINAL // ERCOT_QLEARNING_V12</p>
+        <h1 class="site-text">Teaching an RL Agent to Bid in a Realistic Electricity Market</h1>
+        <h4 class="site-text">
+            A data-driven, multi-agent Q-learning thesis on how power generators can bid strategically when the market
+            refuses to sit still.
+        </h4>
+        <div class="hero-command-line" aria-label="Terminal command">
+            <span>tboyle&#64;rl-lab:~$</span>
+            <span>python train_agent.py --market ercot --mode thesis</span>
+        </div>
+    </div>
+
+    <aside class="lab-terminal" aria-label="RL lab terminal status">
+        <div class="panel-title">RL-LAB TERMINAL</div>
+        <dl>
+            @for (row of labTerminalRows; track row.label) {
+                <div>
+                    <dt>{{ row.label }}</dt>
+                    <dd>{{ row.value }}</dd>
+                </div>
+            }
+        </dl>
+    </aside>
+
+    <aside class="training-run" aria-label="Training run metrics">
+        <div class="panel-title">TRAINING RUN</div>
+        <p class="episode-line">Episode: <span>512 / 1000</span></p>
+        @for (metric of trainingMetrics; track metric.label) {
+            <div class="training-metric">
+                <div class="metric-label">
+                    <span>{{ metric.label }}</span>
+                    <span>{{ metric.value }}%</span>
+                </div>
+                <div class="metric-bar" role="meter" [attr.aria-label]="metric.label" [attr.aria-valuenow]="metric.value" aria-valuemin="0" aria-valuemax="100">
+                    <span
+                        class="metric-fill"
+                        [class.reward-fill]="metric.tone === 'reward'"
+                        [class.stability-fill]="metric.tone === 'stability'"
+                        [class.exploration-fill]="metric.tone === 'exploration'"
+                        [style.width.%]="metric.value"
+                    ></span>
+                </div>
+            </div>
+        }
+    </aside>
+
+    <details class="research-log" open>
+        <summary>Research Log</summary>
+        <ul>
+            @for (item of researchLogItems; track item.label) {
+                <li [class.is-done]="item.done">
+                    <span>{{ item.done ? '[x]' : '[ ]' }}</span>
+                    <span>{{ item.label }}</span>
+                </li>
+            }
+        </ul>
+    </details>
+
+</div>

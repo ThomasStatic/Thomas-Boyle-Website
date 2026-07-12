@@ -1,0 +1,403 @@
+:host {
+    --terminal-panel: rgba(19, 31, 29, 0.84);
+    --terminal-line: rgba(126, 231, 216, 0.36);
+    --terminal-muted: rgba(249, 251, 242, 0.74);
+    --terminal-cyan: #7ee7d8;
+    --terminal-yellow: #f8d66d;
+    --terminal-blue: #8abfff;
+    --terminal-green: #c7f07c;
+    --terminal-red: #ff8d7d;
+    display: block;
+}
+
+.site-text {
+    font-family: "VT323", Arimo, Roboto, Poppins;
+    text-decoration: none;
+    color: #f9fbf2;
+    font-weight: 400;
+    margin-bottom: 0.6rem;
+}
+
+.market-ticker {
+    box-sizing: border-box;
+    width: min(100rem, calc(100% - clamp(2rem, 8vw, 4rem)));
+    margin: 5.2rem auto 0;
+    overflow: hidden;
+    border: 1px solid rgba(126, 231, 216, 0.45);
+    border-radius: 8px;
+    background:
+        linear-gradient(90deg, rgba(126, 231, 216, 0.16), transparent 14%, transparent 86%, rgba(248, 214, 109, 0.13)),
+        rgba(9, 16, 15, 0.92);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.35),
+        0 0 20px rgba(126, 231, 216, 0.09);
+}
+
+.ticker-track {
+    display: flex;
+    width: max-content;
+    gap: 2.4rem;
+    padding: 0.42rem 0;
+    color: var(--terminal-yellow);
+    font-family: "VT323", Arimo, Roboto, Poppins;
+    font-size: 1.25rem;
+    letter-spacing: 0;
+    line-height: 1;
+    white-space: nowrap;
+    animation: ticker-scroll 28s linear infinite;
+
+    span {
+        color: var(--terminal-cyan);
+        text-shadow: 0 0 10px rgba(126, 231, 216, 0.24);
+    }
+}
+
+@keyframes ticker-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ticker-track {
+        width: auto;
+        flex-wrap: wrap;
+        animation: none;
+        transform: none;
+    }
+}
+
+.header {
+    box-sizing: border-box;
+    width: 100%;
+
+    h1 {
+        font-size: 3.5rem;
+        line-height: 1.05;
+        margin-bottom: 0.2rem;
+    }
+
+    h4 {
+        font-size: 2rem;
+        line-height: 1.12;
+        margin-top: 0.2rem;
+        margin-bottom: 0;
+        max-width: 58rem;
+    }
+}
+
+.thesis-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.18fr) minmax(21rem, 0.82fr);
+    gap: 1rem;
+    width: min(100rem, calc(100% - clamp(2rem, 8vw, 4rem)));
+    margin: 0 auto;
+    padding: 1rem 0 0;
+}
+
+.hero-copy,
+.lab-terminal,
+.training-run,
+.research-log {
+    border: 1px solid var(--terminal-line);
+    border-radius: 8px;
+    background:
+        linear-gradient(rgba(126, 231, 216, 0.045) 50%, rgba(0, 0, 0, 0.08) 50%) 0 0 / 100% 0.42rem,
+        var(--terminal-panel);
+    box-shadow:
+        inset 0 0 0 1px rgba(249, 251, 242, 0.035),
+        0 0 28px rgba(126, 231, 216, 0.06);
+}
+
+.hero-copy {
+    position: relative;
+    grid-row: 1 / span 3;
+    overflow: hidden;
+    padding: 1.1rem 1.25rem 1.2rem;
+    border-left: 0.34rem solid var(--terminal-cyan);
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 18% 15%, rgba(126, 231, 216, 0.16), transparent 24rem);
+        opacity: 0.55;
+    }
+
+    > * {
+        position: relative;
+        z-index: 1;
+    }
+}
+
+.terminal-kicker,
+.panel-title,
+.episode-line,
+.hero-command-line,
+.research-log,
+.lab-terminal {
+    font-family: "VT323", Arimo, Roboto, Poppins;
+}
+
+.terminal-kicker {
+    margin: 0 0 0.45rem;
+    color: var(--terminal-cyan);
+    font-size: 1.35rem;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.thesis-hero h1 {
+    color: #ffffff;
+    text-shadow: 0 0 18px rgba(249, 251, 242, 0.16);
+}
+
+.thesis-hero h4 {
+    padding-left: 0;
+    color: rgba(249, 251, 242, 0.88);
+}
+
+.hero-command-line {
+    display: grid;
+    gap: 0.18rem;
+    margin-top: 1rem;
+    padding: 0.65rem 0 0.65rem 0.9rem;
+    border-left: 0.22rem solid var(--terminal-yellow);
+    color: #ffffff;
+    font-size: 1.25rem;
+    line-height: 1.05;
+
+    span:first-child {
+        color: var(--terminal-cyan);
+    }
+}
+
+.lab-terminal,
+.training-run,
+.research-log {
+    padding: 0.9rem;
+}
+
+.panel-title {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 0.75rem;
+    color: var(--terminal-yellow);
+    font-size: 1.35rem;
+    line-height: 1;
+
+    &::after {
+        content: "";
+        height: 1px;
+        flex: 1;
+        background: repeating-linear-gradient(90deg, rgba(248, 214, 109, 0.85) 0 0.45rem, transparent 0.45rem 0.75rem);
+    }
+}
+
+.lab-terminal dl {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0;
+
+    div {
+        display: grid;
+        grid-template-columns: 7rem minmax(0, 1fr);
+        gap: 0.75rem;
+    }
+
+    dt {
+        color: var(--terminal-blue);
+    }
+
+    dd {
+        margin: 0;
+        color: #ffffff;
+    }
+}
+
+.episode-line {
+    margin: 0 0 0.75rem;
+    color: var(--terminal-muted);
+    font-size: 1.2rem;
+    line-height: 1;
+
+    span {
+        color: var(--terminal-cyan);
+    }
+}
+
+.training-metric {
+    display: grid;
+    gap: 0.3rem;
+    margin-bottom: 0.72rem;
+}
+
+.training-metric:last-child {
+    margin-bottom: 0;
+}
+
+.metric-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: #ffffff;
+    font-family: "VT323", Arimo, Roboto, Poppins;
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+.metric-bar {
+    height: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(249, 251, 242, 0.18);
+    border-radius: 3px;
+    background:
+        repeating-linear-gradient(90deg, rgba(249, 251, 242, 0.14) 0 0.55rem, rgba(0, 0, 0, 0.22) 0.55rem 0.72rem),
+        rgba(8, 13, 12, 0.9);
+}
+
+.metric-fill {
+    display: block;
+    height: 100%;
+    background: repeating-linear-gradient(90deg, var(--terminal-green) 0 0.55rem, rgba(199, 240, 124, 0.62) 0.55rem 0.72rem);
+}
+
+.stability-fill {
+    background: repeating-linear-gradient(90deg, var(--terminal-blue) 0 0.55rem, rgba(138, 191, 255, 0.62) 0.55rem 0.72rem);
+}
+
+.exploration-fill {
+    background: repeating-linear-gradient(90deg, var(--terminal-red) 0 0.55rem, rgba(255, 141, 125, 0.62) 0.55rem 0.72rem);
+}
+
+.research-log {
+    color: #ffffff;
+
+    summary {
+        cursor: pointer;
+        user-select: none;
+        color: var(--terminal-yellow);
+        font-size: 1.35rem;
+        line-height: 1;
+    }
+
+    ul {
+        display: grid;
+        gap: 0.32rem;
+        max-width: none;
+        margin: 0.75rem 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    li {
+        display: flex;
+        gap: 0.55rem;
+        max-width: none;
+        margin: 0;
+        color: rgba(249, 251, 242, 0.76);
+        font-size: 1.18rem;
+        line-height: 1.05;
+    }
+
+    .is-done {
+        color: #ffffff;
+
+        span:first-child {
+            color: var(--terminal-green);
+        }
+    }
+}
+
+@media (max-width: 900px) {
+    .market-ticker {
+        width: calc(100% - 2rem);
+        margin-top: 5rem;
+    }
+
+    .ticker-track {
+        gap: 1.8rem;
+        font-size: 1.15rem;
+        animation-duration: 24s;
+    }
+
+    .header h1 {
+        font-size: 2.85rem;
+    }
+
+    .header h4 {
+        font-size: 1.65rem;
+    }
+
+    .thesis-hero {
+        grid-template-columns: 1fr;
+        width: calc(100% - 2rem);
+        padding: 1rem 0 0;
+    }
+
+    .hero-copy {
+        grid-row: auto;
+    }
+
+    .lab-terminal dl div {
+        grid-template-columns: 6.5rem minmax(0, 1fr);
+    }
+
+}
+
+@media (max-width: 640px) {
+    .market-ticker {
+        width: calc(100% - 1.4rem);
+        margin-top: 4.85rem;
+    }
+
+    .ticker-track {
+        gap: 1.4rem;
+        font-size: 1.05rem;
+    }
+
+    .header h1 {
+        font-size: 2.25rem;
+    }
+
+    .header h4 {
+        font-size: 1.35rem;
+    }
+
+    .thesis-hero {
+        width: calc(100% - 1.4rem);
+        padding: 0.85rem 0 0;
+    }
+
+    .hero-copy,
+    .lab-terminal,
+    .training-run,
+    .research-log {
+        padding: 0.85rem;
+    }
+
+    .terminal-kicker,
+    .panel-title,
+    .research-log summary {
+        font-size: 1.18rem;
+    }
+
+    .hero-command-line,
+    .metric-label,
+    .episode-line,
+    .research-log li {
+        font-size: 1.05rem;
+    }
+
+    .lab-terminal dl div {
+        grid-template-columns: 5.2rem minmax(0, 1fr);
+        gap: 0.5rem;
+    }
+
+}

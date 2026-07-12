@@ -9,6 +9,8 @@
 }
 
 :host {
+    --terminal-cyan: #7ee7d8;
+    --terminal-yellow: #f8d66d;
     box-sizing: border-box;
     display: block;
 }
@@ -35,32 +37,11 @@ a {
     }
 }
 
-.header {
-    box-sizing: border-box;
-    padding: 5rem clamp(1rem, 4vw, 2rem) 0;
-    width: 100%;
-
-    h1 {
-        font-size: 3.5rem;
-        line-height: 1.05;
-        margin-bottom: 0.2rem;
-    }
-
-    h4 {
-        font-size: 2rem;
-        line-height: 1.12;
-        margin-top: 0.2rem;
-        margin-bottom: 0;
-        max-width: 70rem;
-        padding-left: min(3rem, 4vw);
-    }
-}
-
-
 .subsection {
     box-sizing: border-box;
     padding: 1.2rem clamp(1rem, 4vw, 2rem) 0;
-    width: 100%;
+    width: min(100%, 104rem);
+    margin: 0 auto;
 
     h2 {
         font-size: 2.6rem;
@@ -68,19 +49,46 @@ a {
         padding-top: 0;
         margin-top: 0;
         margin-bottom: 0.4rem;
+
+        &::before {
+            content: "> ";
+            color: var(--terminal-cyan);
+        }
     }
 }
 
 .paragraph-image-block {
+    position: relative;
+    box-sizing: border-box;
     display: flex;
     align-items: flex-start;
     gap: 2rem;
     max-width: 100%;
     width: min(88rem, 100%);
+    padding: 1.05rem;
+    border: 1px solid rgba(126, 231, 216, 0.24);
+    border-radius: 8px;
+    background:
+        linear-gradient(rgba(126, 231, 216, 0.03) 50%, rgba(0, 0, 0, 0.08) 50%) 0 0 / 100% 0.5rem,
+        rgba(19, 31, 29, 0.58);
+    box-shadow: inset 0 0 0 1px rgba(249, 251, 242, 0.025);
 
     > div {
         max-width: 100%;
         min-width: 0;
+    }
+
+    &::before {
+        content: "// research node";
+        position: absolute;
+        top: -0.72rem;
+        left: 0.85rem;
+        padding: 0 0.35rem;
+        color: var(--terminal-yellow);
+        background: #1e2624;
+        font-family: "VT323", Arimo, Roboto, Poppins;
+        font-size: 1rem;
+        line-height: 1;
     }
 }
 
@@ -97,6 +105,10 @@ a {
     max-width: 100%;
     height: auto;
     margin-bottom: 2rem;
+    border: 1px solid rgba(126, 231, 216, 0.26);
+    border-radius: 6px;
+    background: rgba(249, 251, 242, 0.05);
+    box-shadow: 0 0 22px rgba(126, 231, 216, 0.08);
 }
 
 .problem-block > div {
@@ -159,6 +171,10 @@ a {
     width: 100%;
     height: auto;
     margin: 0;
+    border: 1px solid rgba(126, 231, 216, 0.26);
+    border-radius: 6px;
+    background: rgba(249, 251, 242, 0.05);
+    box-shadow: 0 0 22px rgba(126, 231, 216, 0.08);
 }
 
 .parameter-table-wrapper,
@@ -263,6 +279,10 @@ a {
     width: 100%;
     height: auto;
     margin: 0;
+    border: 1px solid rgba(126, 231, 216, 0.26);
+    border-radius: 6px;
+    background: rgba(249, 251, 242, 0.05);
+    box-shadow: 0 0 22px rgba(126, 231, 216, 0.08);
 }
 
 .multi-agent-block > div {
@@ -310,6 +330,10 @@ a {
     display: block;
     width: 100%;
     height: auto;
+    border: 1px solid rgba(126, 231, 216, 0.26);
+    border-radius: 6px;
+    background: rgba(249, 251, 242, 0.05);
+    box-shadow: 0 0 22px rgba(126, 231, 216, 0.08);
 }
 
 figcaption {
@@ -385,6 +409,10 @@ figcaption {
         display: block;
         width: max(100%, 80rem);
         height: auto;
+        border: 1px solid rgba(126, 231, 216, 0.26);
+        border-radius: 6px;
+        background: rgba(249, 251, 242, 0.05);
+        box-shadow: 0 0 22px rgba(126, 231, 216, 0.08);
     }
 }
 
@@ -405,19 +433,6 @@ ul {
     .site-text {
         font-size: 1.2rem;
         line-height: 1.38;
-    }
-
-    .header {
-        padding-top: 5.4rem;
-
-        h1 {
-            font-size: 2.85rem;
-        }
-
-        h4 {
-            font-size: 1.65rem;
-            padding-left: 0;
-        }
     }
 
     .subsection {
@@ -523,18 +538,6 @@ ul {
     .site-text {
         font-size: 1.1rem;
         line-height: 1.34;
-    }
-
-    .header {
-        padding: 5.5rem 1rem 0;
-
-        h1 {
-            font-size: 2.25rem;
-        }
-
-        h4 {
-            font-size: 1.35rem;
-        }
     }
 
     .subsection {
