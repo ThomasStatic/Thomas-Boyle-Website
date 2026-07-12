@@ -1,43 +1,106 @@
 <section class="landing-screen" aria-label="Introduction">
     <app-header></app-header>
-    <h2 class="interesting-header">
-        Psst! Here's why (I think) I'm interesting!
-        <span class="scroll-arrow" aria-hidden="true"></span>
-    </h2>
+    <div class="home-prompt-bar">
+        <span>thomas&#64;home:~$ open README.txt</span>
+        <a href="#about-thomas">scroll_to_about<span class="scroll-arrow" aria-hidden="true"></span></a>
+    </div>
 </section>
 
-<section class="interesting-body" aria-label="About Thomas">
-        <div>
-            <h3>Applied Mathematics & Computer Engineering &#64; 
-                <a 
-                    href="https://www.queensu.ca/mathstat/undergraduate/prospective-undergraduate/mthe" 
-                    target="_blank">Queen's University
+<section class="interesting-body" id="about-thomas" aria-label="About Thomas">
+    <div class="section-console-header">
+        <p>README.TXT</p>
+        <h2>Why I think I am interesting, compiled with only a few warnings.</h2>
+    </div>
+
+    <div class="about-grid">
+        <article class="about-card education-card">
+            <div class="card-titlebar">
+                <span>EDUCATION.SYS</span>
+                <span>PASS</span>
+            </div>
+            <h3>
+                Applied Mathematics & Computer Engineering &#64;
+                <a
+                    href="https://www.queensu.ca/mathstat/undergraduate/prospective-undergraduate/mthe"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Queen's University
                 </a>
             </h3>
-            <p>I recently graduated from Queen’s University’s Applied Mathematics and Computer Engineering program, where I 
-                worked at the intersection of mathematical modelling, stochastic systems, and software engineering.
+            <p>
+                I recently graduated from Queen's University's Applied Mathematics and Computer Engineering program,
+                where I worked at the intersection of mathematical modelling, stochastic systems, and software engineering.
             </p>
-            <p>For my 
-                thesis, I built reinforcement-learning bidding agents for day-ahead electricity markets—combining market 
-                data, optimization, and multi-agent decision-making into a working research project. It confirmed that I really 
-                enjoy building software for problems where the math actually matters.</p>
-        </div>
-        <div>
-            <h3>Software Engineer &#64; <a href="https://www.tylertech.com/" target="_blank">Tyler Technologies</a></h3>
-            <p>I’m now a Software Engineer at Tyler Technologies, building software used by public-sector organizations. 
-                Before joining full-time, I spent 16 consecutive months there as a full-stack and cloud infrastructure intern. 
+            <p>
+                For my thesis, I built reinforcement-learning bidding agents for day-ahead electricity markets, combining
+                market data, optimization, and multi-agent decision-making into a working research project. It confirmed
+                that I really enjoy building software for problems where the math actually matters.
             </p>
-            <p>My work has involved Angular, TypeScript, C#, .NET, SQL, and AWS. I like working across the stack: 
-                understanding the product problem, building the feature, and then figuring out why the deployment pipeline 
+        </article>
+
+        <article class="about-card work-card">
+            <div class="card-titlebar">
+                <span>WORK.LOG</span>
+                <span>ONLINE</span>
+            </div>
+            <h3>
+                Software Engineer &#64;
+                <a href="https://www.tylertech.com/" target="_blank" rel="noopener noreferrer">Tyler Technologies</a>
+            </h3>
+            <p>
+                I am now a Software Engineer at Tyler Technologies, building software used by public-sector organizations.
+                Before joining full-time, I spent 16 consecutive months there as a full-stack and cloud infrastructure intern.
+            </p>
+            <p>
+                My work has involved Angular, TypeScript, C#, .NET, SQL, and AWS. I like working across the stack:
+                understanding the product problem, building the feature, and then figuring out why the deployment pipeline
                 suddenly has opinions.
             </p>
-        </div>
-        <div>
-            <h3>Side projects worth opening → <a href="https://github.com/ThomasStatic" target="_blank">View my GitHub</a></h3>
-            <p>My GitHub is a mix of full-stack applications, systems-oriented projects, and machine learning experiments. 
+        </article>
+
+        <article class="about-card projects-card">
+            <div class="card-titlebar">
+                <span>SIDE_QUESTS.BAT</span>
+                <span>RUNNING</span>
+            </div>
+            <h3>
+                Side projects worth opening ->
+                <a href="https://github.com/ThomasStatic" target="_blank" rel="noopener noreferrer">View my GitHub</a>
+            </h3>
+            <p>
+                My GitHub is a mix of full-stack applications, systems-oriented projects, and machine learning experiments.
                 Some are polished; some are aggressively unfinished; all of them started with a problem I actually wanted to solve.
             </p>
-            <p>I enjoy taking an idea from “this would be cool” through architecture, tradeoffs, debugging, and eventually 
-                something real... not just reproducing a tutorial with different variable names.</p>
+            <p>
+                I enjoy taking an idea from "this would be cool" through architecture, tradeoffs, debugging, and eventually
+                something real. Not just reproducing a tutorial with different variable names.
+            </p>
+        </article>
+    </div>
+
+    <aside class="launch-panel" aria-label="Portfolio quick launch">
+        <div class="launch-titlebar">
+            <span>QUICK_LAUNCH</span>
+            <span>choose your file</span>
         </div>
+        <div class="launch-grid">
+            <a routerLink="/capstone">
+                <span>01</span>
+                Machine Learning Thesis
+            </a>
+            <a routerLink="/order-book">
+                <span>02</span>
+                Order Book WIP
+            </a>
+            <a routerLink="/get-to-know-me">
+                <span>03</span>
+                Get to Know Me
+            </a>
+            <a routerLink="/blackjack">
+                <span>04</span>
+                Blackjack
+            </a>
+        </div>
+    </aside>
 </section>
