@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { CardName, Deck, ICard, PlayingCard, Suit } from 'typedeck';
+import { CardName, PlayingCard, Suit } from 'typedeck';
 import { MatDialog } from '@angular/material/dialog';
 import { EndOfGameDialogComponent } from './end-of-game-dialog/end-of-game-dialog.component';
 import {MatChipsModule} from '@angular/material/chips';
@@ -25,11 +25,11 @@ export class BlackjackComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   private readonly minimumBet = 10;
   private readonly betStep = 10;
+  private readonly maxSplitHands = 4;
   
   validCardNumbers: CardName[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   validCardSuits: Suit[] = [0, 1, 2, 3]; // Suit is an enum with values 0-3
-  deck: Deck | null = null;
-  cards: ICard[] = [];
+  private deck: PlayingCard[] = [];
 
   dealersHand: WritableSignal<PlayingCard[]> = signal([]);
   playerHands: WritableSignal<PlayingCard[][]> = signal([[]]);
@@ -61,13 +61,56 @@ export class BlackjackComponent implements OnInit {
   }
 
   refreshDeck(): void {
-    this.cards = [];
+    const cards: PlayingCard[] = [];
     for(const cardName of this.validCardNumbers) {
       for(const suit of this.validCardSuits) {
-        this.cards.push(new PlayingCard(cardName, suit));
+        cards.push(new PlayingCard(cardName, suit));
       }
     }
-    this.deck = new Deck(this.cards);
+    this.deck = this.shuffleDeck(cards);
+  }
+
+  private shuffleDeck(cards: PlayingCard[]): PlayingCard[] {
+    const shuffledCards = [...cards];
+
+    for(let index = shuffledCards.length - 1; index > 0; index--) {
+      const randomIndex = this.getRandomIndex(index + 1);
+      [shuffledCards[index], shuffledCards[randomIndex]] = [shuffledCards[randomIndex], shuffledCards[index]];
+    }
+
+    return shuffledCards;
+  }
+
+  private getRandomIndex(maxExclusive: number): number {
+    if(maxExclusive <= 0) {
+      throw new Error('Cannot draw a random index from an empty range');
+    }
+
+    const crypto = globalThis.crypto;
+    if(crypto?.getRandomValues) {
+      const randomValues = new Uint32Array(1);
+      const randomLimit = Math.floor(0x100000000 / maxExclusive) * maxExclusive;
+      let randomValue = 0;
+
+      do {
+        crypto.getRandomValues(randomValues);
+        randomValue = randomValues[0];
+      } while(randomValue >= randomLimit);
+
+      return randomValue % maxExclusive;
+    }
+
+    return Math.floor(Math.random() * maxExclusive);
+  }
+
+  private drawCard(): PlayingCard {
+    const card = this.deck.shift();
+
+    if(!card) {
+      throw new Error('No cards remaining in deck');
+    }
+
+    return card;
   }
 
   protected getImagePath(card: PlayingCard): string {
@@ -125,9 +168,14 @@ export class BlackjackComponent implements OnInit {
 
     this.saveBank();
     this.refreshDeck();
-    this.deck?.shuffle();
-    this.dealersHand.set([this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]);
-    this.playerHands.set([[this.deck?.takeCard() as PlayingCard, this.deck?.takeCard() as PlayingCard]]);
+
+    const playerFirstCard = this.drawCard();
+    const dealerHoleCard = this.drawCard();
+    const playerSecondCard = this.drawCard();
+    const dealerUpCard = this.drawCard();
+
+    this.dealersHand.set([dealerHoleCard, dealerUpCard]);
+    this.playerHands.set([[playerFirstCard, playerSecondCard]]);
     this.playerHandBets.set([this.userBet()]);
     this.playerHandStatuses.set(['playing']);
     this.activePlayerHandIndex.set(0);
@@ -288,6 +336,7 @@ export class BlackjackComponent implements OnInit {
 
   protected canSplit(handIndex: number): boolean {
     return this.shouldShowSplitButton(handIndex)
+      && this.playerHands().length < this.maxSplitHands
       && this.totalWagerAfterAdding(this.getPlayerHandBet(handIndex)) <= this.userBank();
   }
 
@@ -302,8 +351,8 @@ export class BlackjackComponent implements OnInit {
     const [firstCard, secondCard] = currentHands[handIndex];
     const splitBet = currentBets[handIndex];
     const splitHands = [
-      [firstCard, this.deck?.takeCard() as PlayingCard],
-      [secondCard, this.deck?.takeCard() as PlayingCard]
+      [firstCard, this.drawCard()],
+      [secondCard, this.drawCard()]
     ];
 
     this.playerHands.set([
@@ -350,12 +399,12 @@ export class BlackjackComponent implements OnInit {
         return hand;
       }
 
-      return [...hand, this.deck?.takeCard() as PlayingCard];
+      return [...hand, this.drawCard()];
     }));
   }
 
   private hitDealer(): void {
-    this.dealersHand.update(hand => [...hand, this.deck?.takeCard() as PlayingCard]);
+    this.dealersHand.update(hand => [...hand, this.drawCard()]);
     this.dealersTotal.set(this.calcHandTotal(this.dealersHand()));
   }
 
@@ -495,8 +544,8 @@ export class BlackjackComponent implements OnInit {
     });
   }
 
-  private cardSplitValue(card: PlayingCard): number {
-    return this.getCardValue(card.cardName);
+  private cardSplitValue(card: PlayingCard): CardName {
+    return card.cardName;
   }
 
   private calcHandTotal(hand: PlayingCard[]): number {
