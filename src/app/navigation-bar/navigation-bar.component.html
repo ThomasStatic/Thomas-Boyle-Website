@@ -48,5 +48,18 @@
                 Blackjack
             </a>
         </li>
+        <li>
+            <a
+                routerLink="/order-book"
+                routerLinkActive="active-route"
+                [routerLinkActiveOptions]="{ exact: true }"
+                ariaCurrentWhenActive="page"
+                aria-label="Order Book Under Construction"
+                (click)="refreshIfCurrentRoute($event, '/order-book')"
+            >
+                <span class="nav-label-full">Order Book</span>
+                <span class="nav-label-short">Order Book</span>
+            </a>
+        </li>
     </ul>
 </nav>

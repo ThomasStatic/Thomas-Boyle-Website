@@ -1,0 +1,106 @@
+<section class="order-book-page">
+    <div class="ticker-strip" aria-hidden="true">
+        <span>UNDER CONSTRUCTION</span>
+        <span>LIMIT ORDERS LOADING</span>
+        <span>CACHE LINES BEING NEGOTIATED</span>
+        <span>C++ SMARTYPANTS MODE</span>
+    </div>
+
+    <main class="order-book-shell">
+        <section class="hero-copy">
+            <p class="section-kicker">systems project // current WIP</p>
+            <h1>Order Book <span>(Under Construction)</span></h1>
+            <p class="lead">
+                I am building a high-performance electronic limit order book in modern C++ because apparently
+                my idea of a relaxing side project is asking, "what if a queue had opinions about fairness,
+                latency, and the memory hierarchy?"
+            </p>
+            <p>
+                This is explicitly a current work in progress. It is not done, not polished, and not pretending
+                to be a production exchange. The goal is to understand the infrastructure underneath modern markets:
+                matching orders, preserving price-time priority, and designing data structures that do not make the
+                CPU file a formal complaint.
+            </p>
+            <p>
+                As it grows, I am planning to add benchmarking, profiling, unit tests, market data feeds, replay tools,
+                and progressively more performance-focused experiments. Less "hot stock tip," more "let me build the
+                tiny engine room where the market plumbing lives."
+            </p>
+        </section>
+
+        <aside class="construction-panel" aria-label="Order book project construction status">
+            <pre class="construction-sign">==============================
+[ UNDER CONSTRUCTION ]
+==============================
+
+███████████████████████████
+█ 🚧  WORK IN PROGRESS  🚧 █
+███████████████████████████</pre>
+
+            <div class="completion-meter">
+                <span>Estimated Completion:</span>
+                <div class="progress-row" aria-label="Estimated completion 10 percent">
+                    <div class="progress-track" aria-hidden="true">
+                        @for(segment of progressSegments; track $index) {
+                            <span [class.is-filled]="segment"></span>
+                        }
+                    </div>
+                    <strong>10%</strong>
+                </div>
+            </div>
+        </aside>
+
+        <section class="terminal-panel project-terminal" aria-label="Order book debug terminal">
+            <div class="terminal-titlebar">
+                <span>C:\MARKET\LOB&gt;</span>
+                <span>matching_engine.exe</span>
+            </div>
+            <div class="terminal-body">
+                @for(logLine of buildLogLines; track logLine.text) {
+                    <p [class]="'log-line is-' + logLine.status">
+                        <span>[{{ logLine.status.toUpperCase() }}]</span>
+                        {{ logLine.text }}
+                    </p>
+                }
+                <p class="cursor-line">awaiting next commit<span></span></p>
+            </div>
+        </section>
+
+        <section class="terminal-panel depth-panel" aria-label="Example limit order book depth">
+            <div class="terminal-titlebar">
+                <span>SIM_DEPTH</span>
+                <span>price-time priority</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bid Size</th>
+                        <th>Bid</th>
+                        <th>Ask</th>
+                        <th>Ask Size</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(level of orderBookLevels; track level.bidPrice) {
+                        <tr>
+                            <td class="bid-size">{{ level.bidSize }}</td>
+                            <td class="bid-price">{{ level.bidPrice }}</td>
+                            <td class="ask-price">{{ level.askPrice }}</td>
+                            <td class="ask-size">{{ level.askSize }}</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+
+        <section class="feature-grid" aria-label="Order book project focus areas">
+            @for(card of featureCards; track card.title) {
+                <article class="feature-card" [style.--card-accent]="card.accent">
+                    <p>{{ card.label }}</p>
+                    <h2>{{ card.title }}</h2>
+                    <span>{{ card.text }}</span>
+                </article>
+            }
+        </section>
+    </main>
+</section>

@@ -6,11 +6,13 @@ import { StrongVisualizerComponent } from './strong-visualizer/strong-visualizer
 import { BlackjackComponent } from './blackjack/blackjack.component';
 import { CapstoneComponent } from './capstone/capstone.component';
 import { GetToKnowMeComponent } from './get-to-know-me/get-to-know-me.component';
+import { OrderBookComponent } from './order-book/order-book.component';
 
 export const routes: Routes = [
     { path: '', component: HomePageComponent },
     { path: 'get-to-know-me', component: GetToKnowMeComponent },
     { path: 'strong-visualizer', component: StrongVisualizerComponent},
+    { path: 'order-book', component: OrderBookComponent},
     { path: 'blackjack', component: BlackjackComponent},
     { path: 'capstone', component: CapstoneComponent},
     { path: '**', redirectTo: '' },
