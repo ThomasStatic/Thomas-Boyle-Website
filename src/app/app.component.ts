@@ -1,5 +1,5 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, NgZone, OnDestroy, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, NgZone, OnDestroy, PLATFORM_ID, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavigationBarComponent } from './navigation-bar/navigation-bar.component';
 
@@ -50,9 +50,20 @@ const CURSOR_STATE_CLASSES: readonly CursorStateClass[] = [
 })
 export class AppComponent implements OnDestroy {
   title = 'personalProject';
+  protected readonly bootSequenceLines = [
+    'Initializing...',
+    'Retuning The Guitar...',
+    'Adding Shameless Self-Promotion...',
+    'Brewing Coffee...',
+    'Git Reverting That Last Commit...',
+    'Done!'
+  ];
+  protected readonly bootSequenceVisible = signal(false);
+  protected readonly bootSequenceExiting = signal(false);
 
   private activeDragKind: NativeDragKind | null = null;
   private middleScrollState: MiddleScrollState | null = null;
+  private readonly bootSequenceTimers: number[] = [];
   private readonly removeListeners: Array<() => void> = [];
   private scrollAnimationFrame = 0;
   private suppressNextAuxClick = false;
@@ -66,17 +77,36 @@ export class AppComponent implements OnDestroy {
     this.view = this.document.defaultView;
 
     if (isPlatformBrowser(platformId)) {
+      this.startBootSequence();
       this.ngZone.runOutsideAngular(() => this.bindCursorEvents());
     }
   }
 
   ngOnDestroy(): void {
+    for (const timer of this.bootSequenceTimers) {
+      this.view?.clearTimeout(timer);
+    }
+
     for (const removeListener of this.removeListeners) {
       removeListener();
     }
 
     this.clearMiddleScrollState();
     this.setCursorState(null);
+  }
+
+  private startBootSequence(): void {
+    if (!this.view) {
+      return;
+    }
+
+    this.bootSequenceVisible.set(true);
+    this.bootSequenceExiting.set(false);
+
+    this.bootSequenceTimers.push(
+      this.view.setTimeout(() => this.bootSequenceExiting.set(true), 7600),
+      this.view.setTimeout(() => this.bootSequenceVisible.set(false), 8000)
+    );
   }
 
   private bindCursorEvents(): void {

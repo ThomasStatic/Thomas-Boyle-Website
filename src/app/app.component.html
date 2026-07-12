@@ -1,2 +1,25 @@
+@if (bootSequenceVisible()) {
+    <section
+        class="boot-sequence"
+        [class.is-exiting]="bootSequenceExiting()"
+        aria-label="Portfolio boot sequence"
+        aria-live="polite"
+    >
+        <div class="boot-window">
+            <div class="boot-titlebar">
+                <span>BOOT_PORTFOLIO.BAT</span>
+                <span>v1.0</span>
+            </div>
+
+            <div class="boot-lines">
+                @for (line of bootSequenceLines; track line) {
+                    <p>{{ line }}</p>
+                }
+                <span class="boot-cursor" aria-hidden="true"></span>
+            </div>
+        </div>
+    </section>
+}
+
 <app-navigation-bar></app-navigation-bar>
 <router-outlet></router-outlet>

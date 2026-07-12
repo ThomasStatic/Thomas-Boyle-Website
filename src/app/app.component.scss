@@ -1,0 +1,137 @@
+.boot-sequence {
+    align-items: center;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(249, 251, 242, 0.04) 0,
+            rgba(249, 251, 242, 0.04) 1px,
+            transparent 1px,
+            transparent 5px
+        ),
+        var(--site-grid-background);
+    background-size: auto, var(--site-grid-size);
+    display: grid;
+    inset: 0;
+    justify-items: center;
+    padding: 1rem;
+    position: fixed;
+    z-index: 1000;
+}
+
+.boot-sequence.is-exiting {
+    animation: boot-screen-fade 0.4s ease forwards;
+    pointer-events: none;
+}
+
+.boot-window {
+    background: rgba(13, 18, 18, 0.96);
+    border: 1px solid rgba(126, 231, 216, 0.42);
+    border-radius: 8px;
+    box-shadow: 0 0 0 3px rgba(13, 18, 18, 0.7), 0 0 48px rgba(126, 231, 216, 0.2);
+    color: #f9fbf2;
+    font-family: "VT323", Arimo, Roboto, Poppins;
+    max-width: 34rem;
+    overflow: hidden;
+    width: min(100%, 34rem);
+}
+
+.boot-titlebar {
+    align-items: center;
+    background: #525151;
+    display: flex;
+    font-size: clamp(1.1rem, 4vw, 1.35rem);
+    justify-content: space-between;
+    line-height: 1;
+    min-height: 2.5rem;
+    padding: 0 0.85rem;
+}
+
+.boot-titlebar span:last-child {
+    color: #c7f07c;
+}
+
+.boot-lines {
+    min-height: 13.5rem;
+    padding: 1.1rem 1rem 1.25rem;
+}
+
+.boot-lines p {
+    animation: boot-line-in 0.55s steps(5) both;
+    color: #f9fbf2;
+    font-size: clamp(1.35rem, 5vw, 1.75rem);
+    line-height: 1;
+    margin: 0 0 0.62rem;
+    opacity: 0;
+}
+
+.boot-lines p::before {
+    color: #7ee7d8;
+    content: "> ";
+}
+
+.boot-lines p:nth-child(1) {
+    animation-delay: 0.2s;
+}
+
+.boot-lines p:nth-child(2) {
+    animation-delay: 1.4s;
+}
+
+.boot-lines p:nth-child(3) {
+    animation-delay: 2.6s;
+}
+
+.boot-lines p:nth-child(4) {
+    animation-delay: 3.8s;
+}
+
+.boot-lines p:nth-child(5) {
+    animation-delay: 5s;
+}
+
+.boot-lines p:nth-child(6) {
+    animation-delay: 6.2s;
+    color: #c7f07c;
+}
+
+.boot-cursor {
+    animation: boot-cursor-blink 0.7s steps(2) infinite;
+    background: #7ee7d8;
+    display: inline-block;
+    height: 1.2rem;
+    margin-left: 1.15rem;
+    width: 0.55rem;
+}
+
+@media (width <= 420px) {
+    .boot-lines {
+        min-height: 12.25rem;
+    }
+}
+
+@keyframes boot-line-in {
+    from {
+        filter: blur(0.08rem);
+        opacity: 0;
+        transform: translateY(0.15rem);
+    }
+
+    to {
+        filter: blur(0);
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes boot-cursor-blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+@keyframes boot-screen-fade {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
