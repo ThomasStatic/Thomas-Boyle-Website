@@ -23,3 +23,7 @@ describe('AppComponent boot transcript',()=>{
     tick(10000);fixture.detectChanges();expect(fixture.nativeElement.querySelector('.boot-sequence')).toBeNull();
   }));
 });
+  it('renders the boot overlay in the initial component state',()=>{
+    const fixture=TestBed.createComponent(AppComponent);fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.boot-sequence')).not.toBeNull();
+  });

@@ -64,7 +64,9 @@ export class AppComponent implements OnDestroy {
     'Git Reverting That Last Commit...',
     'Done!'
   ];
-  protected readonly bootSequenceVisible = signal(false);
+  // Render the boot overlay in the SSR/prerendered HTML so the landing page
+  // cannot paint before client hydration starts the interactive transcript.
+  protected readonly bootSequenceVisible = signal(true);
   protected readonly bootSequenceExiting = signal(false);
   protected readonly bootReady = signal(false);
   protected readonly bootCountdown = signal(20);
@@ -103,7 +105,7 @@ export class AppComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.bootController?.abort();
-    if(this.bootScrollFrame&&this.view)this.view.cancelAnimationFrame(this.bootScrollFrame);
+    if(this.bootScrollFrame&&this.view?.cancelAnimationFrame)this.view.cancelAnimationFrame(this.bootScrollFrame);
 
     for (const removeListener of this.removeListeners) {
       removeListener();
@@ -142,7 +144,7 @@ export class AppComponent implements OnDestroy {
   private appendBootLine(text:string,kind:BootLineKind):number{const index=this.bootTranscriptLines().length;this.bootTranscriptLines.update(lines=>[...lines,{kind,text}]);return index;}
   private async runBootCountdown(seconds:number,signal:AbortSignal):Promise<void>{const deadline=Date.now()+seconds*1000;while(!signal.aborted){const remaining=Math.max(0,Math.ceil((deadline-Date.now())/1000));this.bootCountdown.set(remaining);if(remaining===0){this.enterBoot();return;}if(!await this.bootDelay(200,signal))return;}}
   private bootDelay(ms:number,signal:AbortSignal):Promise<boolean>{return new Promise(resolve=>{if(signal.aborted){resolve(false);return}const timer=this.view!.setTimeout(()=>{signal.removeEventListener('abort',cancel);resolve(true);},ms);const cancel=()=>{this.view!.clearTimeout(timer);resolve(false)};signal.addEventListener('abort',cancel,{once:true});});}
-  private scheduleBootScroll():void{if(!this.view||this.bootScrollFrame||!this.bootSequenceVisible())return;this.bootScrollFrame=this.view.requestAnimationFrame(()=>{this.bootScrollFrame=0;const element=this.bootTranscript?.nativeElement;if(!element)return;const required=Math.max(0,element.scrollHeight-element.clientHeight);if(element.scrollTop<required)element.scrollTop=required;});}
+  private scheduleBootScroll():void{if(!this.view?.requestAnimationFrame||this.bootScrollFrame||!this.bootSequenceVisible())return;this.bootScrollFrame=this.view.requestAnimationFrame(()=>{this.bootScrollFrame=0;const element=this.bootTranscript?.nativeElement;if(!element)return;const required=Math.max(0,element.scrollHeight-element.clientHeight);if(element.scrollTop<required)element.scrollTop=required;});}
 
   protected enterBoot(event?:Event): void {
     if(!this.bootReady()||!this.bootSequenceVisible())return;event?.preventDefault();event?.stopPropagation();
