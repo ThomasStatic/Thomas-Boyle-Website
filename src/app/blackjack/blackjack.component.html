@@ -1,115 +1,169 @@
-<section class="blackjack-table">
-    <section class="hand-section dealer-hand-section">
-        <div class="hand-of-cards" aria-label="Dealer hand">
-            @if(!userStanding() && betPlaced()) {
-                <img src="playing-cards/red_backing.png" alt="" class="card">
-                <img [src]="getImagePath(dealersHand()[1])" alt="" class="card">
-            }
-            @else {
-                @for(card of dealersHand(); track $index) {
-                    <img [src]="getImagePath(card)" alt="" class="card">
-                }
-            }
-        </div>
-        @if(betPlaced()) {
-            <p class="centered hand-totals">{{ !userStanding() ? "Dealer showing: " + dealersTotal() : "Dealer has: " + dealersTotal()}}</p>
-        }
-    </section>
+<section class="blackjack-page">
+    <div class="blackjack-terminal">
+        <header class="blackjack-header">
+            <div>
+                <p class="terminal-kicker">CASINO_TERMINAL // BLACKJACK.EXE</p>
+                <h1>Blackjack</h1>
+            </div>
+            <div class="terminal-lights" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </header>
 
-    <section class="hand-section player-hand-section">
-        @if(splitActive()) {
-            <div class="split-hands">
-                @for(hand of playerHands(); track $index) {
-                    <div class="split-hand" [class.active-split-hand]="isActivePlayerHand($index)">
-                        <div class="hand-of-cards" aria-label="Split player hand">
-                            @for(card of hand; track $index) {
-                                <img [src]="getImagePath(card)" alt="" class="card">
-                            }
-                        </div>
-                        @if(isActivePlayerHand($index)) {
-                            <div class="controls centered">
-                                <button mat-stroked-button (click)="hit('Player')" [disabled]="!canHitActiveHand()">Hit</button>
-                                @if(shouldShowDoubleButton($index)) {
-                                    <button mat-stroked-button (click)="double($index)" [disabled]="!canDouble($index)">Double</button>
-                                }
-                                <button mat-stroked-button (click)="stand()" [disabled]="!canActOnActiveHand()">Stand</button>
-                                @if(shouldShowSplitButton($index)) {
-                                    <button mat-stroked-button (click)="split($index)" [disabled]="!canSplit($index)">Split</button>
-                                }
-                            </div>
-                        }
-                        <p class="centered hand-totals">{{ getPlayerHandTotalText($index) }}</p>
-                    </div>
-                }
+        <div class="terminal-command">
+            <span>tboyle&#64;casino:~$</span>
+            <span>./deal --table=portfolio --vibe=retro</span>
+        </div>
+
+        <div class="status-grid" aria-label="Blackjack game status">
+            <div class="status-cell">
+                <span>Bank</span>
+                <strong>{{ userBank() }}</strong>
             </div>
-        }
-        @else {
-            <div class="hand-of-cards" aria-label="Player hand">
-                @for(card of playerHands()[0]; track $index) {
-                    <img [src]="getImagePath(card)" alt="" class="card">
-                }
+            <div class="status-cell">
+                <span>Current Bet</span>
+                <strong>{{ userBet() }}</strong>
             </div>
-            @if(betPlaced()) {
-                <div class="controls centered">
-                    <button mat-stroked-button (click)="hit('Player')" [disabled]="!canHitActiveHand()">Hit</button>
-                    @if(shouldShowDoubleButton(0)) {
-                        <button mat-stroked-button (click)="double(0)" [disabled]="!canDouble(0)">Double</button>
+            <div class="status-cell">
+                <span>Round State</span>
+                <strong>{{ roundStatusText() }}</strong>
+            </div>
+            <div class="status-cell">
+                <span>Shoe</span>
+                <strong>{{ remainingCardsText() }}</strong>
+            </div>
+        </div>
+
+        <section class="blackjack-table">
+            <section class="hand-section dealer-hand-section">
+                <div class="hand-label">
+                    <span>Dealer Node</span>
+                    <span>HOUSE_AI</span>
+                </div>
+                <div class="hand-of-cards" aria-label="Dealer hand">
+                    @if(!userStanding() && betPlaced()) {
+                        <img src="playing-cards/red_backing.png" alt="" class="card">
+                        <img [src]="getImagePath(dealersHand()[1])" alt="" class="card">
                     }
-                    <button mat-stroked-button (click)="stand()" [disabled]="!canActOnActiveHand()">Stand</button>
-                    @if(shouldShowSplitButton(0)) {
-                        <button mat-stroked-button (click)="split(0)" [disabled]="!canSplit(0)">Split</button>
+                    @else {
+                        @for(card of dealersHand(); track $index) {
+                            <img [src]="getImagePath(card)" alt="" class="card">
+                        }
                     }
                 </div>
-                <p class="centered hand-totals">{{ getPlayerHandTotalText(0) }}</p>
-            }
-        }
-    </section>
+                @if(betPlaced()) {
+                    <p class="centered hand-totals">{{ !userStanding() ? "Dealer showing: " + dealersTotal() : "Dealer has: " + dealersTotal()}}</p>
+                }
+            </section>
 
-    <div class="blackjack-actions">
-        <div class="bank-container">
-            <p class="bank-amount">Bank: {{ userBank()}}</p>
-            <button
-                mat-stroked-button
-                class="reset-bank-button"
-                (click)="resetBank()"
-                [disabled]="!canResetBank()"
-            >
-                Reset Bank
-            </button>
-        </div>
+            <section class="hand-section player-hand-section">
+                <div class="hand-label">
+                    <span>Player Node</span>
+                    <span>{{ activeSeatText() }}</span>
+                </div>
+                @if(splitActive()) {
+                    <div class="split-hands">
+                        @for(hand of playerHands(); track $index) {
+                            <div class="split-hand" [class.active-split-hand]="isActivePlayerHand($index)">
+                                <div class="hand-of-cards" aria-label="Split player hand">
+                                    @for(card of hand; track $index) {
+                                        <img [src]="getImagePath(card)" alt="" class="card">
+                                    }
+                                </div>
+                                @if(isActivePlayerHand($index)) {
+                                    <div class="controls centered">
+                                        <button mat-stroked-button (click)="hit('Player')" [disabled]="!canHitActiveHand()">Hit</button>
+                                        @if(shouldShowDoubleButton($index)) {
+                                            <button mat-stroked-button (click)="double($index)" [disabled]="!canDouble($index)">Double</button>
+                                        }
+                                        <button mat-stroked-button (click)="stand()" [disabled]="!canActOnActiveHand()">Stand</button>
+                                        @if(shouldShowSplitButton($index)) {
+                                            <button mat-stroked-button (click)="split($index)" [disabled]="!canSplit($index)">Split</button>
+                                        }
+                                    </div>
+                                }
+                                <p class="centered hand-totals">{{ getPlayerHandTotalText($index) }}</p>
+                            </div>
+                        }
+                    </div>
+                }
+                @else {
+                    <div class="hand-of-cards" aria-label="Player hand">
+                        @for(card of playerHands()[0]; track $index) {
+                            <img [src]="getImagePath(card)" alt="" class="card">
+                        }
+                    </div>
+                    @if(betPlaced()) {
+                        <div class="controls centered">
+                            <button mat-stroked-button (click)="hit('Player')" [disabled]="!canHitActiveHand()">Hit</button>
+                            @if(shouldShowDoubleButton(0)) {
+                                <button mat-stroked-button (click)="double(0)" [disabled]="!canDouble(0)">Double</button>
+                            }
+                            <button mat-stroked-button (click)="stand()" [disabled]="!canActOnActiveHand()">Stand</button>
+                            @if(shouldShowSplitButton(0)) {
+                                <button mat-stroked-button (click)="split(0)" [disabled]="!canSplit(0)">Split</button>
+                            }
+                        </div>
+                        <p class="centered hand-totals">{{ getPlayerHandTotalText(0) }}</p>
+                    }
+                }
+            </section>
 
-        <div class="betting-container">
-            <div class="bet-amount-controls">
-                <button matFab class="betting-button" (click)="changeBet(-10)" [disabled]="!canDecreaseBet()">
-                    <mat-icon>arrow_left</mat-icon>
-                </button>
-                <mat-chip-set>
-                    <mat-chip>{{ userBet() }}</mat-chip>
-                </mat-chip-set>
+            <div class="blackjack-actions">
+                <div class="bank-container">
+                    <p class="bank-amount">Bank: {{ userBank()}}</p>
+                    <button
+                        mat-stroked-button
+                        class="reset-bank-button"
+                        (click)="resetBank()"
+                        [disabled]="!canResetBank()"
+                    >
+                        Reset Bank
+                    </button>
+                </div>
 
-                <button matFab class="betting-button" (click)="changeBet(10)" [disabled]="!canIncreaseBet()">
-                    <mat-icon>arrow_right</mat-icon>
-                </button>
+                <div class="betting-container">
+                    <div class="bet-amount-controls">
+                        <button matFab class="betting-button" (click)="changeBet(-10)" [disabled]="!canDecreaseBet()" aria-label="Decrease bet">
+                            <mat-icon>arrow_left</mat-icon>
+                        </button>
+                        <mat-chip-set>
+                            <mat-chip>{{ userBet() }}</mat-chip>
+                        </mat-chip-set>
+
+                        <button matFab class="betting-button" (click)="changeBet(10)" [disabled]="!canIncreaseBet()" aria-label="Increase bet">
+                            <mat-icon>arrow_right</mat-icon>
+                        </button>
+                    </div>
+
+                    <div class="bet-action-buttons">
+                        <button
+                            class="centered place-bet"
+                            mat-stroked-button
+                            (click)="placeBet()"
+                            [disabled]="!canPlaceBet()"
+                        >
+                            Place Bet
+                        </button>
+                        <button
+                            class="centered place-bet"
+                            mat-stroked-button
+                            (click)="resetGame()"
+                            [disabled]="disableResetButton()"
+                        >
+                            Reset Game
+                        </button>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <div class="bet-action-buttons">
-                <button 
-                    class="centered place-bet" 
-                    mat-stroked-button 
-                    (click)="placeBet()"
-                    [disabled]="!canPlaceBet()"
-                >
-                    Place Bet
-                </button>
-                <button 
-                    class="centered place-bet" 
-                    mat-stroked-button 
-                    (click)="resetGame()" 
-                    [disabled]="disableResetButton()"
-                >
-                    Reset Game
-                </button>
-            </div>
-        </div>
+        <footer class="terminal-footer">
+            <span>RNG: CRYPTO</span>
+            <span>MAX_SPLIT: 4</span>
+            <span>HOUSE_RULE: DEALER_STANDS_17</span>
+        </footer>
     </div>
 </section>

@@ -154,6 +154,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     }
 }
 
+.blackjack-round-dialog {
+    .mat-mdc-dialog-container,
+    .mat-mdc-dialog-surface,
+    .mdc-dialog__surface {
+        background: transparent !important;
+        box-shadow: none !important;
+        overflow: visible;
+    }
+}
+
 :is(
     html.cursor-native-drag-link,
     html.cursor-native-drag-link *,

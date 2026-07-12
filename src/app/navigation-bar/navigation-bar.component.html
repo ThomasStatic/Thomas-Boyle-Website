@@ -39,17 +39,6 @@
         </li>
         <li>
             <a
-                routerLink="/blackjack"
-                routerLinkActive="active-route"
-                [routerLinkActiveOptions]="{ exact: true }"
-                ariaCurrentWhenActive="page"
-                (click)="refreshIfCurrentRoute($event, '/blackjack')"
-            >
-                Blackjack
-            </a>
-        </li>
-        <li>
-            <a
                 routerLink="/order-book"
                 routerLinkActive="active-route"
                 [routerLinkActiveOptions]="{ exact: true }"
@@ -59,6 +48,17 @@
             >
                 <span class="nav-label-full">Order Book</span>
                 <span class="nav-label-short">Order Book</span>
+            </a>
+        </li>
+        <li>
+            <a
+                routerLink="/blackjack"
+                routerLinkActive="active-route"
+                [routerLinkActiveOptions]="{ exact: true }"
+                ariaCurrentWhenActive="page"
+                (click)="refreshIfCurrentRoute($event, '/blackjack')"
+            >
+                Blackjack
             </a>
         </li>
     </ul>

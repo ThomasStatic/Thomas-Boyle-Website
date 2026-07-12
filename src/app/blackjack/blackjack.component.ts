@@ -278,6 +278,42 @@ export class BlackjackComponent implements OnInit {
     return !this.userStanding() ? `You have: ${total}` : `Standing with: ${total}`;
   }
 
+  protected roundStatusText(): string {
+    if(!this.betPlaced()) {
+      return 'AWAITING BET';
+    }
+
+    if(this.userStanding()) {
+      return 'ROUND CLOSED';
+    }
+
+    if(this.splitActive()) {
+      return `HAND ${this.activePlayerHandIndex() + 1}/${this.playerHands().length}`;
+    }
+
+    return 'PLAYER TURN';
+  }
+
+  protected activeSeatText(): string {
+    if(!this.betPlaced()) {
+      return 'STANDBY';
+    }
+
+    if(this.userStanding()) {
+      return 'STANDING';
+    }
+
+    if(this.splitActive()) {
+      return `HAND ${this.activePlayerHandIndex() + 1}/${this.playerHands().length}`;
+    }
+
+    return 'ACTIVE_HAND';
+  }
+
+  protected remainingCardsText(): string {
+    return this.betPlaced() ? `${this.deck.length} CARDS` : 'READY';
+  }
+
   protected isActivePlayerHand(handIndex: number): boolean {
     return this.activePlayerHandIndex() === handIndex && this.playerHandStatuses()[handIndex] === 'playing';
   }
@@ -536,8 +572,9 @@ export class BlackjackComponent implements OnInit {
   private openRoundDialog(result: RoundResult): void {
     this.setUserBank(this.userBank() + result.bankDelta);
     this.dialog.open(EndOfGameDialogComponent, {
-      height: '200px',
-      width: '500px',
+      width: 'min(92vw, 520px)',
+      maxWidth: '92vw',
+      panelClass: 'blackjack-round-dialog',
       data: { title: result.title, message: result.message }
     }).afterClosed().subscribe(() => {
       this.disableResetButton.set(false);
