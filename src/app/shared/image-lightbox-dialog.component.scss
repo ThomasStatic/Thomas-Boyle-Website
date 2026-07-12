@@ -36,6 +36,44 @@
     object-fit: contain;
 }
 
+.lightbox-controls {
+    align-items: center;
+    display: flex;
+    gap: 0.35rem;
+    left: clamp(0.4rem, 1.2vw, 0.9rem);
+    position: fixed;
+    top: clamp(0.4rem, 1.2vw, 0.9rem);
+    user-select: none;
+    z-index: 2;
+
+    button {
+        align-items: center;
+        background: rgba(51, 50, 50, 0.92);
+        border: 1px solid rgba(249, 251, 242, 0.34);
+        border-radius: 8px;
+        color: #f9fbf2;
+        display: flex;
+        font-family: "VT323", Arimo, Roboto, Poppins;
+        font-size: 1.35rem;
+        height: 2.35rem;
+        justify-content: center;
+        line-height: 1;
+        min-width: 2.35rem;
+        padding: 0.3rem 0.65rem;
+
+        &:hover,
+        &:focus-visible {
+            background: rgba(126, 231, 216, 0.28);
+            border-color: rgba(249, 251, 242, 0.72);
+            outline: none;
+        }
+
+        &:active {
+            cursor: var(--cursor-link-active) !important;
+        }
+    }
+}
+
 .lightbox-close {
     align-items: center;
     background: rgba(51, 50, 50, 0.92);
@@ -69,6 +107,15 @@
 }
 
 @media (width <= 640px) {
+    .lightbox-controls {
+        button {
+            font-size: 1.1rem;
+            height: 2rem;
+            min-width: 2rem;
+            padding-inline: 0.5rem;
+        }
+    }
+
     .lightbox-close {
         height: 2.35rem;
         width: 2.35rem;

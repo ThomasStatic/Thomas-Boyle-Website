@@ -2,6 +2,11 @@
     <button type="button" class="lightbox-close" aria-label="Close expanded image" (click)="close()">
         &times;
     </button>
+    <div class="lightbox-controls" aria-label="Image zoom controls">
+        <button type="button" aria-label="Zoom out" [disabled]="!canZoomOut" (click)="zoomOut()">-</button>
+        <button type="button" aria-label="Reset zoom" (click)="resetZoom()">{{ zoomPercent }}</button>
+        <button type="button" aria-label="Zoom in" [disabled]="!canZoomIn" (click)="zoomIn()">+</button>
+    </div>
     <div class="lightbox-frame">
         <img
             class="lightbox-image"
